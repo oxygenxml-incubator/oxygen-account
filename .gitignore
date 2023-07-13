@@ -1,5 +1,7 @@
 /.metadata/
 HELP.md
+mvnw
+mvnw.cmd
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -11,6 +13,8 @@ target/
 .factorypath
 .project
 .settings
+.metadata
+.mvn/
 .springBeans
 .sts4-cache
 
