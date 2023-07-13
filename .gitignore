@@ -13,6 +13,7 @@ target/
 .factorypath
 .project
 .settings
+.metadata
 .mvn/
 .springBeans
 .sts4-cache
