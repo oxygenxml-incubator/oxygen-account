@@ -24,7 +24,7 @@ jobs:
       with:
         java-version: 17
         distribution: 'adopt'
-        maven-version: '4.0.0'
+        maven-version: '3.9.2'
 
     - name: Get pom.xml
       run: |
