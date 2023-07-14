@@ -1,59 +1,40 @@
-name: Build and Test oxygen-account
+name: Build and Test
+
+ 
 
 on:
   push:
     branches:
-      - github-actions-branch 
-  pull_request:
-    branches:
       - github-actions-branch
 
+ 
+
 jobs:
-  build:
+  build-and-test:
     runs-on: windows-latest
 
-    steps:
-    - name: Use Node.js 16
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
+ 
 
-    - name: Checkout repository
+    steps:
+    - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up JDK 17
+ 
+
+    - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        java-version: '17'
+        java-version: 17
 
-    - name: Build with Maven
-      run: mvn package --quiet --batch-mode
+ 
 
-    - name: Run tests
-      run: mvn test --quiet --batch-mode
-
-    - name: Create JAR
-      run: |
-        mvn clean compile assembly:single --quiet --batch-mode
-        jar cvf target/my-app.jar -C target/classes .
-        jar uvf target/my-app.jar -C target/test-classes .
-        jar uvf target/my-app.jar -C target/generated-sources .
-        jar uvf target/my-app.jar -C target/generated-test-sources .
-
-    - name: Upload JAR artifact
-      uses: actions/upload-artifact@v2
+    - name: Set up Maven
+      uses: actions/setup-java@v2
       with:
-        name: my-app
-        path: |
-          target/my-app.jar
-          target/test-classes/**
-          target/classes/**
-          target/generated-sources/**
-          target/generated-test-sources/**
+        java-version: 17
+        maven-version: '4.0.0'
 
-    - name: Set status
-      uses: marocchino/sticky-pull-request-comment@v2
-      with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        message: |
-          Build Status: ${{ job.status }}
+ 
+
+    - name: Build and Test
+      run: mvn clean test
