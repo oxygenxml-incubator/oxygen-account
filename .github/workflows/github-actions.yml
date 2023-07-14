@@ -25,7 +25,6 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '17'
-        distribution: 'adopt'
 
     - name: Build with Maven
       run: mvn package --quiet --batch-mode
@@ -34,13 +33,23 @@ jobs:
       run: mvn test --quiet --batch-mode
 
     - name: Create JAR
-      run: mvn clean compile assembly:single --quiet --batch-mode
+      run: |
+        mvn clean compile assembly:single --quiet --batch-mode
+        jar cvf target/my-app.jar -C target/classes .
+        jar uvf target/my-app.jar -C target/test-classes .
+        jar uvf target/my-app.jar -C target/generated-sources .
+        jar uvf target/my-app.jar -C target/generated-test-sources .
 
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v2
       with:
         name: my-app
-        path: target/my-app.jar
+        path: |
+          target/my-app.jar
+          target/test-classes/**
+          target/classes/**
+          target/generated-sources/**
+          target/generated-test-sources/**
 
     - name: Set status
       uses: marocchino/sticky-pull-request-comment@v2
