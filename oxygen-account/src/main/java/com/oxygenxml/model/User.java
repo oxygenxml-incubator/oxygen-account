@@ -22,11 +22,31 @@ public class User {
 	
 	@Id
 	@GeneratedValue
+	/**
+	 * The ID of the user.
+	 */
 	private int id;
+
+	/**
+	 * The username of the user.
+	 */
 	private String username;
+
+	/**
+	 * The email address of the user.
+	 */
 	private String email;
+
+	/**
+	 * The registration date of the user.
+	 */
 	private String registrationDate;
+
+	/**
+	 * The password of the user.
+	 */
 	private String password;
+
 	
 
 }
