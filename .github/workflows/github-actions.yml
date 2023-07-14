@@ -12,9 +12,10 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          maven-version: '2.1.1'
           distribution: 'temurin'
       - name: Build with Maven
         run: |
           cd oxygen-account
+          mvn --batch-mode --update-snapshots clean
           mvn --batch-mode --update-snapshots package
+
