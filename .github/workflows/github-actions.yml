@@ -18,6 +18,12 @@ jobs:
       with:
         java-version: 17
         distribution: 'adopt'
+        
+    - name: Download POM.xml
+      uses: actions/download-artifact@v3
+      with:
+         name: pom
+         path: ./pom.xml
 
     - name: Set up Maven
       uses: actions/setup-java@v3
@@ -26,8 +32,5 @@ jobs:
         distribution: 'adopt'
         maven-version: '3.9.2'
 
-    - name: Get pom.xml
-      run: |
-        curl -o pom.xml https://github.com/oxygenxml-incubator/oxygen-account/blob/main/oxygen-account/pom.xml
     - name: Build and Test
       run: mvn clean test
