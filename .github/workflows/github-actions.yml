@@ -5,7 +5,7 @@ name: Build and Test
 on:
   push:
     branches:
-      - github-acrions-branch
+      - github-actions-branch
 
  
 
@@ -22,7 +22,7 @@ jobs:
  
 
     - name: Set up JDK
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         java-version: 17
         distribution: 'adopt'
