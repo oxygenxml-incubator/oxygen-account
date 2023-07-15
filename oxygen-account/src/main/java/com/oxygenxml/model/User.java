@@ -20,11 +20,11 @@ The class includes basic user information such as username, email, registration 
 @Table(name = "users")
 public class User {
 	
-	@Id
-	@GeneratedValue
 	/**
 	 * The ID of the user.
 	 */
+	@Id
+	@GeneratedValue
 	private int id;
 
 	/**
