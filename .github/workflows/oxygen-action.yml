@@ -22,13 +22,13 @@ jobs:
         cache: 'maven'
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package --file oxygen-account/pom.xml
 
     - name: Test with Maven
-      run: mvn test --file pom.xml
+      run: mvn test --file oxygen-account/pom.xml
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
       with:
         name: packaged-jar
-        path: target/*.jar
+        path: oxygen-account/target/*.jar
