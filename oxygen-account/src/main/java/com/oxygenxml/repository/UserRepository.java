@@ -15,4 +15,18 @@ It handles CRUD operations for User objects.
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 
+	/**
+	 * Checks if a User entity with the provided email exists in the database.
+	 *
+	 * @param email The email to check for in the database.
+	 * @return A boolean value representing whether a User with the provided email exists.
+	 */
+	boolean existsByEmail(String email);
+	/**
+	 * Checks if a User entity with the provided username exists in the database.
+	 *
+	 * @param username The username to check for in the database.
+	 * @return A boolean value representing whether a User with the provided username exists.
+	 */
+	boolean existsByUsername(String username);
 }
