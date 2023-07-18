@@ -27,9 +27,13 @@ jobs:
     - name: Test with Maven
       run: mvn -Dtest=com.oxygenxml.account.OxygenAccountApplicationTests test --file oxygen-account/pom.xml
 
-    - runs:
-      using: 'node16'
-      main: 'main.js'
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Run Custom JavaScript Action
+      run: node main.js
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
