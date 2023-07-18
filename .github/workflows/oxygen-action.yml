@@ -24,9 +24,6 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file oxygen-account/pom.xml
 
-    - name: Test with Maven
-      run: mvn -Dtest=com.oxygenxml.account.OxygenAccountApplicationTests test --file oxygen-account/pom.xml
-
     - name: Setup Node.js environment
       uses: actions/setup-node@v2
       with:
