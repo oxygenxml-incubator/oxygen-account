@@ -32,7 +32,7 @@ jobs:
       with:
         node-version: '16'
 
-    - name: Run Custom JavaScript Action
+    - name: Run JavaScript Action
       run: node main.js
 
     - name: Archive production artifacts
