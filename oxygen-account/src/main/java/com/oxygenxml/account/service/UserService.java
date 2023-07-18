@@ -1,14 +1,13 @@
-package com.oxygenxml.service;
-
-import com.oxygenxml.repository.UserRepository;
+package com.oxygenxml.account.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.oxygenxml.model.User;
-import com.oxygenxml.messages.UserServiceMessages;
+import com.oxygenxml.account.messages.Messages;
+import com.oxygenxml.account.model.User;
+import com.oxygenxml.account.repository.UserRepository;
 
 /**
  *  Service class for user-related operations.
@@ -31,17 +30,17 @@ public class UserService {
 	
 	public User registerUser(User newUser) {
 		if(userRepository.existsByEmail(newUser.getEmail())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UserServiceMessages.EMAIL_ALREADY_EXISTS);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.EMAIL_ALREADY_EXISTS);
 		}
 		
 		if(userRepository.existsByUsername(newUser.getUsername())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, UserServiceMessages.USERNAME_ALREADY_EXISTS);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.USERNAME_ALREADY_EXISTS);
 		}
 		
 		try {
 			return userRepository.save(newUser);
 		}catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, UserServiceMessages.REGISTRATION_FAILED );
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.REGISTRATION_FAILED );
 		}
 	}
 }

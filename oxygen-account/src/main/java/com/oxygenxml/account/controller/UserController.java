@@ -1,4 +1,4 @@
-package com.oxygenxml.controller;
+package com.oxygenxml.account.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.oxygenxml.service.UserService;
-import com.oxygenxml.model.User;
+import com.oxygenxml.account.model.User;
+import com.oxygenxml.account.service.UserService;
 
 /**
  * The UserControllerclass is a REST controller that manages HTTP requests related to users.

@@ -1,7 +1,8 @@
-package com.oxygenxml.repository;
+package com.oxygenxml.account.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.oxygenxml.model.User;
+
+import com.oxygenxml.account.model.User;
 
 /**
 

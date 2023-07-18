@@ -1,5 +1,7 @@
-package com.oxygenxml.model;
+package com.oxygenxml.account.model;
 
+
+import com.oxygenxml.account.messages.Messages;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +13,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.oxygenxml.messages.UserMessages;
 
 
 
@@ -41,14 +42,14 @@ public class User {
 	/**
 	 * The username of the user.
 	 */
-	@NotEmpty(message = UserMessages.ERROR_USERNAME_EMPTY)
+	@NotEmpty(message = Messages.EMPTY_USERNAME)
 	private String username;
 
 	/**
 	 *  The email address of the user.
 	 */
-	@NotEmpty(message = UserMessages.ERROR_EMAIL_EMPTY)
-	@Email(message = UserMessages.ERROR_EMAIL_INVALID)
+	@NotEmpty(message = Messages.EMPTY_USERNAME)
+	@Email(message = Messages.INVALID_EMAIL)
 	private String email;
 
 	/**
@@ -61,8 +62,8 @@ public class User {
 	/**
 	 *  The password of the user.
 	 */
-	@NotEmpty(message = UserMessages.ERROR_PASSWORD_EMPTY)
-	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$", message = UserMessages.ERROR_PASSWORD_INVALID)
+	@NotEmpty(message = Messages.EMPTY_PASSWORD)
+	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$", message = Messages.INVALID_PASSWORD)
 	private String password;
 
 	
