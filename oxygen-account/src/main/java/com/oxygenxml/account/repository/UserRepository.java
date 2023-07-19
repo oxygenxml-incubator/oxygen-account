@@ -29,5 +29,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	 * @param username The username to check for in the database.
 	 * @return A boolean value representing whether a User with the provided username exists.
 	 */
-	boolean existsByUsername(String username);
+	boolean existsByname(String name);
 }

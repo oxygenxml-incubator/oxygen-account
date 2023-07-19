@@ -1,10 +1,14 @@
 package com.oxygenxml.account.model;
 
 
+import java.sql.Timestamp;
+
 import com.oxygenxml.account.messages.Messages;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -36,19 +40,19 @@ public class User {
 	 * Unique id of the user.
 	 */
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
 	/**
 	 * The username of the user.
 	 */
-	@NotEmpty(message = Messages.EMPTY_USERNAME)
-	private String username;
+	@NotEmpty(message = Messages.EMPTY_NAME)
+	private String name;
 
 	/**
 	 *  The email address of the user.
 	 */
-	@NotEmpty(message = Messages.EMPTY_USERNAME)
+	@NotEmpty(message = Messages.EMPTY_EMAIL)
 	@Email(message = Messages.INVALID_EMAIL)
 	private String email;
 
@@ -57,7 +61,7 @@ public class User {
 	 *  This field represents the date when the user's account is created.
 	 *  It will be automatically saved in the database upon the creation of a new account.
 	*/	
-	private String registrationDate;
+	private Timestamp registration_date;
 
 	/**
 	 *  The password of the user.

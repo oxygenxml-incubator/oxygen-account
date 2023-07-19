@@ -10,7 +10,7 @@ public class Messages {
 	/**
 	 * Message indicating that the username field is empty.
 	 */
-	 public static final String EMPTY_USERNAME = "Please insert your username.";
+	 public static final String EMPTY_NAME = "Please insert your username.";
 	/**
 	 * Message indicating that the email field is empty.
 	 */

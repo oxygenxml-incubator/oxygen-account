@@ -1,5 +1,6 @@
 package com.oxygenxml.account.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,18 +22,15 @@ import com.oxygenxml.account.service.UserService;
 public class UserController {
 	
 
-	
-	private final UserService userService;
-	
 	/**
      * Constructs a  UserController with a specified UserService
      *
      * @param userService the service that this controller will use to process user related actions
      */
-	public UserController(UserService userService) {
-		this.userService = userService;
-	}
+	@Autowired
+	private UserService userService;
 	
+
 	/**
      * Handles the POST request to register a new user.
      * 

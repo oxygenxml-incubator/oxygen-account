@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.oxygenxml.account.messages.Messages;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
+import com.oxygenxml.account.dto.UserDto;
 
 /**
  *  Service class for user-related operations.
@@ -33,9 +34,8 @@ public class UserService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.EMAIL_ALREADY_EXISTS);
 		}
 		
-		if(userRepository.existsByUsername(newUser.getUsername())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.USERNAME_ALREADY_EXISTS);
-		}
+		
+		System.out.println(newUser);
 		
 		try {
 			return userRepository.save(newUser);

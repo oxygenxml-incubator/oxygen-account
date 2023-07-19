@@ -12,7 +12,7 @@ public class MessageService {
 	private static Map<String, String> messageMap = new HashMap<>();
 	
 	static {
-		messageMap.put(MessageId.USERNAME_EMPTY.getId(), Messages.EMPTY_USERNAME);
+		messageMap.put(MessageId.USERNAME_EMPTY.getId(), Messages.EMPTY_NAME);
 		messageMap.put(MessageId.EMAIL_EMPTY.getId(), Messages.EMPTY_EMAIL);
 		messageMap.put(MessageId.EMAIL_INVALID.getId(), Messages.INVALID_EMAIL);
 		messageMap.put(MessageId.PASSWORD_EMPTY.getId(), Messages.EMPTY_PASSWORD);
