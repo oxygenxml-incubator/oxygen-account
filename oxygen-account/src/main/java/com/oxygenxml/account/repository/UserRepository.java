@@ -30,4 +30,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	 * @return A boolean value representing whether a User with the provided username exists.
 	 */
 	boolean existsByname(String name);
+	
+	void deleteAll();
 }

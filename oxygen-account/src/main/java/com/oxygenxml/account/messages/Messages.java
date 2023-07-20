@@ -1,44 +1,60 @@
 package com.oxygenxml.account.messages;
 
-/**
- * The UserMessages class provides a set of predefined messages that can be used throughout the application 
- * for user interactions.
- */
 
-public class Messages {
-	
-	/**
-	 * Message indicating that the username field is empty.
-	 */
-	 public static final String EMPTY_NAME = "Please insert your username.";
-	/**
-	 * Message indicating that the email field is empty.
-	 */
-	 public static final String EMPTY_EMAIL = "Please insert your email.";
-	/**
-	 * Message indicating that the provided email is invalid.
-	 */
-	 public static final String INVALID_EMAIL = "Email should be valid.";
-	/**
-	 * Message indicating that the password field is empty.
-	 */
-	 public static final String EMPTY_PASSWORD = "Please insert your password.";
-	/**
-	 * Message indicating that the provided password is invalid.
-	 */
-	 public static final String INVALID_PASSWORD = "Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number and no spaces.";
-    /**
-	 * Message indicating that there is already a user with the same email address in the system.
-	 */
-	 public static final String EMAIL_ALREADY_EXISTS = "User with this email already exists.";
-	/**
-     * Message indicating that there is already a user with the same username in the system.
-	 */
-	 public static final String USERNAME_ALREADY_EXISTS = "User with this username already exists.";
-    /**
-	 * Message indicating that the registration process has failed.
-	 */
-	 public static final String REGISTRATION_FAILED = "Registration failed. Please try again later.";
-	
+public enum Messages {
+
+	 /**
+	  * ID corresponding to the message indicating that the username field is empty.
+	  */
+	 USERNAME_EMPTY("EMPTY_NAME", "Please insert your username."),
+
+	 /**
+	  * ID corresponding to the message indicating that the email field is empty.
+	  */
+	 EMAIL_EMPTY("EMPTY_EMAIL", "Please insert your email."),
+
+	 /**
+	  * ID corresponding to the message indicating that the provided email is invalid.
+	  */
+	 EMAIL_INVALID("INVALID_EMAIL", "Email should be valid."),
+
+	 /**
+	  * ID corresponding to the message indicating that the password field is empty.
+	  */
+	 PASSWORD_EMPTY("EMPTY_PASSWORD", "Please insert your password."),
+
+	 /**
+	  * ID corresponding to the message indicating that the provided password is invalid.
+	  */
+	 PASSWORD_INVALID("INVALID_PASSWORD", "Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number and no spaces."),
+	 /**
+	  * ID corresponding to the message indicating that there is already a user with the same email address in the system.
+	  */
+	 EMAIL_ALREADY_EXISTS("EMAIL_ALREADY_EXISTS", "User with this email already exists."),
+	 /**
+	  * ID corresponding to the message indicating that there is already a user with the same username in the system.
+	  */
+	 USERNAME_ALREADY_EXISTS("USERNAME_ALREADY_EXISTS", "User with this username already exists."),
+	 /**
+	  * ID corresponding to the message indicating that the registration process has failed.
+	  */
+	 REGISTRATION_FAILED("REGISTRATION_FAILED", "Registration failed. Please try again later.");
+
+	 private final String id;
+	 private final String message;
+
+	    Messages(String id, String message) {
+	        this.id = id;
+	        this.message = message;
+	    }
+
+	    public String getId() {
+	        return id;
+	    }
+	    
+	    public String getMessage() {
+	    	return message;
+	    }
+
 
 }

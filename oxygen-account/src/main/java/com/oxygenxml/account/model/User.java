@@ -2,9 +2,6 @@ package com.oxygenxml.account.model;
 
 
 import java.sql.Timestamp;
-
-import com.oxygenxml.account.messages.Messages;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,14 +42,14 @@ public class User {
 	/**
 	 * The username of the user.
 	 */
-	@NotEmpty(message = Messages.EMPTY_NAME)
+	@NotEmpty
 	private String name;
 
 	/**
 	 *  The email address of the user.
 	 */
-	@NotEmpty(message = Messages.EMPTY_EMAIL)
-	@Email(message = Messages.INVALID_EMAIL)
+	@NotEmpty
+	@Email
 	private String email;
 
 	/**
@@ -61,13 +57,14 @@ public class User {
 	 *  This field represents the date when the user's account is created.
 	 *  It will be automatically saved in the database upon the creation of a new account.
 	*/	
+	@Column(name = "registration_date", insertable = false)
 	private Timestamp registration_date;
+	
 
 	/**
 	 *  The password of the user.
 	 */
-	@NotEmpty(message = Messages.EMPTY_PASSWORD)
-	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$", message = Messages.INVALID_PASSWORD)
+	@NotEmpty
 	private String password;
 
 	

@@ -5,15 +5,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.oxygenxml.account.messages.Messages;
+import com.oxygenxml.account.messages.MessageId;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
-import com.oxygenxml.account.dto.UserDto;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  *  Service class for user-related operations.
  */
+
 @Service
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserService {
 	
 	/**
@@ -21,6 +26,7 @@ public class UserService {
 	 */
 	@Autowired
 	private UserRepository userRepository;
+	
 	
 	/**
 	 * Register a new user in the system.
@@ -31,16 +37,16 @@ public class UserService {
 	
 	public User registerUser(User newUser) {
 		if(userRepository.existsByEmail(newUser.getEmail())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.EMAIL_ALREADY_EXISTS);
+			throw new ResponseStatusException(HttpStatus.CONFLICT, MessageId.EMAIL_ALREADY_EXISTS);
 		}
 		
 		
-		System.out.println(newUser);
 		
-		try {
 			return userRepository.save(newUser);
-		}catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.REGISTRATION_FAILED );
-		}
+		
+	}
+	
+	public void deleteAll() {
+		userRepository.deleteAll();
 	}
 }
