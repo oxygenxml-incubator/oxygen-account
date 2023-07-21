@@ -24,12 +24,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class UserControllerTest {
 
+	/**
+	 * The MockMvc instance is used for simulating HTPP requests
+	 */
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * The UserService instance is used for manipulating users
+     */
     @Autowired
     private UserService userService;
     
+    /**
+     * Ther UserConverter instance is used for converting between UserDto and User
+     */
     @Autowired
     private UserConverter userConverter;
 
