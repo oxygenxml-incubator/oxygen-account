@@ -30,6 +30,9 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
+	/**
+	 * The UserConverter to convert between UserDto and User entities
+	 */
 	@Autowired
 	private UserConverter userConverter;
 
