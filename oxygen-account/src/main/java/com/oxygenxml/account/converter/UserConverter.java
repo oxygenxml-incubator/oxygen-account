@@ -6,15 +6,14 @@ import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.model.User;
 
 /**
- * A utility class that provides methods for converting between UserDto and User
- *
+ * A utility class that provides methods for converting between {@link UserDto} and {@link User}
  */
 
 @Component
 public class UserConverter {
 	
 	/**
-	 * Converts a User object to a UserDto object.
+	 * Converts a {@link User} object to a {@link UserDto} object.
 	 * 
 	 * @param user the User object to be converted.
 	 * @return the corresponding UserDto object with the name and email
@@ -31,7 +30,7 @@ public class UserConverter {
 	}
 	
 	/**
-	 * Converts a UserDto object to a User object.
+	 * Converts a {@link UserDto} object to a {@link User} object.
 	 * 
 	 * @param userDto the UserDto object to be converted
 	 * @return the corresponding User object with the name, email and password

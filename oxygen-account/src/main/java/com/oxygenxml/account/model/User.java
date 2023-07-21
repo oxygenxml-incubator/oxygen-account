@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,8 +18,6 @@ import lombok.NoArgsConstructor;
 /**
 
 	The User class represents a user entity in the system.
-
-	It is annotated with the necessary annotations for persistence.
 
 	The class includes basic user information such as username, email, registration date, and password.
 */
@@ -40,16 +37,13 @@ public class User {
 	private int id;
 
 	/**
-	 * The username of the user.
+	 * The name of the user.
 	 */
-	@NotEmpty
 	private String name;
 
 	/**
 	 *  The email address of the user.
 	 */
-	@NotEmpty
-	@Email
 	private String email;
 
 	/**

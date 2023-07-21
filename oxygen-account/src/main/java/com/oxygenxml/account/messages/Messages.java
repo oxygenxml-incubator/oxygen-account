@@ -1,5 +1,8 @@
 package com.oxygenxml.account.messages;
 
+/**
+ * The Messages enumeration contains various types of error messages and their unique identifiers associated with them.
+ */
 
 public enum Messages {
 
@@ -40,18 +43,37 @@ public enum Messages {
 	  */
 	 REGISTRATION_FAILED("REGISTRATION_FAILED", "Registration failed. Please try again later.");
 
+	
+	/**
+	 * Unique identifier corresponding to each type of message.
+	 */
 	 private final String id;
+	 /**
+	  * The error message associated with each unique identifier
+	  */
 	 private final String message;
-
+	 
+	 /**
+	  * Constructs a new instance of Messages with the specified identifier and message
+	  * @param id the unique identifier for the message
+	  * @param message the error message associated with the identifier
+	  */
 	    Messages(String id, String message) {
 	        this.id = id;
 	        this.message = message;
 	    }
 
+	    /**
+	     * Return the unique identifier of the message.
+	     * @return the identifier
+	     */
 	    public String getId() {
 	        return id;
 	    }
-	    
+	    /**
+	     * Returns the error message associated with the identifier of the message
+	     * @return the error message
+	     */
 	    public String getMessage() {
 	    	return message;
 	    }

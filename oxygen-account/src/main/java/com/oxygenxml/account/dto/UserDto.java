@@ -6,6 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+/**
+ * This class is used for transferring data between the client and the application during HTPP requests
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
