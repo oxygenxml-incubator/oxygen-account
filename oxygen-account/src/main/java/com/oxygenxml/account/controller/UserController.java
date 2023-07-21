@@ -1,6 +1,7 @@
 package com.oxygenxml.account.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,22 +25,21 @@ public class UserController {
 
 	/**
      * Constructs a  UserController with a specified UserService
+     *
+     * @param userService the service that this controller will use to process user related actions
      */
 	@Autowired
 	private UserService userService;
 	
-	/**
-	 * The UserConverter to convert between UserDto and User entities
-	 */
 	@Autowired
 	private UserConverter userConverter;
 
 	/**
      * Handles the POST request to register a new user.
      * 
-     * @param newUserDto the user to be registered.
+     * @param newUser the user to be registered.
      * 
-     * @return a UserDto with the newly registered user.
+     * @return a ResponseEntity with the newly registered user if successful, or the reason for the failure if unsuccessful.
      */
 	@PostMapping("/register")
 	public UserDto registerUser(@RequestBody UserDto newUserDto){
