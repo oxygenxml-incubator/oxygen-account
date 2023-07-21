@@ -15,6 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * The UserControllerTest class tests the functionality of UserController
+ *
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -29,12 +33,20 @@ public class UserControllerTest {
     @Autowired
     private UserConverter userConverter;
 
+    /**
+     * This method all users from the database, preparing it for the next test
+     */
 	    @BeforeEach
 	    public void setup() {
 	    	
 	        userService.deleteAll();
 	    }
 
+	    /**
+	     * The testRegisterUser method tests the user registration functionality.
+	     *  It attempts to register a new user
+	     * @throws Exception if the test encounters any errors.
+	     */
     @Test
     public void testRegisterUser() throws Exception {
     	
@@ -50,6 +62,11 @@ public class UserControllerTest {
             .andExpect(status().isOk());
     }
     
+    /**
+     * The testRegisterSameEmail method tests whether another user with the same email can be registered
+     * It registers an initial user, then attempts to register a new user with the same email.
+     * @throws Exception if the test encounters any errors
+     */
     @Test
     public void testRegisterSameEmail() throws Exception{
     	

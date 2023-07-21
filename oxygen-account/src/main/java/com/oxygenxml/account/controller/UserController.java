@@ -36,9 +36,9 @@ public class UserController {
 	/**
      * Handles the POST request to register a new user.
      * 
-     * @param newUser the user to be registered.
+     * @param newUserDto the user to be registered.
      * 
-     * @return a ResponseEntity with the newly registered user if successful, or the reason for the failure if unsuccessful.
+     * @return a UserDto with the newly registered user.
      */
 	@PostMapping("/register")
 	public UserDto registerUser(@RequestBody UserDto newUserDto){

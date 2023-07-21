@@ -40,12 +40,13 @@ public class UserService {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, MessageId.EMAIL_ALREADY_EXISTS);
 		}
 		
-		
-		
-			return userRepository.save(newUser);
+		return userRepository.save(newUser);
 		
 	}
 	
+	/**
+	 * Method used to delete the databese during tests
+	 */
 	public void deleteAll() {
 		userRepository.deleteAll();
 	}
