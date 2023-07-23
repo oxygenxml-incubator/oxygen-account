@@ -43,7 +43,7 @@ public class UserControllerTest {
     private UserConverter userConverter;
 
     /**
-     * This method all users from the database, preparing it for the next test
+     * This method delete all users from the database, preparing it for the next test
      */
 	    @BeforeEach
 	    public void setup() {
