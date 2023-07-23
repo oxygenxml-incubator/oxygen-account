@@ -1,18 +1,20 @@
 package com.oxygenxml.account;
 
-import com.oxygenxml.account.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oxygenxml.account.dto.UserDto;
-import com.oxygenxml.account.converter.UserConverter;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.hamcrest.Matchers.is;
+
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -22,6 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@SqlGroup({
+	@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:database/BeforeTestRun.sql"),
+	@Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:database/AfterTestRun.sql")
+})
 public class UserControllerTest {
 
 	/**
@@ -29,27 +35,6 @@ public class UserControllerTest {
 	 */
     @Autowired
     private MockMvc mockMvc;
-
-    /**
-     * The UserService instance is used for manipulating users
-     */
-    @Autowired
-    private UserService userService;
-    
-    /**
-     * Ther UserConverter instance is used for converting between UserDto and User
-     */
-    @Autowired
-    private UserConverter userConverter;
-
-    /**
-     * This method all users from the database, preparing it for the next test
-     */
-	    @BeforeEach
-	    public void setup() {
-	    	
-	        userService.deleteAll();
-	    }
 
 	    /**
 	     * The testRegisterUser method tests the user registration functionality.
@@ -79,24 +64,17 @@ public class UserControllerTest {
     @Test
     public void testRegisterSameEmail() throws Exception{
     	
-    	UserDto existingUser = new UserDto();
-    	
-    	existingUser.setName("Text");
-    	existingUser.setEmail("teest@gmail.com");
-    	existingUser.setPassword("password123");
-    	
-    	userService.registerUser(userConverter.dtoToEntity(existingUser));
-    	
     	UserDto newUser = new UserDto();
     	
     	newUser.setName("Test");
-    	newUser.setEmail("teest@gmail.com");
+    	newUser.setEmail("test@gmail.com");
     	newUser.setPassword("password");
     	
     	mockMvc.perform(post("/api/users/register")
     	          .contentType("application/json")
     	          .content(asJsonString(newUser)))
-    	          .andExpect(status().isConflict());
+    	          .andExpect(status().isConflict())
+    	          .andExpect(jsonPath("$.errorMessage", is("User with this email already exists.")));
     }
 
     /**

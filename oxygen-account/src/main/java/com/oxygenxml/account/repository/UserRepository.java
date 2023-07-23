@@ -23,13 +23,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	 * @return A boolean value representing whether a User with the provided email exists.
 	 */
 	boolean existsByEmail(String email);
-	/**
-	 * Checks if a User entity with the provided username exists in the database.
-	 *
-	 * @param username The username to check for in the database.
-	 * @return A boolean value representing whether a User with the provided username exists.
-	 */
-	boolean existsByname(String name);
 	
-	void deleteAll();
 }

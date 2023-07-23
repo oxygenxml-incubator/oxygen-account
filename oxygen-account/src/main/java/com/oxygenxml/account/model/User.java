@@ -52,7 +52,7 @@ public class User {
 	 *  It will be automatically saved in the database upon the creation of a new account.
 	*/	
 	@Column(name = "registration_date", insertable = false)
-	private Timestamp registration_date;
+	private Timestamp registrationDate;
 	
 
 	/**

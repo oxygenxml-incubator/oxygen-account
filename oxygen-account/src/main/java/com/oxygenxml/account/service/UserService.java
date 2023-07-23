@@ -45,10 +45,4 @@ public class UserService {
 		
 	}
 	
-	/**
-	 * Method used to delete the databese during tests
-	 */
-	public void deleteAll() {
-		userRepository.deleteAll();
-	}
 }
