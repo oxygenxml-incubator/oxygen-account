@@ -1,7 +1,8 @@
-package com.oxygenxml.repository;
+package com.oxygenxml.account.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.oxygenxml.model.User;
+
+import com.oxygenxml.account.model.User;
 
 /**
 
@@ -14,5 +15,13 @@ It handles CRUD operations for User objects.
 */
 
 public interface UserRepository extends JpaRepository<User, Integer> {
+
+	/**
+	 * Checks if a User entity with the provided email exists in the database.
+	 *
+	 * @param email The email to check for in the database.
+	 * @return A boolean value representing whether a User with the provided email exists.
+	 */
+	boolean existsByEmail(String email);
 
 }
