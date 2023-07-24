@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
 import static org.hamcrest.Matchers.is;
 
 
@@ -48,17 +48,17 @@ public class UserControllerTest {
 	     */
     @Test
     public void testRegisterUser() throws Exception {
-    	
-        UserDto newUser = new UserDto();
-        
-        newUser.setName("test");
-        newUser.setEmail("teesting@test.com");
-        newUser.setPassword("test");
 
-        mockMvc.perform(post("/api/users/register")
-            .contentType("application/json")
-            .content(asJsonString(newUser)))
-            .andExpect(status().isOk());
+    	UserDto newUser = new UserDto();
+
+    	newUser.setName("test");
+    	newUser.setEmail("teesting@test.com");
+    	newUser.setPassword("test");
+
+    	ResultActions resultAction = mockMvc.perform(post("/api/users/register")
+    			.contentType("application/json")
+    			.content(asJsonString(newUser)));
+    	resultAction.andExpect(status().isOk());
     }
     
     /**
@@ -68,18 +68,19 @@ public class UserControllerTest {
      */
     @Test
     public void testRegisterSameEmail() throws Exception{
-    	
+
     	UserDto newUser = new UserDto();
-    	
+
     	newUser.setName("Test");
     	newUser.setEmail("test@gmail.com");
     	newUser.setPassword("password");
-    	
-    	mockMvc.perform(post("/api/users/register")
-    	          .contentType("application/json")
-    	          .content(asJsonString(newUser)))
-    	          .andExpect(status().isConflict())
-    	          .andExpect(jsonPath("$.errorMessage", is("User with this email already exists.")));
+
+    	ResultActions resultAction = mockMvc.perform(post("/api/users/register")
+    			.contentType("application/json")
+    			.content(asJsonString(newUser)));
+    	resultAction.andExpect(status().isConflict())
+    				.andExpect(jsonPath("$.errorMessage", is("User with this email already exists.")))
+    				.andExpect(jsonPath("$.internalErrorCode", is(1)));
     }
 
     /**
