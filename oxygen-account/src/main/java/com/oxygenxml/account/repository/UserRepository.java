@@ -24,8 +24,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	 */
 	boolean existsByEmail(String email);
 
-	/**
-	 * Method used to delete the databese during tests
-	 */
-	void deleteAll();
 }
