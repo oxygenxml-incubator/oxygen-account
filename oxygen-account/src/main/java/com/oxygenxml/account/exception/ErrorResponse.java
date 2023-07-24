@@ -1,4 +1,4 @@
-package com.oxygenxml.account.exceptions;
+package com.oxygenxml.account.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

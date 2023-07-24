@@ -1,4 +1,4 @@
-package com.oxygenxml.account.exceptions;
+package com.oxygenxml.account.exception;
 
 import org.springframework.http.HttpStatus;
 import com.oxygenxml.account.messages.Messages;
@@ -9,7 +9,7 @@ import com.oxygenxml.account.messages.Messages;
 import lombok.Getter;
 
 @Getter
-public class OxygenAccountExceptions extends RuntimeException{
+public class OxygenAccountException extends RuntimeException{
 	
 	/**
 	 * Unique ID used in serialization to verify that the sender and receiver of a serialized object maintain compatibility.
@@ -34,7 +34,7 @@ public class OxygenAccountExceptions extends RuntimeException{
 	 * @param status the status of the HTTP response
 	 * @param errorCode the internal error code
 	 */
-	public OxygenAccountExceptions(Messages message, HttpStatus status, InternalErrorCode errorCode) {
+	public OxygenAccountException(Messages message, HttpStatus status, InternalErrorCode errorCode) {
 		super(message.getMessage());
 		this.status = status;
 		this.messageId = message.getId();

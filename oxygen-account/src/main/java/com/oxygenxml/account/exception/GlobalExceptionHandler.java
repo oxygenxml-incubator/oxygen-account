@@ -1,4 +1,4 @@
-package com.oxygenxml.account.exceptions;
+package com.oxygenxml.account.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,8 +15,8 @@ public class GlobalExceptionHandler {
 	 * @param exception the instance of OxygenAccountExceptions that has been thrown.
 	 * @return ResponseEntity<ErrorResponse> this is the HTTP response containing the details of the exception that was handled.
 	 */
-	@ExceptionHandler(OxygenAccountExceptions.class)
-	public ResponseEntity<ErrorResponse> handleOxygenAccountExceptions(OxygenAccountExceptions exception) {
+	@ExceptionHandler(OxygenAccountException.class)
+	public ResponseEntity<ErrorResponse> handleOxygenAccountExceptions(OxygenAccountException exception) {
 		ErrorResponse errorResponse = new ErrorResponse();
 		
 		errorResponse.setInternalErrorCode(exception.getErrorCode().getInternalErrorCode());
