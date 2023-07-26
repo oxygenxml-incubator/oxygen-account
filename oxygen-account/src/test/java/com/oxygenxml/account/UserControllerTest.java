@@ -67,7 +67,6 @@ public class UserControllerTest {
    */
   @Test
   public void testRegisterSameEmail() throws Exception{
-
     UserDto newUser = new UserDto();
 
     newUser.setName("Test");
