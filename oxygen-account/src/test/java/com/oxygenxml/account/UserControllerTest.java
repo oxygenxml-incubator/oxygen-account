@@ -48,7 +48,6 @@ public class UserControllerTest {
    */
   @Test
   public void testRegisterUser() throws Exception {
-
     UserDto newUser = new UserDto();
 
     newUser.setName("test");
@@ -86,15 +85,7 @@ public class UserControllerTest {
   /**
    * Helper method to convert an object to JSON string.
    */
-  private String asJsonString(final Object obj) {
-
-    try {
-
+  private String asJsonString(final Object obj) throws Exception {
       return new ObjectMapper().writeValueAsString(obj);
-
-    } catch (Exception e) {
-
-      throw new RuntimeException(e);
-    }
   }
 }
