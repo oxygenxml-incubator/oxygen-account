@@ -58,7 +58,7 @@ public enum Messages {
 	  * @param id the unique identifier for the message
 	  * @param message the error message associated with the identifier
 	  */
-	    Messages(String id, String message) {
+	    private Messages(String id, String message) {
 	        this.id = id;
 	        this.message = message;
 	    }

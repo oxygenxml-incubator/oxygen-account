@@ -20,7 +20,7 @@ public enum InternalErrorCode {
 	 * It initializes the internalErrorCode with a specific value
 	 * @param internalErrorCode  the internal error code that is associated with a specific error
 	 */
-	InternalErrorCode(int internalErrorCode){
+	private InternalErrorCode(int internalErrorCode){
 		this.internalErrorCode = internalErrorCode;
 	}
 
