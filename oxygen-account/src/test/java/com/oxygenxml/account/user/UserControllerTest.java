@@ -1,4 +1,4 @@
-package com.oxygenxml.account.controller;
+package com.oxygenxml.account.user;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -34,7 +34,7 @@ import com.oxygenxml.account.utility.JsonUtil;
 	@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {"classpath:db/ClearDatabase.sql", "classpath:db/PopulateDatabase.sql"}),
 	@Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:db/ClearDatabase.sql")
 })
-public class UserControllerTest extends JsonUtil {
+public class UserControllerTest {
 	
 
   /**
@@ -58,7 +58,7 @@ public class UserControllerTest extends JsonUtil {
 
     ResultActions resultAction = mockMvc.perform(post("/api/users/register")
         .contentType("application/json")
-        .content(asJsonString(newUser)));
+        .content(JsonUtil.asJsonString(newUser)));
     resultAction.andExpect(status().isOk());
   }
 
@@ -77,7 +77,7 @@ public class UserControllerTest extends JsonUtil {
 
     ResultActions resultAction = mockMvc.perform(post("/api/users/register")
         .contentType("application/json")
-        .content(asJsonString(newUser)));
+        .content(JsonUtil.asJsonString(newUser)));
     resultAction.andExpect(status().isConflict())
     .andExpect(jsonPath("$.errorMessage", is("User with this email already exists.")))
     .andExpect(jsonPath("$.internalErrorCode", is(1)));

@@ -1,4 +1,4 @@
-package com.oxygenxml.account.service;
+package com.oxygenxml.account.user;
 
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.model.User;
@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:db/PopulateDatabase.sql"),
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:db/ClearDatabase.sql")
 })
-public class UserServiceTest extends JsonUtil {
+public class UserServiceTest {
 
 	/**
      * The password encoder that will be used to encode passwords
@@ -63,7 +63,7 @@ public class UserServiceTest extends JsonUtil {
 
         ResultActions resultAction = mockMvc.perform(post("/api/users/register")
                 .contentType("application/json")
-                .content(asJsonString(newUser)));
+                .content(JsonUtil.asJsonString(newUser)));
         resultAction.andExpect(status().isOk());
 
         User registeredUser = userRepository.findByEmail("test@test.com");
