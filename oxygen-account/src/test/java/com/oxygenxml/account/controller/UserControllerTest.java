@@ -34,7 +34,7 @@ import com.oxygenxml.account.utility.JsonUtil;
 	@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {"classpath:db/ClearDatabase.sql", "classpath:db/PopulateDatabase.sql"}),
 	@Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:db/ClearDatabase.sql")
 })
-public class UserControllerTest implements JsonUtil {
+public class UserControllerTest extends JsonUtil {
 	
 
   /**

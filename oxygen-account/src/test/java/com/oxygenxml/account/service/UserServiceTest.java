@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:db/PopulateDatabase.sql"),
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:db/ClearDatabase.sql")
 })
-public class UserServiceTest implements JsonUtil {
+public class UserServiceTest extends JsonUtil {
 
 	/**
      * The password encoder that will be used to encode passwords
