@@ -9,6 +9,7 @@ import com.oxygenxml.account.exception.OxygenAccountException;
 import com.oxygenxml.account.messages.Messages;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,11 @@ public class UserService {
 	 */
 	@Autowired
 	private UserRepository userRepository;
+	/**
+	 * Instance of BCryptPasswordEncoder used for encoding the password
+	 */
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 	
 	
 	/**
@@ -40,6 +46,8 @@ public class UserService {
 		if(userRepository.existsByEmail(newUser.getEmail())) {
 			throw new OxygenAccountException(Messages.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT, InternalErrorCode.EMAIL_ALREADY_EXISTS);
 		}
+		
+		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		
 		return userRepository.save(newUser);
 		

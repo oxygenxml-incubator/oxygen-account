@@ -24,4 +24,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	 */
 	boolean existsByEmail(String email);
 
+	/**
+	 * Finds a User entity in the database by the provided email.
+	 * @param email The email of the User entity to find in the database.
+	 * @return A User entity that matches the provided email, or null if no matching User entity is found.
+	 */
+	User findByEmail(String email);
+
 }

@@ -1,4 +1,4 @@
-package com.oxygenxml.account;
+package com.oxygenxml.account.user;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -17,8 +17,9 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oxygenxml.account.OxygenAccountApplication;
 import com.oxygenxml.account.dto.UserDto;
+import com.oxygenxml.account.utility.JsonUtil;
 
 /**
  * The UserControllerTest class tests the functionality of UserController
@@ -34,6 +35,7 @@ import com.oxygenxml.account.dto.UserDto;
 	@Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:db/ClearDatabase.sql")
 })
 public class UserControllerTest {
+	
 
   /**
    * The MockMvc instance is used for simulating HTPP requests
@@ -56,7 +58,7 @@ public class UserControllerTest {
 
     ResultActions resultAction = mockMvc.perform(post("/api/users/register")
         .contentType("application/json")
-        .content(asJsonString(newUser)));
+        .content(JsonUtil.asJsonString(newUser)));
     resultAction.andExpect(status().isOk());
   }
 
@@ -75,16 +77,11 @@ public class UserControllerTest {
 
     ResultActions resultAction = mockMvc.perform(post("/api/users/register")
         .contentType("application/json")
-        .content(asJsonString(newUser)));
+        .content(JsonUtil.asJsonString(newUser)));
     resultAction.andExpect(status().isConflict())
     .andExpect(jsonPath("$.errorMessage", is("User with this email already exists.")))
     .andExpect(jsonPath("$.internalErrorCode", is(1)));
   }
 
-  /**
-   * Helper method to convert an object to JSON string.
-   */
-  private String asJsonString(final Object obj) throws Exception {
-      return new ObjectMapper().writeValueAsString(obj);
-  }
 }
+
