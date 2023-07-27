@@ -1,6 +1,5 @@
-package com.oxygenxml.account;
+package com.oxygenxml.account.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
@@ -15,6 +14,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import com.oxygenxml.account.utility.JsonUtil;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:db/PopulateDatabase.sql"),
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:db/ClearDatabase.sql")
 })
-public class UserServiceTest {
+public class UserServiceTest implements JsonUtil {
 
 	/**
      * The password encoder that will be used to encode passwords
@@ -77,17 +77,10 @@ public class UserServiceTest {
     public void testPasswordEncodingConsistency() {
         String rawPassword = "password";
         
-        System.out.println(passwordEncoder.encode(rawPassword));
-        
         String encodedPassword1 = "$2a$10$yWjIRyR/PQu2nS/0jzQa6.lj0YxI/Hc56fb/MD8rLteQe7kYn.NLS";
 
         assertTrue(passwordEncoder.matches(rawPassword, encodedPassword1));
     }
     
-    /**
-     * Helper method to convert an object to JSON string.
-     */
-    private String asJsonString(final Object obj) throws Exception {
-        return new ObjectMapper().writeValueAsString(obj);
-    }
+   
 }
