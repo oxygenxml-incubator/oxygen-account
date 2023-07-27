@@ -19,7 +19,7 @@ public class WebSecurityConfiguration  {
 	 * This password encoder use BCryptoPasswordEncoder to encode the password
 	 * @return a BCryptoPasswordEncoder
 	 */
-	@Bean
+	@Bean("encoder")
 	public PasswordEncoder encoder() {
 		return new BCryptPasswordEncoder();
 	}

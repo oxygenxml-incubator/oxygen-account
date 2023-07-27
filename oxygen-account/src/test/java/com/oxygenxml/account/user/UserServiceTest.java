@@ -1,24 +1,24 @@
 package com.oxygenxml.account.user;
 
-import com.oxygenxml.account.dto.UserDto;
-import com.oxygenxml.account.model.User;
-import com.oxygenxml.account.repository.UserRepository;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import com.oxygenxml.account.dto.UserDto;
+import com.oxygenxml.account.model.User;
+import com.oxygenxml.account.repository.UserRepository;
 import com.oxygenxml.account.utility.JsonUtil;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * The UserServiceTest class tests the functionality of UserService
@@ -37,7 +37,7 @@ public class UserServiceTest {
      * The password encoder that will be used to encode passwords
      */
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
     /**
      * The UserRepository that will be used to manipulate the users in the database
      */

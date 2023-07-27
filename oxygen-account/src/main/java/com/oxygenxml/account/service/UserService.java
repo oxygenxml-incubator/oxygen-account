@@ -2,6 +2,7 @@ package com.oxygenxml.account.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.oxygenxml.account.exception.InternalErrorCode;
@@ -9,7 +10,6 @@ import com.oxygenxml.account.exception.OxygenAccountException;
 import com.oxygenxml.account.messages.Messages;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -32,7 +32,7 @@ public class UserService {
 	 * Instance of BCryptPasswordEncoder used for encoding the password
 	 */
 	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 	
 	
 	/**
