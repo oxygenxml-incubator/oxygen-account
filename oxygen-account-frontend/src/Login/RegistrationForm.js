@@ -52,6 +52,40 @@ function RegistrationForm() {
         setPasswordError(password.trim() === '' ? 'Password required' : passwordRegex.test(password) ? '' : 'Password must be at least 8 characters, with one uppercase and one number');
 
         setConfirmPasswordError(confirmPassword.trim() === '' ? 'Confirm password required' : password === confirmPassword ? '' : 'Passwords do not match.');
+    
+        if (!nameError && !emailError && !passwordError && !confirmPasswordError) {
+            const newUser = {
+                name: name.trim(),
+                email: email.trim(),
+                password: password.trim(),
+
+            };
+
+            console.log(name.trim());
+            console.log(email.trim());
+            console.log(password.trim());
+
+            fetch('api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newUser),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to create account');
+                    }
+                    alert('Account created successfully!');
+
+                })
+
+                .catch(error => {
+                    console.error(error);
+                    alert('Failed to create account. Please try again later.');
+                });
+
+        }
     }
 
     return (
