@@ -56,7 +56,7 @@ function RegistrationForm() {
 
     return (
         <form>
-            <Grid container spacing={2} style= {{margin: '20px'}}>
+            <Grid container spacing={2} style={{ margin: '20px' }}>
                 <Grid>
                     <Item>
                         <h1>Create new account</h1>
@@ -69,7 +69,7 @@ function RegistrationForm() {
                             label="Name"
                             variant="outlined"
                             value={name}
-                            sx = {{width: '550px'}}
+                            sx={{ width: '550px' }}
                             onChange={handleInputChange}
                             error={Boolean(nameError)}
                             helperText={nameError}
@@ -82,7 +82,7 @@ function RegistrationForm() {
                             label="Email"
                             variant="outlined"
                             value={email}
-                            sx = {{width: '550px'}}
+                            sx={{ width: '550px' }}
                             onChange={handleInputChange}
                             error={Boolean(emailError)}
                             helperText={emailError}
@@ -95,7 +95,7 @@ function RegistrationForm() {
                             label="Password"
                             type="password"
                             value={password}
-                            sx = {{width: '550px'}}
+                            sx={{ width: '550px' }}
                             onChange={handleInputChange}
                             error={Boolean(passwordError)}
                             helperText={passwordError}
@@ -108,14 +108,14 @@ function RegistrationForm() {
                             label="Confirm Password"
                             type="password"
                             value={confirmPassword}
-                            sx = {{width: '550px'}}
+                            sx={{ width: '550px' }}
                             onChange={handleInputChange}
                             error={Boolean(confirmPasswordError)}
                             helperText={confirmPasswordError}
                         />
                     </Item>
                     <Item>
-                        <Button onClick={handleClickButton} variant="contained" style = {{marginLeft: '150px'}}>Create account</Button>
+                        <Button onClick={handleClickButton} variant="contained" style={{ marginLeft: '150px' }}>Create account</Button>
                     </Item>
                 </Grid>
             </Grid>

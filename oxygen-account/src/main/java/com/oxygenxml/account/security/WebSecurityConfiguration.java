@@ -38,6 +38,9 @@ public class WebSecurityConfiguration  {
         		.csrf((csrf) -> csrf.disable())
         		.authorizeHttpRequests(authz->authz
         		.requestMatchers("/api/users/register").permitAll()
+        		.requestMatchers("/").permitAll()
+        		.requestMatchers("/login").permitAll()
+        		.requestMatchers("/app/login.js").permitAll()
         		.anyRequest().authenticated());
            
 
