@@ -7,6 +7,7 @@ module.exports = {
     filename: 'login.js',
   },
   mode: "development",
+  watch: true,
   module: {
     rules: [
       {
