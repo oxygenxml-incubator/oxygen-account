@@ -12,7 +12,6 @@ import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 /**
  *  Service class for user-related operations.
@@ -20,7 +19,6 @@ import lombok.NoArgsConstructor;
 
 @Service
 @AllArgsConstructor
-@NoArgsConstructor
 public class UserService {
 	
 	/**
@@ -34,6 +32,9 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private final ValidationService userServiceValidation;
+	
 	
 	/**
 	 * Register a new user in the system.
@@ -43,9 +44,13 @@ public class UserService {
 	 */
 	
 	public User registerUser(User newUser) {
+		
+		
+		userServiceValidation.validate(newUser);
+		
 		if(userRepository.existsByEmail(newUser.getEmail())) {
-			throw new OxygenAccountException(Messages.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT, InternalErrorCode.EMAIL_ALREADY_EXISTS);
-		}
+            throw new OxygenAccountException(Messages.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT, InternalErrorCode.EMAIL_ALREADY_EXISTS);
+        }
 		
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		

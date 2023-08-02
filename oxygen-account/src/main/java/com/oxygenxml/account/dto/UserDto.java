@@ -1,7 +1,8 @@
 package com.oxygenxml.account.dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,19 +19,20 @@ public class UserDto {
 	/**
 	 * The name of the user
 	 */
-	@NotEmpty
+	@NotBlank
 	private String name;
 	
 	/**
 	 * The email address of the user
 	 */
-	@NotEmpty
+	@NotBlank
 	@Email
 	private String email;
 	
 	/**
 	 * The password of the user
 	 */
-	@NotEmpty
+	@NotBlank
+	@Size(min = 8)
 	private String password;
 }

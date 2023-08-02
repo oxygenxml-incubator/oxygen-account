@@ -9,7 +9,7 @@ public enum Messages {
 	 /**
 	  * ID corresponding to the message indicating that the username field is empty.
 	  */
-	 USERNAME_EMPTY("EMPTY_NAME", "Please insert your username."),
+	NAME_EMPTY("EMPTY_NAME", "Please insert your username."),
 
 	 /**
 	  * ID corresponding to the message indicating that the email field is empty.
@@ -29,19 +29,23 @@ public enum Messages {
 	 /**
 	  * ID corresponding to the message indicating that the provided password is invalid.
 	  */
-	 PASSWORD_INVALID("INVALID_PASSWORD", "Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number and no spaces."),
+	 PASSWORD_INVALID("INVALID_PASSWORD", "Password must have at least 8 characters."),
 	 /**
 	  * ID corresponding to the message indicating that there is already a user with the same email address in the system.
 	  */
 	 EMAIL_ALREADY_EXISTS("EMAIL_ALREADY_EXISTS", "User with this email already exists."),
 	 /**
-	  * ID corresponding to the message indicating that there is already a user with the same username in the system.
+	  * ID corresponding to the message indicating that the action failed during execution.
 	  */
-	 USERNAME_ALREADY_EXISTS("USERNAME_ALREADY_EXISTS", "User with this username already exists."),
+	 BAD_REQUEST("BAD_REQUEST", "Bad request."),
 	 /**
-	  * ID corresponding to the message indicating that the registration process has failed.
+	  * ID corresponding to the message indicating that the field is empty.
 	  */
-	 REGISTRATION_FAILED("REGISTRATION_FAILED", "Registration failed. Please try again later.");
+	 EMPTY_FIELD("EMPTY_FIELD", "Please provide a non-empty value"),
+	/**
+	 * ID corresponding to the message indicating that the field is too short.
+	 */
+	 SHORT_FIELD("SHORT_FIELD", "Input field is too short. Please enter a longer value.");
 
 	
 	/**

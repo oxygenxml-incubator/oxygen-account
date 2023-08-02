@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.oxygenxml.account.model.User;
 
+
 /**
 
 The com.oxygenxml.repository package contains interfaces and classes related to the repository layer of the application.
