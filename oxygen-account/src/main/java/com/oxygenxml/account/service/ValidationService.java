@@ -21,7 +21,6 @@ import java.util.Map;
 /**
  * Service class responsible for validating objects against a set of predefined constraints.
  */
-
 @Service
 @Scope("singleton")
 public class ValidationService {

@@ -32,9 +32,6 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
-	@Autowired
-	private final ValidationService userServiceValidation;
-	
 	
 	/**
 	 * Register a new user in the system.
@@ -42,12 +39,8 @@ public class UserService {
 	 * @param newUser The new User entity to be registered.
 	 * @return The registered User entity, or a ResponseStatusException if an error occurs.
 	 */
-	
 	public User registerUser(User newUser) {
-		
-		
-		userServiceValidation.validate(newUser);
-		
+				
 		if(userRepository.existsByEmail(newUser.getEmail())) {
             throw new OxygenAccountException(Messages.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT, InternalErrorCode.EMAIL_ALREADY_EXISTS);
         }

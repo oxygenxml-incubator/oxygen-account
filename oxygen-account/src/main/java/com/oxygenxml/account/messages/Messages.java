@@ -30,18 +30,22 @@ public enum Messages {
 	  * ID corresponding to the message indicating that the provided password is invalid.
 	  */
 	 PASSWORD_INVALID("INVALID_PASSWORD", "Password must have at least 8 characters."),
+	 
 	 /**
 	  * ID corresponding to the message indicating that there is already a user with the same email address in the system.
 	  */
 	 EMAIL_ALREADY_EXISTS("EMAIL_ALREADY_EXISTS", "User with this email already exists."),
+	 
 	 /**
 	  * ID corresponding to the message indicating that the action failed during execution.
 	  */
 	 BAD_REQUEST("BAD_REQUEST", "Bad request."),
+	 
 	 /**
 	  * ID corresponding to the message indicating that the field is empty.
 	  */
 	 EMPTY_FIELD("EMPTY_FIELD", "Please provide a non-empty value"),
+	 
 	/**
 	 * ID corresponding to the message indicating that the field is too short.
 	 */
@@ -52,6 +56,7 @@ public enum Messages {
 	 * Unique identifier corresponding to each type of message.
 	 */
 	 private final String id;
+	 
 	 /**
 	  * The error message associated with each unique identifier
 	  */
