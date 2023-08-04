@@ -9,7 +9,7 @@ public enum Messages {
 	 /**
 	  * ID corresponding to the message indicating that the username field is empty.
 	  */
-	NAME_EMPTY("EMPTY_NAME", "Please insert your username."),
+	NAME_EMPTY("EMPTY_NAME", "The name cannot be empty."),
 
 	 /**
 	  * ID corresponding to the message indicating that the email field is empty.
@@ -34,7 +34,7 @@ public enum Messages {
 	 /**
 	  * ID corresponding to the message indicating that there is already a user with the same email address in the system.
 	  */
-	 EMAIL_ALREADY_EXISTS("EMAIL_ALREADY_EXISTS", "User with this email already exists."),
+	 EMAIL_ALREADY_EXISTS("EMAIL_ALREADY_EXISTS", "An account with this email address already exists."),
 	 
 	 /**
 	  * ID corresponding to the message indicating that the action failed during execution.

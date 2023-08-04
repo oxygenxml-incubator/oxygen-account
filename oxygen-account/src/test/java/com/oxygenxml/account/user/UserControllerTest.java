@@ -16,8 +16,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.http.HttpStatus;
-
 
 import com.oxygenxml.account.OxygenAccountApplication;
 import com.oxygenxml.account.dto.UserDto;
@@ -82,9 +80,9 @@ public class UserControllerTest {
         .contentType("application/json")
         .content(JsonUtil.asJsonString(newUser)));
     resultAction.andExpect(status().isConflict())
-    .andExpect(jsonPath("$.message", is(Messages.EMAIL_ALREADY_EXISTS.getMessage())))
-    .andExpect(jsonPath("$.code", is("1001")))
-    .andExpect(jsonPath("$.status", is(Integer.toString(HttpStatus.CONFLICT.value()))));
+    .andExpect(jsonPath("$.errorMessage", is(Messages.EMAIL_ALREADY_EXISTS.getMessage())))
+    .andExpect(jsonPath("$.internalErrorCode", is(1001)))
+    .andExpect(jsonPath("$.messageId", is(Messages.EMAIL_ALREADY_EXISTS.getId())));
   }
   /**
    * The testInvalidEmail method tests the registration with an invalid email.
@@ -102,9 +100,9 @@ public class UserControllerTest {
         .content(JsonUtil.asJsonString(newUserDto)));
 
     resultAction.andExpect(status().isUnprocessableEntity())
-      .andExpect(jsonPath("$.message", is(Messages.EMAIL_INVALID.getMessage())))
-      .andExpect(jsonPath("$.code", is("1008")))
-      .andExpect(jsonPath("$.status", is(Integer.toString(HttpStatus.UNPROCESSABLE_ENTITY.value()))));
+      .andExpect(jsonPath("$.errorMessage", is(Messages.EMAIL_INVALID.getMessage())))
+      .andExpect(jsonPath("$.internalErrorCode", is(1008)))
+      .andExpect(jsonPath("$.messageId", is(Messages.EMAIL_INVALID.getId())));
 
   }
   /**
@@ -123,9 +121,9 @@ public class UserControllerTest {
 			  .content(JsonUtil.asJsonString(newUserDto)));
 	  
 	  resultAction.andExpect(status().isUnprocessableEntity())
-	  .andExpect(jsonPath("$.message", is(Messages.SHORT_FIELD.getMessage())))
-	  .andExpect(jsonPath("$.code", is("1008")))
-	  .andExpect(jsonPath("$.status", is(Integer.toString(HttpStatus.UNPROCESSABLE_ENTITY.value()))));
+	  .andExpect(jsonPath("$.errorMessage", is(Messages.SHORT_FIELD.getMessage())))
+	  .andExpect(jsonPath("$.internalErrorCode", is(1008)))
+	  .andExpect(jsonPath("$.messageId", is(Messages.SHORT_FIELD.getId())));
 	  
   }
   /**
@@ -144,9 +142,9 @@ public class UserControllerTest {
 			  .content(JsonUtil.asJsonString(newUserDto)));
 	  
 	  resultAction.andExpect(status().isUnprocessableEntity())
-	  .andExpect(jsonPath("$.message", is(Messages.EMPTY_FIELD.getMessage())))
-	  .andExpect(jsonPath("$.code", is("1008")))
-	  .andExpect(jsonPath("$.status", is(Integer.toString(HttpStatus.UNPROCESSABLE_ENTITY.value()))));
+	  .andExpect(jsonPath("$.errorMessage", is(Messages.EMPTY_FIELD.getMessage())))
+	  .andExpect(jsonPath("$.internalErrorCode", is(1008)))
+	  .andExpect(jsonPath("$.messageId", is(Messages.EMPTY_FIELD.getId())));
 	  
   }
 

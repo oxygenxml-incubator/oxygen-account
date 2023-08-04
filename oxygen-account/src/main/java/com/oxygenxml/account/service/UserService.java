@@ -11,14 +11,10 @@ import com.oxygenxml.account.messages.Messages;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
 
-import lombok.AllArgsConstructor;
-
 /**
  *  Service class for user-related operations.
  */
-
 @Service
-@AllArgsConstructor
 public class UserService {
 	
 	/**
@@ -26,6 +22,7 @@ public class UserService {
 	 */
 	@Autowired
 	private UserRepository userRepository;
+	
 	/**
 	 * Instance of BCryptPasswordEncoder used for encoding the password
 	 */
@@ -37,7 +34,8 @@ public class UserService {
 	 * Register a new user in the system.
 	 * 
 	 * @param newUser The new User entity to be registered.
-	 * @return The registered User entity, or a ResponseStatusException if an error occurs.
+	 * @return The registered User entity
+	 * @throws OxygenAccountException If a user with the same email already exists.
 	 */
 	public User registerUser(User newUser) {
 				
