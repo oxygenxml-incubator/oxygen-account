@@ -24,8 +24,8 @@ public class UserController {
 	
 
 	/**
-     * Constructs a  UserController with a specified UserService
-     */
+	 * UserService used for user-related operations.
+	 */
 	@Autowired
 	private UserService userService;
 	
