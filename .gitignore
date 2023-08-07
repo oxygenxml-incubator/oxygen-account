@@ -36,3 +36,4 @@ build/
 
 ### VS Code ###
 .vscode/
+oxygen-account/src/main/resources/static/app/
