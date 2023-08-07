@@ -19,4 +19,4 @@ These instructions will help you understand how the `RegistrationForm` and `Logi
 
 2. Start the backend server that serves the registration page.
 
-3. Navigate to localhost:8080/login in your web browser to access the Oxygen Account application's register page.
+3. Navigate to localhost:8080/ in your web browser to access the Oxygen Account application's register page.

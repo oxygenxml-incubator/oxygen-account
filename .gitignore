@@ -36,5 +36,4 @@ build/
 
 ### VS Code ###
 .vscode/
-oxygen-account-frontend/package-lock.json
 oxygen-account/src/main/resources/static/app/
