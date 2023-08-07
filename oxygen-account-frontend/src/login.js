@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Login from './Login/Login';
+
+import AuthContainer from './login/AuthContainer.jsx';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Login />
+    <AuthContainer />
   </React.StrictMode>
 );

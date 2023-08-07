@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/login.js',
   output: {
     path: path.join(__dirname, '../oxygen-account/src/main/resources/static/app'),
     filename: 'login.js',
