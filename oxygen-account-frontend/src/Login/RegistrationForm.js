@@ -1,11 +1,12 @@
 import React from 'react';
-import Button from '@mui/material/Button';
-
 import { useState } from 'react';
-import { TextField, Snackbar, CircularProgress } from '@mui/material';
-import Alert from '@mui/material/Alert';
-import Grid from '@mui/material/Grid';
+import { TextField, Snackbar, CircularProgress, Button, Alert, Grid } from '@mui/material';
 
+
+/**
+ * Component for registering accounts in a database.
+ * This component returns a form for users to provide their name, email, and password.
+ */
 function RegistrationForm() {
     
     // State variable for the user's name.
@@ -85,7 +86,9 @@ function RegistrationForm() {
         }
     }
 
-
+    /**
+    * This function clears the input fields.
+    */
     const clearInputFields = () => {
         setName('');
         setEmail('');
