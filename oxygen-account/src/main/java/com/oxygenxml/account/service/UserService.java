@@ -11,16 +11,10 @@ import com.oxygenxml.account.messages.Messages;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 /**
  *  Service class for user-related operations.
  */
-
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
 public class UserService {
 	
 	/**
@@ -28,6 +22,7 @@ public class UserService {
 	 */
 	@Autowired
 	private UserRepository userRepository;
+	
 	/**
 	 * Instance of BCryptPasswordEncoder used for encoding the password
 	 */
@@ -39,13 +34,14 @@ public class UserService {
 	 * Register a new user in the system.
 	 * 
 	 * @param newUser The new User entity to be registered.
-	 * @return The registered User entity, or a ResponseStatusException if an error occurs.
+	 * @return The registered User entity
+	 * @throws OxygenAccountException If a user with the same email already exists.
 	 */
-	
 	public User registerUser(User newUser) {
+				
 		if(userRepository.existsByEmail(newUser.getEmail())) {
-			throw new OxygenAccountException(Messages.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT, InternalErrorCode.EMAIL_ALREADY_EXISTS);
-		}
+            throw new OxygenAccountException(Messages.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT, InternalErrorCode.EMAIL_ALREADY_EXISTS);
+        }
 		
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		

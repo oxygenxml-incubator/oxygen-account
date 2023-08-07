@@ -3,11 +3,10 @@ package com.oxygenxml.account.exception;
 import org.springframework.http.HttpStatus;
 import com.oxygenxml.account.messages.Messages;
 
+import lombok.Getter;
 /**
  * This class is used for handling custom exceptions specific to the Oxygen Account
  */
-import lombok.Getter;
-
 @Getter
 public class OxygenAccountException extends RuntimeException{
 	
