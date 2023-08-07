@@ -50,17 +50,11 @@ public class UserController {
      */
 	@PostMapping("/register")
 	public UserDto registerUser(@RequestBody UserDto newUserDto){
-	
-			validationService.validate(newUserDto);
-			User newUser = userConverter.dtoToEntity(newUserDto);		
-			User registeredUser = userService.registerUser(newUser);
-			UserDto registeredUserDto = userConverter.entityToDto(registeredUser);
-			return registeredUserDto;
-			
-		
+        
+		validationService.validate(newUserDto);
+		User newUser = userConverter.dtoToEntity(newUserDto);		
+		User registeredUser = userService.registerUser(newUser);
+		return userConverter.entityToDto(registeredUser);
+
 	}
-
-
-
 }
-
