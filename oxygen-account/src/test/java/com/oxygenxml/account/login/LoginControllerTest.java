@@ -23,7 +23,7 @@ import com.oxygenxml.account.OxygenAccountApplication;
 @AutoConfigureMockMvc
 @TestPropertySource(locations="classpath:application-test.properties")
 @ActiveProfiles("test")
-public class LoginControllerTest {
+class LoginControllerTest {
     @Autowired
     private MockMvc mockMvc;
     
@@ -31,7 +31,7 @@ public class LoginControllerTest {
      * Tests the functionality of the showLoginForm() method from the Login Controller.
      */
     @Test
-    public void testShowLoginForm() throws Exception {
+    void testShowLoginForm() throws Exception {
         mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("login"));
