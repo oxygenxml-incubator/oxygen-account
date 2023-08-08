@@ -50,7 +50,7 @@ public class WebSecurityConfiguration {
 	 */
 	@Bean
 	public WebSecurityCustomizer ignoringCustomizer() {
-		return (web) -> web.ignoring()
+		return web -> web.ignoring()
 				.requestMatchers("/app/login.js");
 	}
       
