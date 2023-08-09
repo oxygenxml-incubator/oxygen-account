@@ -51,7 +51,7 @@ public class UserControllerTest {
 	 * @throws Exception if the test encounters any errors.
 	 */
 	@Test
-	public void testRegisterUser() throws Exception {
+	void testRegisterUser() throws Exception {
 		UserDto newUser = new UserDto();
 
 		newUser.setName("test");
@@ -70,7 +70,7 @@ public class UserControllerTest {
 	 * @throws Exception if the test encounters any errors
 	 */
 	@Test
-	public void testRegisterSameEmail() throws Exception{
+	void testRegisterSameEmail() throws Exception{
 		UserDto newUser = new UserDto();
 
 		newUser.setName("Test");
@@ -91,7 +91,7 @@ public class UserControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testInvalidEmail() throws Exception {
+	void testInvalidEmail() throws Exception {
 		UserDto newUserDto = new UserDto();
 		newUserDto.setName("Test");
 		newUserDto.setEmail("invalidemail");
@@ -113,7 +113,7 @@ public class UserControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testInvalidPassword() throws Exception{
+	void testInvalidPassword() throws Exception{
 		UserDto newUserDto = new UserDto();
 		newUserDto.setName("Test");
 		newUserDto.setEmail("email@email.com");
@@ -135,7 +135,7 @@ public class UserControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testEmptyField() throws Exception{
+	void testEmptyField() throws Exception{
 		UserDto newUserDto = new UserDto();
 		newUserDto.setName("");
 		newUserDto.setEmail("email@email.com");
@@ -157,7 +157,7 @@ public class UserControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testMultipleErrors() throws Exception{
+	void testMultipleErrors() throws Exception{
 		UserDto newUserDto = new UserDto();
 		newUserDto.setName("");
 		newUserDto.setEmail("emailemail.com");
