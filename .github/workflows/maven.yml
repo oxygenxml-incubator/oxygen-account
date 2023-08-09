@@ -32,10 +32,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: mvn clean -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=oxygen-account --file oxygen-account/pom.xml
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
@@ -45,18 +41,24 @@ jobs:
         
   frontend-tests-and-bundle:
     runs-on: ubuntu-latest
+    
     needs: build
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      
     - name: Setup Node.js environment
       uses: actions/setup-node@v2
       with:
         node-version: '16'
+
     - name: Install dependencies
       run: cd oxygen-account-frontend && npm install
+      
     - name: Run frontend tests
       run: cd oxygen-account-frontend && npm test
+      
     - name: Build frontend bundle
       if: success()
       run: cd oxygen-account-frontend && npx webpack
