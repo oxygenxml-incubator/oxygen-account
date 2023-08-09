@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node'
 import { rest } from 'msw';
 
-import Login from '../../login/Login'
+import AuthContainer from '../../login/AuthContainer';
 
 // Create a mock server for handling API requests and responses
 const server = setupServer();
@@ -19,7 +19,7 @@ afterAll(() => server.close())
  * Test case to validate the display of error messages for invalid input data.
  */
 test('displays error messages for invalid data', () => {
-  render(<Login />);
+  render(<AuthContainer />);
 
   // Get input elements and simulate invalid data
   const inputName = screen.getByLabelText('Name');
@@ -62,7 +62,7 @@ test('sends registration request for valid data', async () => {
     })
   );
 
-  render(<Login />);
+  render(<AuthContainer />);
 
   // Get input elements and simulate valid data
   const inputName = screen.getByLabelText('Name');
@@ -103,7 +103,7 @@ test('sends registration request with used email', async () => {
       );
     })
   );
-  render(<Login />);
+  render(<AuthContainer />);
 
   // Get input elements and simulate valid data (with already used email)
   const inputName = screen.getByLabelText('Name');
@@ -139,7 +139,7 @@ test('network error', async () => {
     })
   );
 
-  render(<Login />);
+  render(<AuthContainer />);
 
   // Get input elements and simulate valid data
   const inputName = screen.getByLabelText('Name');
@@ -181,7 +181,7 @@ test('closes Snackbar when close button is clicked', async () => {
     })
   );
 
-  render(<Login />);
+  render(<AuthContainer />);
 
   // Get input elements and simulate valid data
   const inputName = screen.getByLabelText('Name');
@@ -232,7 +232,7 @@ test('input fields are reset after successful submission', async () => {
     })
   );
 
-  render(<Login />);
+  render(<AuthContainer />);
 
   // Get input elements and simulate valid data
   const inputName = screen.getByLabelText('Name');
