@@ -16,7 +16,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
+
 
 
 import com.oxygenxml.account.OxygenAccountApplication;
@@ -102,6 +103,7 @@ public class UserControllerTest {
 				.content(JsonUtil.asJsonString(newUserDto)));
 
 		resultAction.andExpect(status().isUnprocessableEntity())
+		.andExpect(jsonPath("$.errors[0].fieldName", is("email")))
 		.andExpect(jsonPath("$.errors[0].errorMessage", is(Message.EMAIL_INVALID.getMessage())))
 		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
 		.andExpect(jsonPath("$.errors[0].messageId", is(Message.EMAIL_INVALID.getId())));
@@ -124,6 +126,7 @@ public class UserControllerTest {
 				.content(JsonUtil.asJsonString(newUserDto)));
 
 		resultAction.andExpect(status().isUnprocessableEntity())
+		.andExpect(jsonPath("$.errors[0].fieldName", is("password")))
 		.andExpect(jsonPath("$.errors[0].errorMessage", is(Message.SHORT_FIELD.getMessage())))
 		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
 		.andExpect(jsonPath("$.errors[0].messageId", is(Message.SHORT_FIELD.getId())));
@@ -146,6 +149,7 @@ public class UserControllerTest {
 				.content(JsonUtil.asJsonString(newUserDto)));
 
 		resultAction.andExpect(status().isUnprocessableEntity())
+		.andExpect(jsonPath("$.errors[0].fieldName", is("name")))
 		.andExpect(jsonPath("$.errors[0].errorMessage", is(Message.EMPTY_FIELD.getMessage())))
 		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
 		.andExpect(jsonPath("$.errors[0].messageId", is(Message.EMPTY_FIELD.getId())));
@@ -169,8 +173,12 @@ public class UserControllerTest {
 
 		resultAction.andExpect(status().isUnprocessableEntity())
 		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
-		.andExpect(jsonPath("$.errors[*].errorMessage", containsInAnyOrder(Message.EMPTY_FIELD.getMessage(), Message.SHORT_FIELD.getMessage(), Message.EMAIL_INVALID.getMessage())))
-		.andExpect(jsonPath("$.errors[*].messageId", containsInAnyOrder(Message.EMPTY_FIELD.getId(), Message.SHORT_FIELD.getId(), Message.EMAIL_INVALID.getId())));
+		.andExpect(jsonPath("$.errors[?(@.fieldName == 'name')].errorMessage", hasItem(Message.EMPTY_FIELD.getMessage())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'name')].messageId", hasItem(Message.EMPTY_FIELD.getId())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'email')].errorMessage", hasItem(Message.EMAIL_INVALID.getMessage())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'email')].messageId", hasItem(Message.EMAIL_INVALID.getId())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'password')].errorMessage", hasItem(Message.SHORT_FIELD.getMessage())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'password')].messageId", hasItem(Message.SHORT_FIELD.getId())));
 	}
 }
 
