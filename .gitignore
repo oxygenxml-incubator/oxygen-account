@@ -17,6 +17,7 @@ target/
 .mvn/
 .springBeans
 .sts4-cache
+.sonarlint/
 
 ### IntelliJ IDEA ###
 .idea

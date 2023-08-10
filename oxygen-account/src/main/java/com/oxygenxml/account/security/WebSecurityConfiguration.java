@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -36,12 +37,12 @@ public class WebSecurityConfiguration {
         	http
         		.csrf((csrf) -> csrf.disable())
         		.authorizeHttpRequests(authz->authz
-        		.requestMatchers("/api/users/register").permitAll()
-        		.requestMatchers("/").permitAll()
-        		.requestMatchers("/login").permitAll()
-        		.anyRequest().authenticated());
-           
-
+        		.requestMatchers("/api/users/register", "/").permitAll()
+        		.anyRequest().authenticated())
+        		.formLogin((form) -> form
+        				.loginPage("/login")
+        				.permitAll());
+        	
         return http.build();
     }
 	
