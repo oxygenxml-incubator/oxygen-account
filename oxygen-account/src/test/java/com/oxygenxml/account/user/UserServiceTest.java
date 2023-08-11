@@ -54,7 +54,7 @@ public class UserServiceTest {
      * @throws Exception
      */
     @Test
-    public void testPasswordEncodingByServer() throws Exception {
+    void testPasswordEncodingByServer() throws Exception {
 
         UserDto newUser = new UserDto();
         newUser.setName("test");
@@ -74,13 +74,11 @@ public class UserServiceTest {
      * Test that the password encoding is consistent
      */
     @Test
-    public void testPasswordEncodingConsistency() {
+    void testPasswordEncodingConsistency() {
         String rawPassword = "password";
         
         String encodedPassword1 = "$2a$10$yWjIRyR/PQu2nS/0jzQa6.lj0YxI/Hc56fb/MD8rLteQe7kYn.NLS";
 
         assertTrue(passwordEncoder.matches(rawPassword, encodedPassword1));
-    }
-    
-   
+    }    
 }

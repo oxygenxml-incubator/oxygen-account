@@ -4,7 +4,7 @@ package com.oxygenxml.account.messages;
  * The Messages enumeration contains various types of error messages and their unique identifiers associated with them.
  */
 
-public enum Messages {
+public enum Message {
 
 	 /**
 	  * ID corresponding to the message indicating that the username field is empty.
@@ -44,12 +44,17 @@ public enum Messages {
 	 /**
 	  * ID corresponding to the message indicating that the field is empty.
 	  */
-	 EMPTY_FIELD("EMPTY_FIELD", "Please provide a non-empty value"),
+	 EMPTY_FIELD("EMPTY_FIELD", "Please provide a non-empty value."),
 	 
 	/**
 	 * ID corresponding to the message indicating that the field is too short.
 	 */
-	 SHORT_FIELD("SHORT_FIELD", "Input field is too short. Please enter a longer value.");
+	 SHORT_FIELD("SHORT_FIELD", "Input field is too short. Please enter a longer value."),
+	
+	 /**
+	  * ID corresponding to the message indicating that the validation failed.
+	  */
+	 INPUT_VALIDATION_FAILED("INPUT_VALIDATION_FAILED", "Input validation failed");
 
 	
 	/**
@@ -67,7 +72,7 @@ public enum Messages {
 	  * @param id the unique identifier for the message
 	  * @param message the error message associated with the identifier
 	  */
-	    private Messages(String id, String message) {
+	    private Message(String id, String message) {
 	        this.id = id;
 	        this.message = message;
 	    }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.oxygenxml.account.exception.InternalErrorCode;
 import com.oxygenxml.account.exception.OxygenAccountException;
-import com.oxygenxml.account.messages.Messages;
+import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
 
@@ -40,7 +40,7 @@ public class UserService {
 	public User registerUser(User newUser) {
 				
 		if(userRepository.existsByEmail(newUser.getEmail())) {
-            throw new OxygenAccountException(Messages.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT, InternalErrorCode.EMAIL_ALREADY_EXISTS);
+            throw new OxygenAccountException(Message.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT, InternalErrorCode.EMAIL_ALREADY_EXISTS);
         }
 		
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));

@@ -6,10 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oxygenxml.account.model.User;
+import com.oxygenxml.account.model.User;	
 import com.oxygenxml.account.service.UserService;
 import com.oxygenxml.account.service.ValidationService;
-
 
 import com.oxygenxml.account.converter.UserConverter;
 import com.oxygenxml.account.dto.UserDto;
@@ -55,6 +54,9 @@ public class UserController {
 		User newUser = userConverter.dtoToEntity(newUserDto);		
 		User registeredUser = userService.registerUser(newUser);
 		return userConverter.entityToDto(registeredUser);
-
 	}
+	
+	
+
+	
 }
