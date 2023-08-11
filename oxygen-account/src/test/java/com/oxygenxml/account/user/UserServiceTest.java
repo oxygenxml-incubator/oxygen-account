@@ -80,7 +80,5 @@ public class UserServiceTest {
         String encodedPassword1 = "$2a$10$yWjIRyR/PQu2nS/0jzQa6.lj0YxI/Hc56fb/MD8rLteQe7kYn.NLS";
 
         assertTrue(passwordEncoder.matches(rawPassword, encodedPassword1));
-    }
-    
-   
+    }    
 }
