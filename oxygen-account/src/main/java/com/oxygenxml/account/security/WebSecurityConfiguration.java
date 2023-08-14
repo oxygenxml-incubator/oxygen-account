@@ -37,7 +37,7 @@ public class WebSecurityConfiguration {
         	http
         		.csrf((csrf) -> csrf.disable())
         		.authorizeHttpRequests(authz->authz
-        		.requestMatchers("/api/users/register", "/").permitAll()
+        		.requestMatchers("/api/users/register").permitAll()
         		.anyRequest().authenticated())
         		.formLogin((form) -> form
         				.loginPage("/login")
@@ -52,7 +52,8 @@ public class WebSecurityConfiguration {
 	@Bean
 	public WebSecurityCustomizer ignoringCustomizer() {
 		return web -> web.ignoring()
-				.requestMatchers("/app/login.js");
+				.requestMatchers("/app/login.js")
+        		.requestMatchers("/app/63c72bb6ba828872ed1d09fd3d8f83d6.jpg");
 	}
       
 }

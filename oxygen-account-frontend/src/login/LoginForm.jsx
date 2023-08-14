@@ -2,14 +2,12 @@ import React from 'react';
 import { useState } from 'react';
 import { TextField, Snackbar, CircularProgress, Button, Alert, Grid } from '@mui/material';
 
-
 /**
  * Component for registering accounts in a database.
  * This component returns a form for users to provide their name, email, and password.
  */
-function RegistrationForm({ toggleForm }) {
-    // State variable for the user's name.
-    const [name, setName] = useState('');
+function LoginForm({ toggleForm }) {
+
 
     // State variable for the user's email address.
     const [email, setEmail] = useState('');
@@ -17,20 +15,11 @@ function RegistrationForm({ toggleForm }) {
     // State variable for the user's password.
     const [password, setPassword] = useState('');
 
-    // State variable for confirming the user's password.
-    const [confirmPassword, setConfirmPassword] = useState('');
-
-    // State variable for storing error message related to the name field.
-    const [nameError, setNameError] = useState('');
-
     // State variable for storing error message related to the email field.
     const [emailError, setEmailError] = useState('');
 
     // State variable for storing error message related to the password field.
     const [passwordError, setPasswordError] = useState('');
-
-    // State variable for storing error message related to the confirm password field.
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
     // State variable indicating when the form submission is in progress.
     const [isLoadingActive, setisLoadingActive] = useState(false);
@@ -55,14 +44,7 @@ function RegistrationForm({ toggleForm }) {
     const handleInputChange = (event) => {
         const { id, value } = event.target;
 
-        if (id === "name-input") {
-            setName(value);
-
-            if (nameError !== '') {
-                setNameError('');
-            }
-        }
-        else if (id === "email-input") {
+        if (id === "email-input") {
             setEmail(value);
 
             if (emailError !== '') {
@@ -76,105 +58,93 @@ function RegistrationForm({ toggleForm }) {
                 setPasswordError('');
             }
         }
-        else if (id === "confirmPassword-input") {
-            setConfirmPassword(value);
-
-            if (confirmPasswordError !== '') {
-                setConfirmPasswordError('');
-            }
-        }
     }
 
     /**
     * This function clears the input fields.
     */
     const clearInputFields = () => {
-        setName('');
         setEmail('');
         setPassword('');
-        setConfirmPassword('');
     }
 
+    // /**
+    //  * Send a registration request to the server to create a new user account.
+    //  * @param {Object} newUser - The user object with name, email, and password properties.
+    //  * @returns {Promise} A promise that resolves with the response data from the server.
+    //  * @throws {Error} If the response from the server contains an errorMessage.
+    //  */
+    // const sendRegistrationRequest = (newUser) => {
+    //     return fetch('api/users/register', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(newUser),
+    //     })
+    //         .then((response) => {
+    //             if (response.ok) {
+    //                 clearInputFields();
+
+    //                 setisLoadingActive(false);
+
+    //                 setIsSuccessSnackbar(true);
+    //                 setSnackbarMessage('Account created successfully!');
+    //                 setShowSnackbar(true);
+    //             }
+    //             return response.json();
+    //         })
+    //         .then((data) => {
+    //             if (data.errorMessage) {
+    //                 throw new Error(data.errorMessage);
+    //             }
+    //         })
+    //         .catch(error => {
+    //             setisLoadingActive(false);
+
+    //             setIsSuccessSnackbar(false);
+
+    //             // If the error name is 'TypeError', it means there was a connection error.
+    //             // Otherwise, display the error message from the error object.
+    //             setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
+
+    //             setShowSnackbar(true);
+    //         });
+    // };
+
+
     /**
-     * Send a registration request to the server to create a new user account.
-     * @param {Object} newUser - The user object with name, email, and password properties.
-     * @returns {Promise} A promise that resolves with the response data from the server.
-     * @throws {Error} If the response from the server contains an errorMessage.
-     */
-    const sendRegistrationRequest = (newUser) => {
-        return fetch('api/users/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newUser),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    clearInputFields();
-
-                    setisLoadingActive(false);
-
-                    setIsSuccessSnackbar(true);
-                    setSnackbarMessage('Account created successfully!');
-                    setShowSnackbar(true);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                if (data.errorMessage) {
-                    throw new Error(data.errorMessage);
-                }
-            })
-            .catch(error => {
-                setisLoadingActive(false);
-
-                setIsSuccessSnackbar(false);
-
-                // If the error name is 'TypeError', it means there was a connection error.
-                // Otherwise, display the error message from the error object.
-                setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
-
-                setShowSnackbar(true);
-            });
-    };
-
-
-    /**
-    * Validates the input fields for user registration.
+    * Validates the input fields for user authentication.
     * @returns {boolean} True if all input fields are valid, otherwise false.
     */
     const validateInputs = () => {
-        let isNameValid = name.trim() !== '';
         let isEmailValid = email.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        let isPasswordValid = /^.{8,}$/.test(password.trim());
-        let isConfirmPasswordValid = confirmPassword.trim() !== '' && password === confirmPassword;
+        let isPasswordValid = password.trim() !== '';
 
         // Set an error message for each field if it is invalid.
-        setNameError(isNameValid ? '' : 'Invalid name.');
-        setEmailError(isEmailValid ? '' : 'Invalid email.');
-        setPasswordError(isPasswordValid ? '' : 'Password must be at least 8 characters.');
-        setConfirmPasswordError(isConfirmPasswordValid ? '' : 'Passwords do not match.');
 
-        return isNameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid;
+        setEmailError(isEmailValid ? '' : 'Invalid email.');
+        setPasswordError(isPasswordValid ? '' : 'Empty password.');
+
+        return isEmailValid && isPasswordValid;
     }
 
     /*
-     * Handle click event of the registration button.
+     * Handle click event of the log in button.
      */
     const handleClickButton = () => {
         // Validate the input fields before proceeding with registration.
         if (validateInputs()) {
-            setisLoadingActive(true);
+            // setisLoadingActive(true);
 
-            // Create a new user object.
-            const newUser = {
-                name: name.trim(),
-                email: email.trim(),
-                password: password.trim(),
-            };
+            // // Create a new user object.
+            // const newUser = {
+            //     name: name.trim(),
+            //     email: email.trim(),
+            //     password: password.trim(),
+            // };
 
-            sendRegistrationRequest(newUser);
+            // sendRegistrationRequest(newUser);
         }
 
     }
@@ -189,31 +159,16 @@ function RegistrationForm({ toggleForm }) {
     return (
         <form>
             {/* Grid container for layout */}
-            <Grid container spacing={2.5}>
+            <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <h1 style = {{marginLeft: "140px"}}>Create new account</h1>
+                    <h1 style = {{marginLeft: "220px"}}>Log in</h1>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                        <h3 style = {{marginLeft: "20px"}}>Already a member?&nbsp;</h3>
-                        <a href="#" onClick={(e) => { e.preventDefault(); toggleForm(); }} className="link-style"  style={{ textDecoration: "none", fontSize: '20px', color: 'blue' }}>
-                            Log In
+                        <h3 style = {{marginLeft: "70px"}}>Don't have an Oxygen Account?&nbsp;</h3>
+                        <a href="#" onClick={(e) => { e.preventDefault(); toggleForm(); }} style={{ textDecoration: "none", fontSize: '20px', color: 'blue' }}>
+                            Create an account
                         </a>
                         <h3>.</h3>
                     </div>
-
-                </Grid>
-
-                {/* Name input field */}
-                <Grid item xs={12}>
-                    <TextField
-                        id="name-input"
-                        label="Name"
-                        variant="outlined"
-                        value={name}
-                        sx={{ width: '550px' }}
-                        onChange={handleInputChange}
-                        error={Boolean(nameError)}
-                        helperText={nameError}
-                    />
                 </Grid>
 
                 {/* Email input field */}
@@ -244,26 +199,12 @@ function RegistrationForm({ toggleForm }) {
                     />
                 </Grid>
 
-                {/* Confirm Password input field */}
-                <Grid item xs={12}>
-                    <TextField
-                        id="confirmPassword-input"
-                        label="Confirm Password"
-                        type="password"
-                        value={confirmPassword}
-                        sx={{ width: '550px' }}
-                        onChange={handleInputChange}
-                        error={Boolean(confirmPasswordError)}
-                        helperText={confirmPasswordError}
-                    />
-                </Grid>
-
                 {/* Loading indicator and "Create account" button */}
                 <Grid item xs={12} display="flex">
                     <CircularProgress style={{ marginLeft: '110px', visibility: isLoadingActive ? 'visible' : 'hidden' }} />
 
-                    <Button onClick={handleClickButton} variant="contained" style={{ marginLeft: '30px' }} disabled={isLoadingActive}>
-                        Create account
+                    <Button onClick={handleClickButton} variant="contained" style={{ marginLeft: '75px' }} disabled={isLoadingActive}>
+                        Log In
                     </Button>
                 </Grid>
 
@@ -292,4 +233,4 @@ function RegistrationForm({ toggleForm }) {
     );
 };
 
-export default RegistrationForm;
+export default LoginForm;
