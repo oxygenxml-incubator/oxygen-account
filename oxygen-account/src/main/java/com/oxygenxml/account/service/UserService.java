@@ -37,7 +37,7 @@ public class UserService {
 	 * @return The registered User entity
 	 * @throws OxygenAccountException If a user with the same email already exists.
 	 */
-	public User registerUser(User newUser) {
+	public com.oxygenxml.account.model.User registerUser(User newUser) {
 				
 		if(userRepository.existsByEmail(newUser.getEmail())) {
             throw new OxygenAccountException(Messages.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT, InternalErrorCode.EMAIL_ALREADY_EXISTS);
@@ -49,4 +49,7 @@ public class UserService {
 		
 	}
 	
+	public User getUserByEmail(String email) {
+		return userRepository.findByEmail(email);
+	}
 }
