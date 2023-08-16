@@ -19,17 +19,17 @@ public class OxygenAccountException extends RuntimeException{
 	/**
 	 * The HttpStatus that is to be returned. It represents the status of the HTTP response
 	 */
-	private HttpStatus status;
+	private final HttpStatus status;
 	
 	/**
 	 * The id of the message that is to be returned. It is used to identify the message.
 	 */
-	private String messageId;
+	private final String messageId;
 	
 	/**
 	 * The error code that is to be returned. It provides more details about the specific error.
 	 */
-	private InternalErrorCode errorCode;
+	private final InternalErrorCode errorCode;
 	
 	/**
 	 * Constructs a new OxygenAccountExceptions with the specified detail message, HTTP status, and error code.

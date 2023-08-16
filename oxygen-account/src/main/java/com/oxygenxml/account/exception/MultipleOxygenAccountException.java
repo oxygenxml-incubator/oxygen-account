@@ -22,7 +22,7 @@ public class MultipleOxygenAccountException extends OxygenAccountException {
 	/**
 	 *  A list of InputValidationError objects that represent the specific validation errors
 	 */
-	private List<InputValidationError> fieldErrors;
+	private transient final List<InputValidationError> fieldErrors;
 
 	/**
 	 * Constructs a MultipleOxygenAccountException with the specified details
