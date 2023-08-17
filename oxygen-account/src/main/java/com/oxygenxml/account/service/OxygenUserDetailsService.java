@@ -17,14 +17,12 @@ public class OxygenUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		
 		com.oxygenxml.account.model.User appUser = userService.getUserByEmail(email);
-		System.out.println(appUser);
 		if(appUser == null) {
-			System.out.println("User is not here");
 			throw new UsernameNotFoundException(Messages.USER_NOT_FOUND.getMessage());
 		}
 
-		System.out.println("User is here");
 		UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(appUser.getEmail())
 				.password(appUser.getPassword());
 		return builder.build();

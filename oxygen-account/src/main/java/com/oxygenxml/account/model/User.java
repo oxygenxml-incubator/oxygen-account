@@ -43,6 +43,7 @@ public class User {
 	/**
 	 *  The email address of the user.
 	 */
+	@Column(name = "email")
 	private String email;
 
 	/**

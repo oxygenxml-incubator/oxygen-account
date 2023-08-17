@@ -41,10 +41,12 @@ public class WebSecurityConfiguration {
 		http
 		.csrf((csrf) -> csrf.disable())
 		.authorizeHttpRequests(authz->authz
-				.requestMatchers("/api/users/register","/login").permitAll()
+				.requestMatchers("/api/users/register").permitAll()
 				.anyRequest().authenticated())
 		.formLogin((form) -> form
 				.loginPage("/login")
+				.usernameParameter("email")
+			    .passwordParameter("password")
 				.permitAll());
 
 		return http.build();

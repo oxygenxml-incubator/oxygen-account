@@ -1,8 +1,11 @@
 package com.oxygenxml.account.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 
 /**
  * This class handles exceptions globally for the application and provides central exception handling across all HTTP requests
@@ -25,4 +28,14 @@ public class GlobalExceptionHandler {
 		
 		return new ResponseEntity<>(errorResponse, exception.getStatus());
 	}
+	
+	@ExceptionHandler(UsernameNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException exeption) {
+	    ErrorResponse errorResponse = new ErrorResponse();
+	    
+	    errorResponse.setErrorMessage(exeption.getMessage());
+	    
+	    return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+	}
+
 }
