@@ -7,9 +7,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.oxygenxml.account.service.OxygenUserDetailsService;
 
 /**
  * Configuration class for web application security.
@@ -19,11 +20,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfiguration {
 
 	@Autowired
-	private UserDetailsService userDetailsService;
+	private OxygenUserDetailsService userDetailsService;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	@Autowired
 	public void configure(AuthenticationManagerBuilder auth) throws Exception{
 		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
 	}
@@ -39,7 +41,7 @@ public class WebSecurityConfiguration {
 		http
 		.csrf((csrf) -> csrf.disable())
 		.authorizeHttpRequests(authz->authz
-				.requestMatchers("/api/users/register").permitAll()
+				.requestMatchers("/api/users/register","/login").permitAll()
 				.anyRequest().authenticated())
 		.formLogin((form) -> form
 				.loginPage("/login")
