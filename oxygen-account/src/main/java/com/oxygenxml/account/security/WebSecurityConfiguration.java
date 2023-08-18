@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
 import com.oxygenxml.account.service.OxygenUserDetailsService;
 
@@ -30,8 +32,15 @@ public class WebSecurityConfiguration {
 		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
 	}
 	
+	@Bean
+	public AuthenticationFailureHandler authenticationFailureHandler() {
+	    SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
+	    failureHandler.setDefaultFailureUrl("/login#invalid-user");
+	    return failureHandler;
+	}
+	
 	/**
-	 * This method defines security like disabling CSRF protection, defining which requests are allowed without authentification
+	 * This method defines security like disabling CSRF protection, defining which requests are allowed without authentication
 	 * @param http - the HttpSecurity instance
 	 * @return the build SecurityFilterChain
 	 * @throws Exception if an error occurs during the security configuration
@@ -47,6 +56,7 @@ public class WebSecurityConfiguration {
 				.loginPage("/login")
 				.usernameParameter("email")
 			    .passwordParameter("password")
+			    .failureHandler(authenticationFailureHandler())
 				.permitAll());
 
 		return http.build();
@@ -59,7 +69,7 @@ public class WebSecurityConfiguration {
 	public WebSecurityCustomizer ignoringCustomizer() {
 		return web -> web.ignoring()
 				.requestMatchers("/app/login.js")
-        		.requestMatchers("/app/63c72bb6ba828872ed1d09fd3d8f83d6.jpg");
+        		.requestMatchers("/img/logo.jpg");
 	}
       
 }
