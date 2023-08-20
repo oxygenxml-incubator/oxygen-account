@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { TextField, Snackbar, CircularProgress, Button, Alert, Grid } from '@mui/material';
+import { TextField, Snackbar, LinearProgress, Button, Alert, Grid } from '@mui/material';
 
 /**
  * Component for registering accounts in a database.
@@ -30,9 +30,6 @@ function LoginForm({ toggleForm }) {
     // State variable for storing the message to display in the Snackbar.
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
-    // State variable indicating whether the Snackbar should display success or error severity.
-    const [isSuccessSnackbar, setIsSuccessSnackbar] = useState(false);
-
 
     /**
      * Handle input change event for text fields.
@@ -44,14 +41,14 @@ function LoginForm({ toggleForm }) {
     const handleInputChange = (event) => {
         const { id, value } = event.target;
 
-        if (id === "email-input") {
+        if (id === "email") {
             setEmail(value);
 
             if (emailError !== '') {
                 setEmailError('');
             }
         }
-        else if (id === "password-input") {
+        else if (id === "password") {
             setPassword(value);
 
             if (passwordError !== '') {
@@ -61,92 +58,19 @@ function LoginForm({ toggleForm }) {
     }
 
     /**
-    * This function clears the input fields.
-    */
-    const clearInputFields = () => {
-        setEmail('');
-        setPassword('');
-    }
-
-    // /**
-    //  * Send a registration request to the server to create a new user account.
-    //  * @param {Object} newUser - The user object with name, email, and password properties.
-    //  * @returns {Promise} A promise that resolves with the response data from the server.
-    //  * @throws {Error} If the response from the server contains an errorMessage.
-    //  */
-    // const sendRegistrationRequest = (newUser) => {
-    //     return fetch('api/users/register', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify(newUser),
-    //     })
-    //         .then((response) => {
-    //             if (response.ok) {
-    //                 clearInputFields();
-
-    //                 setisLoadingActive(false);
-
-    //                 setIsSuccessSnackbar(true);
-    //                 setSnackbarMessage('Account created successfully!');
-    //                 setShowSnackbar(true);
-    //             }
-    //             return response.json();
-    //         })
-    //         .then((data) => {
-    //             if (data.errorMessage) {
-    //                 throw new Error(data.errorMessage);
-    //             }
-    //         })
-    //         .catch(error => {
-    //             setisLoadingActive(false);
-
-    //             setIsSuccessSnackbar(false);
-
-    //             // If the error name is 'TypeError', it means there was a connection error.
-    //             // Otherwise, display the error message from the error object.
-    //             setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
-
-    //             setShowSnackbar(true);
-    //         });
-    // };
-
-
-    /**
     * Validates the input fields for user authentication.
     * @returns {boolean} True if all input fields are valid, otherwise false.
     */
     const validateInputs = () => {
-        let isEmailValid = email.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        let isEmailValid = email.trim() !== '';
         let isPasswordValid = password.trim() !== '';
 
         // Set an error message for each field if it is invalid.
 
-        setEmailError(isEmailValid ? '' : 'Invalid email.');
+        setEmailError(isEmailValid ? '' : 'Empty email.');
         setPasswordError(isPasswordValid ? '' : 'Empty password.');
 
         return isEmailValid && isPasswordValid;
-    }
-
-    /*
-     * Handle click event of the log in button.
-     */
-    const handleClickButton = () => {
-        // Validate the input fields before proceeding with registration.
-        if (validateInputs()) {
-            // setisLoadingActive(true);
-
-            // // Create a new user object.
-            // const newUser = {
-            //     name: name.trim(),
-            //     email: email.trim(),
-            //     password: password.trim(),
-            // };
-
-            // sendRegistrationRequest(newUser);
-        }
-
     }
 
     /*
@@ -156,77 +80,106 @@ function LoginForm({ toggleForm }) {
         setShowSnackbar(false);
     };
 
-    return (
-        <form>
-            {/* Grid container for layout */}
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <h1 style = {{marginLeft: "220px"}}>Log in</h1>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                        <h3 style = {{marginLeft: "70px"}}>Don't have an Oxygen Account?&nbsp;</h3>
-                        <a href="#" onClick={(e) => { e.preventDefault(); toggleForm(); }} style={{ textDecoration: "none", fontSize: '20px', color: 'blue' }}>
-                            Create an account
-                        </a>
-                        <h3>.</h3>
-                    </div>
-                </Grid>
+    // const handleSubmitForm = (event) => {
+    //     if (!validateInputs()) {
+    //         event.preventDefault();
+    //     }
+    //     else {
+    //         if (window.location.hash === '#invalid-user') {
+    //             event.preventDefault();
+    //             setShowSnackbar(true);
+    //             setSnackbarMessage('Invalid user');
+    //         }
+    //     }
 
+    //     window.location.hash = '';
+    // };
+
+    const handleSubmitForm = (event) => {
+        if (!validateInputs()) {
+            event.preventDefault();
+        }
+    
+     
+    
+        if (window.location.hash === '#invalid-user') {
+            setShowSnackbar(true);
+            setSnackbarMessage('Invalid user');
+            window.location.hash = '';
+            return;
+        }
+    };
+
+
+    return (
+        <form action="/login" method='POST' onSubmit={handleSubmitForm}>
+            {/* Grid container for layout */}
+            <Grid container spacing={3} justifyContent="center" alignItems="center">
                 {/* Email input field */}
-                <Grid item xs={12}>
+                <Grid item xs={12} md={12} lg={12} xl={12}>
                     <TextField
-                        id="email-input"
+                        id="email"
+                        name="email"
                         label="Email"
                         variant="outlined"
                         value={email}
-                        sx={{ width: '550px' }}
                         onChange={handleInputChange}
                         error={Boolean(emailError)}
                         helperText={emailError}
+                        fullWidth
                     />
                 </Grid>
 
                 {/* Password input field */}
-                <Grid item xs={12}>
+                <Grid item xs={12} md={12} lg={12} xl={12}>
                     <TextField
-                        id="password-input"
+                        id="password"
+                        name="password"
                         label="Password"
                         type="password"
                         value={password}
-                        sx={{ width: '550px' }}
                         onChange={handleInputChange}
                         error={Boolean(passwordError)}
                         helperText={passwordError}
+                        fullWidth
                     />
                 </Grid>
 
-                {/* Loading indicator and "Create account" button */}
-                <Grid item xs={12} display="flex">
-                    <CircularProgress style={{ marginLeft: '110px', visibility: isLoadingActive ? 'visible' : 'hidden' }} />
-
-                    <Button onClick={handleClickButton} variant="contained" style={{ marginLeft: '75px' }} disabled={isLoadingActive}>
+                {/* Loading indicator and "Log In" button */}
+                <Grid item xs={3} md={3} lg={3} xl={3}>
+                    <Button type="submit" variant="contained" disabled={isLoadingActive}>
                         Log In
                     </Button>
                 </Grid>
 
+                {isLoadingActive &&
+                <Grid item  xs={12} md={12} lg={12} xl={12}>
+                    <LinearProgress />
+                </Grid>}
+
                 {/* Snackbar for showing success or error messages */}
-                <Grid item xs={12}>
+                {showSnackbar && 
+                <Grid item xs={12} md={12} lg={12} xl={12}>
                     <Snackbar
                         open={showSnackbar}
                         autoHideDuration={5000}
                         onClose={handleSnackbarClose}
-                        sx={{ width: '550px', margin: '25px' }}
+                        anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center"
+                         }}
                     >
                         <Alert
                             elevation={6}
                             variant="filled"
                             onClose={handleSnackbarClose}
-                            severity={isSuccessSnackbar ? 'success' : 'error'}
+                            severity={'error'}
                             sx={{ width: '100%' }}
                         >
                             {snackbarMessage}
                         </Alert>
                     </Snackbar>
-                </Grid>
+                </Grid> }
             </Grid>
         </form>
 

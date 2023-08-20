@@ -25,4 +25,13 @@ public class GlobalExceptionHandler {
 		
 		return new ResponseEntity<>(errorResponse, exception.getStatus());
 	}
+	
+	@ExceptionHandler(UsernameNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException exeption) {
+	    ErrorResponse errorResponse = new ErrorResponse();
+	    
+	    errorResponse.setErrorMessage(exeption.getMessage());
+	    
+	    return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+	}
 }

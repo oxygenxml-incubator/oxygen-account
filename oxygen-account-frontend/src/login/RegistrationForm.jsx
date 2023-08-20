@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { TextField, Snackbar, CircularProgress, Button, Alert, Grid } from '@mui/material';
+import { TextField, Snackbar, LinearProgress, Button, Alert, Grid } from '@mui/material';
 
 
 /**
@@ -189,103 +189,98 @@ function RegistrationForm({ toggleForm }) {
     return (
         <form>
             {/* Grid container for layout */}
-            <Grid container spacing={2.5}>
-                <Grid item xs={12}>
-                    <h1 style = {{marginLeft: "140px"}}>Create new account</h1>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                        <h3 style = {{marginLeft: "20px"}}>Already a member?&nbsp;</h3>
-                        <a href="#" onClick={(e) => { e.preventDefault(); toggleForm(); }} className="link-style"  style={{ textDecoration: "none", fontSize: '20px', color: 'blue' }}>
-                            Log In
-                        </a>
-                        <h3>.</h3>
-                    </div>
-
-                </Grid>
-
+            <Grid container spacing={3}  justifyContent="center" alignItems="center">
                 {/* Name input field */}
-                <Grid item xs={12}>
+                <Grid item xs={12} md={12} lg={12} xl={12}>
                     <TextField
                         id="name-input"
                         label="Name"
                         variant="outlined"
                         value={name}
-                        sx={{ width: '550px' }}
                         onChange={handleInputChange}
                         error={Boolean(nameError)}
                         helperText={nameError}
+                        fullWidth
                     />
                 </Grid>
 
                 {/* Email input field */}
-                <Grid item xs={12}>
+                <Grid item xs={12} md={12} lg={12} xl={12}>
                     <TextField
                         id="email-input"
                         label="Email"
                         variant="outlined"
                         value={email}
-                        sx={{ width: '550px' }}
                         onChange={handleInputChange}
                         error={Boolean(emailError)}
                         helperText={emailError}
+                        fullWidth
                     />
                 </Grid>
 
                 {/* Password input field */}
-                <Grid item xs={12}>
+                <Grid item  xs={12} md={12} lg={12} xl={12}>
                     <TextField
                         id="password-input"
                         label="Password"
                         type="password"
                         value={password}
-                        sx={{ width: '550px' }}
                         onChange={handleInputChange}
                         error={Boolean(passwordError)}
                         helperText={passwordError}
+                        fullWidth
                     />
                 </Grid>
 
                 {/* Confirm Password input field */}
-                <Grid item xs={12}>
+                <Grid item  xs={12} md={12} lg={12} xl={12}>
                     <TextField
                         id="confirmPassword-input"
                         label="Confirm Password"
                         type="password"
                         value={confirmPassword}
-                        sx={{ width: '550px' }}
                         onChange={handleInputChange}
                         error={Boolean(confirmPasswordError)}
                         helperText={confirmPasswordError}
+                        fullWidth
                     />
                 </Grid>
 
                 {/* Loading indicator and "Create account" button */}
-                <Grid item xs={12} display="flex">
-                    <CircularProgress style={{ marginLeft: '110px', visibility: isLoadingActive ? 'visible' : 'hidden' }} />
-
-                    <Button onClick={handleClickButton} variant="contained" style={{ marginLeft: '30px' }} disabled={isLoadingActive}>
+                <Grid item  xs={4} md={4} lg={4} xl={4}>
+                    <Button onClick={handleClickButton} variant="contained" disabled={isLoadingActive}>
                         Create account
                     </Button>
                 </Grid>
 
+                {isLoadingActive &&
+                <Grid item  xs={12} md={12} lg={12} xl={12}>
+                    <LinearProgress />
+                </Grid>}
+                
+
                 {/* Snackbar for showing success or error messages */}
-                <Grid item xs={12}>
+                {showSnackbar &&
+                <Grid item  xs={12} md={12} lg={12} xl={12}>
                     <Snackbar
                         open={showSnackbar}
                         autoHideDuration={5000}
                         onClose={handleSnackbarClose}
-                        sx={{ width: '550px', margin: '25px' }}
+                        anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center"
+                         }}
                     >
                         <Alert
                             elevation={6}
                             variant="filled"
                             onClose={handleSnackbarClose}
                             severity={isSuccessSnackbar ? 'success' : 'error'}
-                            sx={{ width: '100%' }}
                         >
                             {snackbarMessage}
                         </Alert>
                     </Snackbar>
-                </Grid>
+                </Grid>}
             </Grid>
         </form>
 

@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.MuiCardHeader-title {
+    text-align: center;
+}
+
+.MuiCard-root {
+    border: 2px solid #ccc;
+}
+
