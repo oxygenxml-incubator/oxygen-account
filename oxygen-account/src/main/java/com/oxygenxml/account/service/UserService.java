@@ -49,6 +49,12 @@ public class UserService {
 		
 	}
 	
+	/**
+	 *  Retrieves a User entity based on the provided email from the database.
+	 *  
+	 * @param email The email of the User entity to retrieve.
+	 * @return A User entity that matches the provided email, or null if no matching User entity is found.
+	 */
 	public User getUserByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}

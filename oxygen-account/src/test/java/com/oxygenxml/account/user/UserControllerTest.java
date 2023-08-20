@@ -147,6 +147,5 @@ public class UserControllerTest {
 	  .andExpect(jsonPath("$.messageId", is(Messages.EMPTY_FIELD.getId())));
 	  
   }
-
 }
 

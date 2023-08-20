@@ -9,12 +9,25 @@ import org.springframework.stereotype.Service;
 
 import com.oxygenxml.account.messages.Messages;
 
+/**
+ * Service implementation for loading user-specific data for authentication purposes.
+ */
 @Service
 public class OxygenUserDetailsService implements UserDetailsService {
 
+	/**
+	 * Service for fetching user details from the database.
+	 */
 	@Autowired
 	private UserService userService;
 
+	/**
+	 * Loads a user by their email, primarily for authentication checks.
+	 * 
+	 * @param email the email of the user to load
+     * @return the user details associated with the provided email
+     * @throws UsernameNotFoundException if a user with the provided email is not found
+	 */
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		

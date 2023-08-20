@@ -19,12 +19,24 @@ import com.oxygenxml.account.service.OxygenUserDetailsService;
 @EnableWebSecurity
 public class WebSecurityConfiguration {
 
+	/**
+	 *  Service for user details retrieval.
+	 */
 	@Autowired
 	private OxygenUserDetailsService userDetailsService;
 	
+	/**
+	 * Instance of BCryptPasswordEncoder used for encoding the password
+	 */
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	/**
+     * Configures authentication using user details and password encoder.
+     *
+     * @param auth the authentication manager builder
+     * @throws Exception if any configuration issues occur
+     */
 	@Autowired
 	public void configure(AuthenticationManagerBuilder auth) throws Exception{
 		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
