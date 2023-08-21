@@ -1,17 +1,20 @@
 import * as React from 'react';
 import { AppBar, Typography, Toolbar, Container } from "@mui/material";
 
+/**
+ * Header component displaying the application's logo and title.
+
+ * @returns {JSX.Element} The JSX representation of the Header component.
+ */
 function Header() {
-    const logoPathElement = document.querySelector('meta[name="logo-path"]');
-
-    let path = logoPathElement.getAttribute('content');
-
     return (
+        /* App Bar for Header */
         <AppBar position="static" style={{ backgroundColor: '#F0F0F0'}}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
+                    {/* Logo */}
                     <img
-                        src={path}
+                        src="/img/logo.jpg"
                         alt="Logo"
                         style={{
                             width: 40,
@@ -20,6 +23,8 @@ function Header() {
                             display: { xs: 'none', md: 'flex' }
                         }}
                     />
+
+                    {/* Title */}
                     <Typography 
                         variant="h6" 
                         component="div" 

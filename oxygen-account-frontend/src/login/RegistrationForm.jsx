@@ -5,7 +5,7 @@ import { TextField, Snackbar, LinearProgress, Button, Alert, Grid } from '@mui/m
 
 /**
  * Component for registering accounts in a database.
- * This component returns a form for users to provide their name, email, and password.
+ * This component returns a form for users to provide their name, email and password.
  */
 function RegistrationForm({ toggleForm }) {
     // State variable for the user's name.
@@ -55,28 +55,28 @@ function RegistrationForm({ toggleForm }) {
     const handleInputChange = (event) => {
         const { id, value } = event.target;
 
-        if (id === "name-input") {
+        if (id === "name-register") {
             setName(value);
 
             if (nameError !== '') {
                 setNameError('');
             }
         }
-        else if (id === "email-input") {
+        else if (id === "email-register") {
             setEmail(value);
 
             if (emailError !== '') {
                 setEmailError('');
             }
         }
-        else if (id === "password-input") {
+        else if (id === "password-register") {
             setPassword(value);
 
             if (passwordError !== '') {
                 setPasswordError('');
             }
         }
-        else if (id === "confirmPassword-input") {
+        else if (id === "confirmPassword-register") {
             setConfirmPassword(value);
 
             if (confirmPasswordError !== '') {
@@ -189,11 +189,11 @@ function RegistrationForm({ toggleForm }) {
     return (
         <form>
             {/* Grid container for layout */}
-            <Grid container spacing={3}  justifyContent="center" alignItems="center">
+            <Grid container spacing={3} direction="column">
                 {/* Name input field */}
-                <Grid item xs={12} md={12} lg={12} xl={12}>
+                <Grid item>
                     <TextField
-                        id="name-input"
+                        id="name-register"
                         label="Name"
                         variant="outlined"
                         value={name}
@@ -205,9 +205,9 @@ function RegistrationForm({ toggleForm }) {
                 </Grid>
 
                 {/* Email input field */}
-                <Grid item xs={12} md={12} lg={12} xl={12}>
+                <Grid item>
                     <TextField
-                        id="email-input"
+                        id="email-register"
                         label="Email"
                         variant="outlined"
                         value={email}
@@ -219,9 +219,9 @@ function RegistrationForm({ toggleForm }) {
                 </Grid>
 
                 {/* Password input field */}
-                <Grid item  xs={12} md={12} lg={12} xl={12}>
+                <Grid item>
                     <TextField
-                        id="password-input"
+                        id="password-register"
                         label="Password"
                         type="password"
                         value={password}
@@ -233,9 +233,9 @@ function RegistrationForm({ toggleForm }) {
                 </Grid>
 
                 {/* Confirm Password input field */}
-                <Grid item  xs={12} md={12} lg={12} xl={12}>
+                <Grid item>
                     <TextField
-                        id="confirmPassword-input"
+                        id="confirmPassword-register"
                         label="Confirm Password"
                         type="password"
                         value={confirmPassword}
@@ -246,22 +246,23 @@ function RegistrationForm({ toggleForm }) {
                     />
                 </Grid>
 
-                {/* Loading indicator and "Create account" button */}
-                <Grid item  xs={4} md={4} lg={4} xl={4}>
+                {/* "Create account" button */}
+                <Grid item container justifyContent="center">
                     <Button onClick={handleClickButton} variant="contained" disabled={isLoadingActive}>
                         Create account
                     </Button>
                 </Grid>
 
+                {/* Conditionally render the loading indicator if isLoadingActive is true */}
                 {isLoadingActive &&
-                <Grid item  xs={12} md={12} lg={12} xl={12}>
+                <Grid item>
                     <LinearProgress />
                 </Grid>}
                 
 
-                {/* Snackbar for showing success or error messages */}
+                {/* Conditionally render the Snackbar for showing success or error messages if showSnackbar is true */}
                 {showSnackbar &&
-                <Grid item  xs={12} md={12} lg={12} xl={12}>
+                <Grid item>
                     <Snackbar
                         open={showSnackbar}
                         autoHideDuration={5000}

@@ -1,14 +1,12 @@
 import React from 'react';
-import { useState } from 'react';
-import { TextField, Snackbar, LinearProgress, Button, Alert, Grid } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { TextField, Snackbar, Button, Alert, Grid } from '@mui/material';
 
 /**
- * Component for registering accounts in a database.
- * This component returns a form for users to provide their name, email, and password.
+ * Component for verify accounts in a database.
+ * This component returns a form for users to provide their email and password.
  */
 function LoginForm({ toggleForm }) {
-
-
     // State variable for the user's email address.
     const [email, setEmail] = useState('');
 
@@ -21,15 +19,11 @@ function LoginForm({ toggleForm }) {
     // State variable for storing error message related to the password field.
     const [passwordError, setPasswordError] = useState('');
 
-    // State variable indicating when the form submission is in progress.
-    const [isLoadingActive, setisLoadingActive] = useState(false);
-
     // State variable for showing or hiding the Snackbar component.
     const [showSnackbar, setShowSnackbar] = useState(false);
 
     // State variable for storing the message to display in the Snackbar.
     const [snackbarMessage, setSnackbarMessage] = useState('');
-
 
     /**
      * Handle input change event for text fields.
@@ -66,7 +60,6 @@ function LoginForm({ toggleForm }) {
         let isPasswordValid = password.trim() !== '';
 
         // Set an error message for each field if it is invalid.
-
         setEmailError(isEmailValid ? '' : 'Empty email.');
         setPasswordError(isPasswordValid ? '' : 'Empty password.');
 
@@ -80,43 +73,40 @@ function LoginForm({ toggleForm }) {
         setShowSnackbar(false);
     };
 
-    // const handleSubmitForm = (event) => {
-    //     if (!validateInputs()) {
-    //         event.preventDefault();
-    //     }
-    //     else {
-    //         if (window.location.hash === '#invalid-user') {
-    //             event.preventDefault();
-    //             setShowSnackbar(true);
-    //             setSnackbarMessage('Invalid user');
-    //         }
-    //     }
-
-    //     window.location.hash = '';
-    // };
-
+    /**
+     * Handles the form submission. Prevents form submission if inputs are not validated.
+     * 
+     * @param {Event} event - The form submission event.
+     */
     const handleSubmitForm = (event) => {
         if (!validateInputs()) {
             event.preventDefault();
         }
-    
-     
-    
-        if (window.location.hash === '#invalid-user') {
-            setShowSnackbar(true);
-            setSnackbarMessage('Invalid user');
-            window.location.hash = '';
-            return;
-        }
     };
 
+    /**
+     * Checks if the URL hash is '#invalid-user', and displays a Snackbar with an error message if true.
+     */
+    function handleInvalidUserHash() {
+        if (window.location.hash === '#invalid-user') {
+            setShowSnackbar(true);
+            setSnackbarMessage('Invalid email or password');
+        }
+    }
+
+    /**
+     * Effect that calls the hash verification method on every page load.
+     */
+    useEffect(() => {
+        handleInvalidUserHash();
+     }, []);
 
     return (
         <form action="/login" method='POST' onSubmit={handleSubmitForm}>
             {/* Grid container for layout */}
-            <Grid container spacing={3} justifyContent="center" alignItems="center">
+            <Grid container spacing={3} direction="column" >
                 {/* Email input field */}
-                <Grid item xs={12} md={12} lg={12} xl={12}>
+                <Grid item>
                     <TextField
                         id="email"
                         name="email"
@@ -131,7 +121,7 @@ function LoginForm({ toggleForm }) {
                 </Grid>
 
                 {/* Password input field */}
-                <Grid item xs={12} md={12} lg={12} xl={12}>
+                <Grid item>
                     <TextField
                         id="password"
                         name="password"
@@ -145,21 +135,16 @@ function LoginForm({ toggleForm }) {
                     />
                 </Grid>
 
-                {/* Loading indicator and "Log In" button */}
-                <Grid item xs={3} md={3} lg={3} xl={3}>
-                    <Button type="submit" variant="contained" disabled={isLoadingActive}>
+                {/* "Log In" button */}
+                <Grid item container justifyContent="center">
+                    <Button type="submit" variant="contained">
                         Log In
                     </Button>
                 </Grid>
 
-                {isLoadingActive &&
-                <Grid item  xs={12} md={12} lg={12} xl={12}>
-                    <LinearProgress />
-                </Grid>}
-
-                {/* Snackbar for showing success or error messages */}
+                {/* Conditionally render the Snackbar for showing success or error messages if showSnackbar is true */}
                 {showSnackbar && 
-                <Grid item xs={12} md={12} lg={12} xl={12}>
+                <Grid item>
                     <Snackbar
                         open={showSnackbar}
                         autoHideDuration={5000}
