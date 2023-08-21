@@ -21,6 +21,9 @@ import com.oxygenxml.account.service.OxygenUserDetailsService;
 @EnableWebSecurity
 public class WebSecurityConfiguration {
 
+	/**
+	 * The redirect URL for situations where a user is invalid.
+	 */
 	private static final String INVALID_USER_URL = "/login#invalid-user";
 	/**
 	 *  Service for user details retrieval.
