@@ -21,6 +21,7 @@ import com.oxygenxml.account.service.OxygenUserDetailsService;
 @EnableWebSecurity
 public class WebSecurityConfiguration {
 
+	private static final String INVALID_USER_URL = "/login#invalid-user";
 	/**
 	 *  Service for user details retrieval.
 	 */
@@ -52,7 +53,7 @@ public class WebSecurityConfiguration {
 	@Bean
 	public AuthenticationFailureHandler authenticationFailureHandler() {
 	    SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
-	    failureHandler.setDefaultFailureUrl("/login#invalid-user");
+	    failureHandler.setDefaultFailureUrl(INVALID_USER_URL);
 	    return failureHandler;
 	}
 	
