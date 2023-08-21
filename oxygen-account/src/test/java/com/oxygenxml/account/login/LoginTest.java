@@ -37,15 +37,27 @@ import com.oxygenxml.account.service.OxygenUserDetailsService;
 @ActiveProfiles("test")
 class LoginTest {
 	
+	/**
+	 * The MockMvc instance is used for simulating HTPP requests
+	 */
     @Autowired
     private MockMvc mockMvc;
     
+    /**
+     * Encoder for encoding and matching passwords.
+     */
     @Autowired
     private PasswordEncoder passwordEncoder;
     
+    /**
+     * Mocked user details service for user-related operations.
+     */
     @MockBean
     private OxygenUserDetailsService userDetailsService;
     
+    /**
+     * Setting up a mock user before each test.
+     */
     @BeforeEach
     void buildUser() {
         UserDetails mockUser = User.builder()
@@ -57,6 +69,11 @@ class LoginTest {
             .thenReturn(mockUser);
     }
     
+    /**
+     * Tests if the authentication is successful.
+     * 
+     * @throws Exception if an error occurs during the test
+     */
     @Test
     void testSuccessfulAuthentication() throws Exception {
     	
@@ -67,24 +84,54 @@ class LoginTest {
                .andExpect(status().isFound());
     }
     
+    /**
+     * Tests accessing the profile path before logging in and after log in.
+     * 
+     * @throws Exception if an error occurs during the test
+     */
     @Test
-    void testAccesProfilePath() throws Exception{
+    void testAccesProfilePathBeforeLogin() throws Exception{
     	
-    	 ResultActions resultActions = mockMvc.perform(post("/login")
+    	mockMvc.perform(get("/profile"))
+        .andExpect(status().isFound()) 
+        .andExpect(redirectedUrlPattern("**/login"));
+    	
+    	  mockMvc.perform(post("/login")
     			.contentType(APPLICATION_FORM_URLENCODED)
     			.param("email", "test@email.com")
     			.param("password", "testPassword"))
     			.andExpect(status().isFound())
     			.andExpect(redirectedUrl("/"));
-    	
-    	 MvcResult result = resultActions.andReturn();
-    	 MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
-
-    	 mockMvc.perform(get("/profile").session(session))
-         .andExpect(status().isOk())
-         .andExpect(view().name("profile"));
     }
     
+    /**
+     * Tests accessing the profile path in another window after a user log in.
+     * 
+     * @throws Exception if an error occurs during the test
+     */
+    @Test
+    void testAccesProfilePathInAnotherWindows() throws Exception {
+    	
+    	 ResultActions resultActions = mockMvc.perform(post("/login")
+     			.contentType(APPLICATION_FORM_URLENCODED)
+     			.param("email", "test@email.com")
+     			.param("password", "testPassword"))
+     			.andExpect(status().isFound())
+     			.andExpect(redirectedUrl("/"));
+     	
+     	 MvcResult result = resultActions.andReturn();
+     	 MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+
+     	 mockMvc.perform(get("/profile").session(session))
+          .andExpect(status().isOk())
+          .andExpect(view().name("profile"));
+    }
+    
+    /**
+     * Tests if authentication fails when a user with the wrong credentials is entered.
+     * 
+     * @throws Exception if an error occurs during the test
+     */
     @Test
     void testUnsuccessfulAuthentication() throws Exception {
     	
@@ -96,6 +143,11 @@ class LoginTest {
                .andExpect(redirectedUrl("/login#invalid-user"));
     }
     
+    /**
+     * Tests if the user can't access the profile without authentication.
+     * 
+     * @throws Exception if an error occurs during the test
+     */
     @Test
     void testCantAccesProfile() throws Exception{
     	

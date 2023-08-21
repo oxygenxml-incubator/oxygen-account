@@ -48,6 +48,9 @@ public enum InternalErrorCode {
 	 */
 	THE_CURRENT_REQUEST_VALIDATION_FAILED(1008),
 	
+	/**
+	 * The error that occurs when the users isn't found when he trying to log in.
+	 */
 	USER_NOT_FOUND(1009);
 	
 	/**

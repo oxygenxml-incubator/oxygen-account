@@ -44,6 +44,11 @@ public class WebSecurityConfiguration {
 		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
 	}
 	
+	/**
+	 * Creates a handler for authentication failures, redirecting the user to the login page with an "#invalid-user" URL hash if authentificatio fails
+	 * 
+	 * @return the authentification failure handler
+	 */
 	@Bean
 	public AuthenticationFailureHandler authenticationFailureHandler() {
 	    SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();

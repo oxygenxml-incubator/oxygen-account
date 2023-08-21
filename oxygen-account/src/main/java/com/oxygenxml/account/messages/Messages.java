@@ -50,8 +50,11 @@ public enum Messages {
 	 * ID corresponding to the message indicating that the field is too short.
 	 */
 	 SHORT_FIELD("SHORT_FIELD", "Input field is too short. Please enter a longer value."),
-	
-	USER_NOT_FOUND("USER_NOT_FOUND", "A user with this email doesn't exist.");
+	 
+	 /**
+	  * ID corresponding to the message indicating that the email or password are incorrect
+	  */
+	USER_NOT_FOUND("USER_NOT_FOUND", "Incorrect email or password.");
 
 	
 	/**
