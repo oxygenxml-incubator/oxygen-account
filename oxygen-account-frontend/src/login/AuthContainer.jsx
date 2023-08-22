@@ -1,15 +1,31 @@
+import "./GlobalStyle.css";
+
 import React from "react";
-import RegistrationForm from "./RegistrationForm.jsx";
+import Header from "./Header.jsx";
+import AuthCard from "./AuthCard.jsx";
+import { Grid } from "@mui/material";
+
 
 /**
- * Login component responsible for rendering the registration form.
- * @returns {JSX.Element} The JSX representation of the Login component.
+ * Component responsible for user authentication and rendering of both login and registration forms.
+ * @returns {JSX.Element} The JSX representation of the Authentication component.
  */
 export default function AuthContainer() {
+ 
   return (
-    <div>
-      <RegistrationForm />
-    </div>
+    /* Main Container */
+    <Grid container direction="column">
+      {/* Header Section */}
+      <Grid item container>
+        <Header />
+      </Grid>
+
+      {/* Authentication Forms Section */}
+      <Grid item container>
+        <AuthCard />
+      </Grid>
+
+    </Grid>
   );
 };
 

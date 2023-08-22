@@ -50,6 +50,11 @@ public enum Message {
 	 * ID corresponding to the message indicating that the field is too short.
 	 */
 	 SHORT_FIELD("SHORT_FIELD", "Input field is too short. Please enter a longer value."),
+	 
+	 /**
+	  * ID corresponding to the message indicating that the email or password are incorrect
+	  */
+	USER_NOT_FOUND("USER_NOT_FOUND", "Incorrect email or password."),
 	
 	 /**
 	  * ID corresponding to the message indicating that the validation failed.

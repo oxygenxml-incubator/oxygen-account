@@ -1,14 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
-import { TextField, Snackbar, CircularProgress, Button, Alert, Grid } from '@mui/material';
+import { TextField, Snackbar, LinearProgress, Button, Alert, Grid } from '@mui/material';
 
 
 /**
  * Component for registering accounts in a database.
- * This component returns a form for users to provide their name, email, and password.
+ * This component returns a form for users to provide their name, email and password.
  */
-function RegistrationForm() {
-    
+function RegistrationForm({ toggleForm }) {
     // State variable for the user's name.
     const [name, setName] = useState('');
 
@@ -56,31 +55,31 @@ function RegistrationForm() {
     const handleInputChange = (event) => {
         const { id, value } = event.target;
 
-        if (id === "name-input") {
+        if (id === "name-register") {
             setName(value);
 
-            if(nameError !== '') {
+            if (nameError !== '') {
                 setNameError('');
             }
         }
-        else if (id === "email-input") {
+        else if (id === "email-register") {
             setEmail(value);
 
-            if(emailError !== '') {
+            if (emailError !== '') {
                 setEmailError('');
             }
         }
-        else if (id === "password-input") {
+        else if (id === "password-register") {
             setPassword(value);
 
-            if(passwordError !== '') {
+            if (passwordError !== '') {
                 setPasswordError('');
             }
         }
-        else if (id === "confirmPassword-input") {
+        else if (id === "confirmPassword-register") {
             setConfirmPassword(value);
 
-            if(confirmPasswordError !== '') {
+            if (confirmPasswordError !== '') {
                 setConfirmPasswordError('');
             }
         }
@@ -190,96 +189,99 @@ function RegistrationForm() {
     return (
         <form>
             {/* Grid container for layout */}
-            <Grid container spacing={3} style={{ margin: '20px' }}>
-                <Grid item xs={12}>
-                    <h1>Create new account</h1>
-                    <h3>Already a member? Log In</h3>
-                </Grid>
-
+            <Grid container spacing={3} direction="column">
                 {/* Name input field */}
-                <Grid item xs={12}>
+                <Grid item>
                     <TextField
-                        id="name-input"
+                        id="name-register"
                         label="Name"
                         variant="outlined"
                         value={name}
-                        sx = {{width: '550px'}}
                         onChange={handleInputChange}
                         error={Boolean(nameError)}
                         helperText={nameError}
+                        fullWidth
                     />
                 </Grid>
 
                 {/* Email input field */}
-                <Grid item xs={12}>
+                <Grid item>
                     <TextField
-                        id="email-input"
+                        id="email-register"
                         label="Email"
                         variant="outlined"
                         value={email}
-                        sx = {{width: '550px'}}
                         onChange={handleInputChange}
                         error={Boolean(emailError)}
                         helperText={emailError}
+                        fullWidth
                     />
                 </Grid>
 
                 {/* Password input field */}
-                <Grid item xs={12}>
+                <Grid item>
                     <TextField
-                        id="password-input"
+                        id="password-register"
                         label="Password"
                         type="password"
                         value={password}
-                        sx = {{width: '550px'}}
                         onChange={handleInputChange}
                         error={Boolean(passwordError)}
                         helperText={passwordError}
+                        fullWidth
                     />
                 </Grid>
 
                 {/* Confirm Password input field */}
-                <Grid item xs={12}>
+                <Grid item>
                     <TextField
-                        id="confirmPassword-input"
+                        id="confirmPassword-register"
                         label="Confirm Password"
                         type="password"
                         value={confirmPassword}
-                        sx = {{width: '550px'}}
                         onChange={handleInputChange}
                         error={Boolean(confirmPasswordError)}
                         helperText={confirmPasswordError}
+                        fullWidth
                     />
                 </Grid>
 
-                {/* Loading indicator and "Create account" button */}
-                <Grid item xs={12} display="flex">
-                    <CircularProgress style={{ marginLeft: '110px', visibility: isLoadingActive ? 'visible' : 'hidden' }} />
-
-                    <Button onClick={handleClickButton} variant="contained" style={{ marginLeft: '30px' }} disabled={isLoadingActive}>
+                {/* "Create account" button */}
+                <Grid item container justifyContent="center">
+                    <Button onClick={handleClickButton} variant="contained" disabled={isLoadingActive}>
                         Create account
                     </Button>
                 </Grid>
 
-                {/* Snackbar for showing success or error messages */}
-                <Grid item xs={12}>
+                {/* Conditionally render the loading indicator if isLoadingActive is true */}
+                {isLoadingActive &&
+                <Grid item>
+                    <LinearProgress />
+                </Grid>}
+                
+
+                {/* Conditionally render the Snackbar for showing success or error messages if showSnackbar is true */}
+                {showSnackbar &&
+                <Grid item>
                     <Snackbar
                         open={showSnackbar}
                         autoHideDuration={5000}
                         onClose={handleSnackbarClose}
-                        sx = {{width: '550px', margin: '25px'}}
+                        anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center"
+                         }}
                     >
                         <Alert
                             elevation={6}
                             variant="filled"
                             onClose={handleSnackbarClose}
                             severity={isSuccessSnackbar ? 'success' : 'error'}
-                            sx = {{width: '100%'}}
                         >
                             {snackbarMessage}
                         </Alert>
                     </Snackbar>
-                </Grid>
+                </Grid>}
             </Grid>
         </form>
 

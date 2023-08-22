@@ -16,10 +16,13 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 /**
- * Test case to validate the display of error messages for invalid input data.
+ * Test case to validate the display of error messages for invalid input data in register form.
  */
-test('displays error messages for invalid data', () => {
+test('displays error messages for invalid data in register form', () => {
   render(<AuthContainer />);
+
+  // Switch to register form
+  fireEvent.click(screen.getByText('Create an account'));
 
   // Get input elements and simulate invalid data
   const inputName = screen.getByLabelText('Name');
@@ -64,6 +67,9 @@ test('sends registration request for valid data', async () => {
 
   render(<AuthContainer />);
 
+  // Switch to register form
+  fireEvent.click(screen.getByText('Create an account'));
+
   // Get input elements and simulate valid data
   const inputName = screen.getByLabelText('Name');
   fireEvent.change(inputName, { target: { value: 'Costescu Constantin-Marius' } });
@@ -103,7 +109,11 @@ test('sends registration request with used email', async () => {
       );
     })
   );
+
   render(<AuthContainer />);
+
+  // Switch to register form
+  fireEvent.click(screen.getByText('Create an account'));
 
   // Get input elements and simulate valid data (with already used email)
   const inputName = screen.getByLabelText('Name');
@@ -131,7 +141,7 @@ test('sends registration request with used email', async () => {
 /**
  * Test case to simulate a network error during the registration request.
  */
-test('network error', async () => {
+test('network error on register submit', async () => {
   // Mock a network error response
   server.use(
     rest.post('/api/users/register', async (req, res, ctx) => {
@@ -140,6 +150,9 @@ test('network error', async () => {
   );
 
   render(<AuthContainer />);
+
+  // Switch to register form
+  fireEvent.click(screen.getByText('Create an account'));
 
   // Get input elements and simulate valid data
   const inputName = screen.getByLabelText('Name');
@@ -165,9 +178,9 @@ test('network error', async () => {
 
 
 /**
- * Test case that simulates pressing the close button on the Snackbar.
+ * Test case that simulates pressing the close button on the Snackbar from register page.
  */
-test('closes Snackbar when close button is clicked', async () => {
+test('closes Snackbar from register page when close button is clicked', async () => {
   // Mock a successful registration response
   server.use(
     rest.post('/api/users/register', async (req, res, ctx) => {
@@ -182,6 +195,9 @@ test('closes Snackbar when close button is clicked', async () => {
   );
 
   render(<AuthContainer />);
+
+  // Switch to register form
+  fireEvent.click(screen.getByText('Create an account'));
 
   // Get input elements and simulate valid data
   const inputName = screen.getByLabelText('Name');
@@ -216,9 +232,9 @@ test('closes Snackbar when close button is clicked', async () => {
 
 
 /**
- * Test case to verify that input fields are reset after successful form submission.
+ * Test case to verify that input fields are reset after successful register form submission.
  */
-test('input fields are reset after successful submission', async () => {
+test('input fields are reset after successful submission of register form', async () => {
   // Mock a successful registration response
   server.use(
     rest.post('/api/users/register', async (req, res, ctx) => {
@@ -233,6 +249,9 @@ test('input fields are reset after successful submission', async () => {
   );
 
   render(<AuthContainer />);
+
+  // Switch to register form
+  fireEvent.click(screen.getByText('Create an account'));
 
   // Get input elements and simulate valid data
   const inputName = screen.getByLabelText('Name');
@@ -260,4 +279,26 @@ test('input fields are reset after successful submission', async () => {
   expect(screen.getByLabelText('Email')).toHaveValue('');
   expect(screen.getByLabelText('Password')).toHaveValue('');
   expect(screen.getByLabelText('Confirm Password')).toHaveValue('');
+});
+
+
+/**
+ * Test case to validate the display of error messages for invalid input data in login form.
+ */
+test('displays error messages for invalid data in login form', () => {
+  render(<AuthContainer />);
+
+  // Get input elements and simulate invalid data
+  const inputName = screen.getByLabelText('Email');
+  fireEvent.change(inputName, { target: { value: '' } });
+
+  const inputEmail = screen.getByLabelText('Password');
+  fireEvent.change(inputEmail, { target: { value: '' } });
+
+  // Click the "Log In" button
+  fireEvent.click(screen.getByRole('button', { name: 'Log In' }));
+
+  // Verify the presence of expected error messages
+  expect(screen.getByText('Empty email.')).toBeInTheDocument();
+  expect(screen.getByText('Empty password.')).toBeInTheDocument();
 });
