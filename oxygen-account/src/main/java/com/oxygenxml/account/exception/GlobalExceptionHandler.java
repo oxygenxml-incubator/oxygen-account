@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
 	/**
-	 * method handles OxygenAccountExceptions that may be thrown during the execution of HTTP requests.
+	 * Method handles OxygenAccountExceptions that may be thrown during the execution of HTTP requests.
 	 * @param exception the instance of OxygenAccountExceptions that has been thrown.
 	 * @return ResponseEntity<ErrorResponse> this is the HTTP response containing the details of the exception that was handled.
 	 */
@@ -25,4 +25,24 @@ public class GlobalExceptionHandler {
 		
 		return new ResponseEntity<>(errorResponse, exception.getStatus());
 	}
+	
+	/**
+	 * Method handles MultipleOxygenAccountException that may be thrown during the execution of HTTP request
+	 * @param exception the instance of MultipleOxygenAccountException that has been thrown.
+	 * @return ResponseEntity<ErrorResponse> this is the HTTP response containing the details of the exception that was handled
+	 */
+	@ExceptionHandler(MultipleOxygenAccountException.class)
+	public ResponseEntity<ErrorResponse> handleMultipleOxygenAccountException(MultipleOxygenAccountException exception) {
+		ErrorResponse errorResponse = new ErrorResponse();
+
+		errorResponse.setInternalErrorCode(exception.getErrorCode().getInternalErrorCode());
+		errorResponse.setErrors(exception.getFieldErrors());
+		errorResponse.setErrorMessage(exception.getMessage());
+		errorResponse.setMessageId(exception.getMessageId());
+	
+		return new ResponseEntity<>(errorResponse, exception.getStatus());
+	}
 }
+
+	
+

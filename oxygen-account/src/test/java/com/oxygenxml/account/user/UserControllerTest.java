@@ -16,11 +16,14 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import static org.hamcrest.Matchers.hasItem;
+
+
 
 import com.oxygenxml.account.OxygenAccountApplication;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.utility.JsonUtil;
-import com.oxygenxml.account.messages.Messages;
+import com.oxygenxml.account.messages.Message;
 
 /**
  * The UserControllerTest class tests the functionality of UserController
@@ -36,116 +39,146 @@ import com.oxygenxml.account.messages.Messages;
 	@Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:db/ClearDatabase.sql")
 })
 public class UserControllerTest {
-	
 
-  /**
-   * The MockMvc instance is used for simulating HTPP requests
-   */
-  @Autowired
-  private MockMvc mockMvc;
+	/**
+	 * The MockMvc instance is used for simulating HTPP requests
+	 */
+	@Autowired
+	private MockMvc mockMvc;
 
-  /**
-   * The testRegisterUser method tests the user registration functionality.
-   *  It attempts to register a new user
-   * @throws Exception if the test encounters any errors.
-   */
-  @Test
-  public void testRegisterUser() throws Exception {
-    UserDto newUser = new UserDto();
+	/**
+	 * The testRegisterUser method tests the user registration functionality.
+	 *  It attempts to register a new user
+	 * @throws Exception if the test encounters any errors.
+	 */
+	@Test
+	void testRegisterUser() throws Exception {
+		UserDto newUser = new UserDto();
 
-    newUser.setName("test");
-    newUser.setEmail("teesting@test.com");
-    newUser.setPassword("testtesttest");
+		newUser.setName("test");
+		newUser.setEmail("teesting@test.com");
+		newUser.setPassword("testtesttest");
 
-    ResultActions resultAction = mockMvc.perform(post("/api/users/register")
-        .contentType("application/json")
-        .content(JsonUtil.asJsonString(newUser)));
-    resultAction.andExpect(status().isOk());
-  }
+		ResultActions resultAction = mockMvc.perform(post("/api/users/register")
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(newUser)));
+		resultAction.andExpect(status().isOk());
+	}
 
-  /**
-   * The testRegisterSameEmail method tests whether another user with the same email can be registered
-   * It registers an initial user, then attempts to register a new user with the same email.
-   * @throws Exception if the test encounters any errors
-   */
-  @Test
-  public void testRegisterSameEmail() throws Exception{
-    UserDto newUser = new UserDto();
+	/**
+	 * The testRegisterSameEmail method tests whether another user with the same email can be registered
+	 * It registers an initial user, then attempts to register a new user with the same email.
+	 * @throws Exception if the test encounters any errors
+	 */
+	@Test
+	void testRegisterSameEmail() throws Exception{
+		UserDto newUser = new UserDto();
 
-    newUser.setName("Test");
-    newUser.setEmail("test@gmail.com");
-    newUser.setPassword("password");
+		newUser.setName("Test");
+		newUser.setEmail("test@gmail.com");
+		newUser.setPassword("password");
 
-    ResultActions resultAction = mockMvc.perform(post("/api/users/register")
-        .contentType("application/json")
-        .content(JsonUtil.asJsonString(newUser)));
-    resultAction.andExpect(status().isConflict())
-    .andExpect(jsonPath("$.errorMessage", is(Messages.EMAIL_ALREADY_EXISTS.getMessage())))
-    .andExpect(jsonPath("$.internalErrorCode", is(1001)))
-    .andExpect(jsonPath("$.messageId", is(Messages.EMAIL_ALREADY_EXISTS.getId())));
-  }
-  /**
-   * The testInvalidEmail method tests the registration with an invalid email.
-   * @throws Exception
-   */
-  @Test
-  public void testInvalidEmail() throws Exception {
-    UserDto newUserDto = new UserDto();
-    newUserDto.setName("Test");
-    newUserDto.setEmail("invalidemail");
-    newUserDto.setPassword("password");
+		ResultActions resultAction = mockMvc.perform(post("/api/users/register")
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(newUser)));
+		resultAction.andExpect(status().isConflict())
+		.andExpect(jsonPath("$.errorMessage", is(Message.EMAIL_ALREADY_EXISTS.getMessage())))
+		.andExpect(jsonPath("$.internalErrorCode", is(1001)))
+		.andExpect(jsonPath("$.messageId", is(Message.EMAIL_ALREADY_EXISTS.getId())));
+	}
 
-    ResultActions resultAction = mockMvc.perform(post("/api/users/register")
-        .contentType("application/json")
-        .content(JsonUtil.asJsonString(newUserDto)));
+	/**
+	 * The testInvalidEmail method tests the registration with an invalid email.
+	 * @throws Exception
+	 */
+	@Test
+	void testInvalidEmail() throws Exception {
+		UserDto newUserDto = new UserDto();
+		newUserDto.setName("Test");
+		newUserDto.setEmail("invalidemail");
+		newUserDto.setPassword("password");
 
-    resultAction.andExpect(status().isUnprocessableEntity())
-      .andExpect(jsonPath("$.errorMessage", is(Messages.EMAIL_INVALID.getMessage())))
-      .andExpect(jsonPath("$.internalErrorCode", is(1008)))
-      .andExpect(jsonPath("$.messageId", is(Messages.EMAIL_INVALID.getId())));
+		ResultActions resultAction = mockMvc.perform(post("/api/users/register")
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(newUserDto)));
 
-  }
-  /**
-   * The testInvalidPassword tests the registration with an invalid password.
-   * @throws Exception
-   */
-  @Test
-  public void testInvalidPassword() throws Exception{
-	  UserDto newUserDto = new UserDto();
-	  newUserDto.setName("Test");
-	  newUserDto.setEmail("email@email.com");
-	  newUserDto.setPassword("pass");
-	  
-	  ResultActions resultAction = mockMvc.perform(post("/api/users/register")
-			  .contentType("application/json")
-			  .content(JsonUtil.asJsonString(newUserDto)));
-	  
-	  resultAction.andExpect(status().isUnprocessableEntity())
-	  .andExpect(jsonPath("$.errorMessage", is(Messages.SHORT_FIELD.getMessage())))
-	  .andExpect(jsonPath("$.internalErrorCode", is(1008)))
-	  .andExpect(jsonPath("$.messageId", is(Messages.SHORT_FIELD.getId())));
-	  
-  }
-  /**
-   * The testEmptyField tests the registration with an invalid password.
-   * @throws Exception
-   */
-  @Test
-  public void testEmptyField() throws Exception{
-	  UserDto newUserDto = new UserDto();
-	  newUserDto.setName("");
-	  newUserDto.setEmail("email@email.com");
-	  newUserDto.setPassword("password");
-	  
-	  ResultActions resultAction = mockMvc.perform(post("/api/users/register")
-			  .contentType("application/json")
-			  .content(JsonUtil.asJsonString(newUserDto)));
-	  
-	  resultAction.andExpect(status().isUnprocessableEntity())
-	  .andExpect(jsonPath("$.errorMessage", is(Messages.EMPTY_FIELD.getMessage())))
-	  .andExpect(jsonPath("$.internalErrorCode", is(1008)))
-	  .andExpect(jsonPath("$.messageId", is(Messages.EMPTY_FIELD.getId())));
-	  
-  }
+		resultAction.andExpect(status().isUnprocessableEntity())
+		.andExpect(jsonPath("$.errors[0].fieldName", is("email")))
+		.andExpect(jsonPath("$.errors[0].errorMessage", is(Message.EMAIL_INVALID.getMessage())))
+		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
+		.andExpect(jsonPath("$.errors[0].messageId", is(Message.EMAIL_INVALID.getId())));
+
+	}
+
+	/**
+	 * The testInvalidPassword tests the registration with an invalid password.
+	 * @throws Exception
+	 */
+	@Test
+	void testInvalidPassword() throws Exception{
+		UserDto newUserDto = new UserDto();
+		newUserDto.setName("Test");
+		newUserDto.setEmail("email@email.com");
+		newUserDto.setPassword("pass");
+
+		ResultActions resultAction = mockMvc.perform(post("/api/users/register")
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(newUserDto)));
+
+		resultAction.andExpect(status().isUnprocessableEntity())
+		.andExpect(jsonPath("$.errors[0].fieldName", is("password")))
+		.andExpect(jsonPath("$.errors[0].errorMessage", is(Message.SHORT_FIELD.getMessage())))
+		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
+		.andExpect(jsonPath("$.errors[0].messageId", is(Message.SHORT_FIELD.getId())));
+
+	}
+
+	/**
+	 * The testEmptyField tests the registration with an invalid password.
+	 * @throws Exception
+	 */
+	@Test
+	void testEmptyField() throws Exception{
+		UserDto newUserDto = new UserDto();
+		newUserDto.setName("");
+		newUserDto.setEmail("email@email.com");
+		newUserDto.setPassword("password");
+
+		ResultActions resultAction = mockMvc.perform(post("/api/users/register")
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(newUserDto)));
+
+		resultAction.andExpect(status().isUnprocessableEntity())
+		.andExpect(jsonPath("$.errors[0].fieldName", is("name")))
+		.andExpect(jsonPath("$.errors[0].errorMessage", is(Message.EMPTY_FIELD.getMessage())))
+		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
+		.andExpect(jsonPath("$.errors[0].messageId", is(Message.EMPTY_FIELD.getId())));
+
+	}
+
+	/**
+	 * The testMultipleErrors tests that the MultipleOxygenAccountException is throwen correctly
+	 * @throws Exception
+	 */
+	@Test
+	void testMultipleErrors() throws Exception{
+		UserDto newUserDto = new UserDto();
+		newUserDto.setName("");
+		newUserDto.setEmail("emailemail.com");
+		newUserDto.setPassword("pass");
+
+		ResultActions resultAction = mockMvc.perform(post("/api/users/register")
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(newUserDto)));
+
+		resultAction.andExpect(status().isUnprocessableEntity())
+		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
+		.andExpect(jsonPath("$.errors[?(@.fieldName == 'name')].errorMessage", hasItem(Message.EMPTY_FIELD.getMessage())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'name')].messageId", hasItem(Message.EMPTY_FIELD.getId())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'email')].errorMessage", hasItem(Message.EMAIL_INVALID.getMessage())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'email')].messageId", hasItem(Message.EMAIL_INVALID.getId())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'password')].errorMessage", hasItem(Message.SHORT_FIELD.getMessage())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'password')].messageId", hasItem(Message.SHORT_FIELD.getId())));
+	}
 }
 

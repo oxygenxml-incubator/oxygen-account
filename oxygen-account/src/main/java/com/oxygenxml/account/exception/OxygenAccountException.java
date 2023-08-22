@@ -1,7 +1,8 @@
 package com.oxygenxml.account.exception;
 
 import org.springframework.http.HttpStatus;
-import com.oxygenxml.account.messages.Messages;
+
+import com.oxygenxml.account.messages.Message;
 
 import lombok.Getter;
 /**
@@ -14,18 +15,22 @@ public class OxygenAccountException extends RuntimeException{
 	 * Unique ID used in serialization to verify that the sender and receiver of a serialized object maintain compatibility.
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	/**
 	 * The HttpStatus that is to be returned. It represents the status of the HTTP response
 	 */
 	private final HttpStatus status;
+	
 	/**
 	 * The id of the message that is to be returned. It is used to identify the message.
 	 */
 	private final String messageId;
+	
 	/**
 	 * The error code that is to be returned. It provides more details about the specific error.
 	 */
 	private final InternalErrorCode errorCode;
+	
 	/**
 	 * Constructs a new OxygenAccountExceptions with the specified detail message, HTTP status, and error code.
 	 * 
@@ -33,12 +38,12 @@ public class OxygenAccountException extends RuntimeException{
 	 * @param status the status of the HTTP response
 	 * @param errorCode the internal error code
 	 */
-	public OxygenAccountException(Messages message, HttpStatus status, InternalErrorCode errorCode) {
+	public OxygenAccountException(Message message, HttpStatus status, InternalErrorCode errorCode) {
 		super(message.getMessage());
 		this.status = status;
 		this.messageId = message.getId();
 		this.errorCode = errorCode;
 	}
-
-	
 }
+
+
