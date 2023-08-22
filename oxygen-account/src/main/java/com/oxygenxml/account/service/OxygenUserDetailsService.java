@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.oxygenxml.account.messages.Messages;
+import com.oxygenxml.account.messages.Message;
 
 /**
  * Service implementation for loading user-specific data for authentication purposes.
@@ -33,7 +33,7 @@ public class OxygenUserDetailsService implements UserDetailsService {
 		com.oxygenxml.account.model.User appUser = userService.getUserByEmail(email);
 		
 		if(appUser == null) {
-			throw new UsernameNotFoundException(Messages.USER_NOT_FOUND.getMessage());
+			throw new UsernameNotFoundException(Message.USER_NOT_FOUND.getMessage());
 		}
 
 		UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(appUser.getEmail())
