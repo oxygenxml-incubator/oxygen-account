@@ -90,9 +90,9 @@ class LoginTest {
      * @throws Exception if an error occurs during the test
      */
     @Test
-    void testAccesProfilePathBeforeLogin() throws Exception{
+    void testAccessProfilePathBeforeLogin() throws Exception{
     	
-    	mockMvc.perform(get("/profile"))
+    	mockMvc.perform(get("/"))
         .andExpect(status().isFound()) 
         .andExpect(redirectedUrlPattern("**/login"));
     	
@@ -110,7 +110,7 @@ class LoginTest {
      * @throws Exception if an error occurs during the test
      */
     @Test
-    void testAccesProfilePathInAnotherWindows() throws Exception {
+    void testAccessProfilePathInAnotherWindows() throws Exception {
     	
     	 ResultActions resultActions = mockMvc.perform(post("/login")
      			.contentType(APPLICATION_FORM_URLENCODED)
@@ -149,7 +149,7 @@ class LoginTest {
      * @throws Exception if an error occurs during the test
      */
     @Test
-    void testCantAccesProfile() throws Exception{
+    void testCantAccessProfile() throws Exception{
     	
     	 mockMvc.perform(get("/profile"))
          .andExpect(status().isFound()) 
