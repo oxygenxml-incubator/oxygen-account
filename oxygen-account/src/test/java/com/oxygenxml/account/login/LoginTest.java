@@ -92,16 +92,19 @@ class LoginTest {
     @Test
     void testAccessProfilePathBeforeLogin() throws Exception{
     	
-    	mockMvc.perform(get("/"))
+    	ResultActions resultAction = mockMvc.perform(get("/profile"))
         .andExpect(status().isFound()) 
         .andExpect(redirectedUrlPattern("**/login"));
     	
-    	  mockMvc.perform(post("/login")
+    	MvcResult result = resultAction.andReturn();
+    	MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+    	
+    	  mockMvc.perform(post("/login").session(session)
     			.contentType(APPLICATION_FORM_URLENCODED)
     			.param("email", "test@email.com")
     			.param("password", "testPassword"))
     			.andExpect(status().isFound())
-    			.andExpect(redirectedUrl("/"));
+    			.andExpect(redirectedUrlPattern("**/profile?continue"));
     }
     
     /**
@@ -110,19 +113,20 @@ class LoginTest {
      * @throws Exception if an error occurs during the test
      */
     @Test
-    void testAccessProfilePathInAnotherWindows() throws Exception {
-    	
-    	 ResultActions resultActions = mockMvc.perform(post("/login")
-     			.contentType(APPLICATION_FORM_URLENCODED)
-     			.param("email", "test@email.com")
-     			.param("password", "testPassword"))
-     			.andExpect(status().isFound())
-     			.andExpect(redirectedUrl("/"));
-     	
-     	 MvcResult result = resultActions.andReturn();
-     	 MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
 
-     	 mockMvc.perform(get("/profile").session(session))
+    void testAccessProfilePathInAnotherWindows() throws Exception {
+
+         ResultActions resultActions = mockMvc.perform(post("/login")
+                 .contentType(APPLICATION_FORM_URLENCODED)
+                 .param("email", "test@email.com")
+                 .param("password", "testPassword"))
+                 .andExpect(status().isFound())
+                 .andExpect(redirectedUrl("/"));
+
+          MvcResult result = resultActions.andReturn();
+          MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+
+          mockMvc.perform(get("/profile").session(session))
           .andExpect(status().isOk())
           .andExpect(view().name("profile"));
     }
