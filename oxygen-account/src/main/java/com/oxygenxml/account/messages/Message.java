@@ -54,7 +54,7 @@ public enum Message {
 	 /**
 	  * ID corresponding to the message indicating that the email or password are incorrect
 	  */
-	USER_NOT_FOUND("USER_NOT_FOUND", "Incorrect email or password.");
+	USER_NOT_FOUND("USER_NOT_FOUND", "Incorrect email or password."),
 	
 	 /**
 	  * ID corresponding to the message indicating that the validation failed.
