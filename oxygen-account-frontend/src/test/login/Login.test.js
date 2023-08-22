@@ -16,11 +16,12 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 /**
- * Test case to validate the display of error messages for invalid input data.
+ * Test case to validate the display of error messages for invalid input data in register form.
  */
 test('displays error messages for invalid data in register form', () => {
   render(<AuthContainer />);
 
+  // Switch to register form
   fireEvent.click(screen.getByText('Create an account'));
 
   // Get input elements and simulate invalid data
@@ -66,6 +67,7 @@ test('sends registration request for valid data', async () => {
 
   render(<AuthContainer />);
 
+  // Switch to register form
   fireEvent.click(screen.getByText('Create an account'));
 
   // Get input elements and simulate valid data
@@ -110,6 +112,7 @@ test('sends registration request with used email', async () => {
 
   render(<AuthContainer />);
 
+  // Switch to register form
   fireEvent.click(screen.getByText('Create an account'));
 
   // Get input elements and simulate valid data (with already used email)
@@ -148,6 +151,7 @@ test('network error on register submit', async () => {
 
   render(<AuthContainer />);
 
+  // Switch to register form
   fireEvent.click(screen.getByText('Create an account'));
 
   // Get input elements and simulate valid data
@@ -174,7 +178,7 @@ test('network error on register submit', async () => {
 
 
 /**
- * Test case that simulates pressing the close button on the Snackbar.
+ * Test case that simulates pressing the close button on the Snackbar from register page.
  */
 test('closes Snackbar from register page when close button is clicked', async () => {
   // Mock a successful registration response
@@ -192,6 +196,7 @@ test('closes Snackbar from register page when close button is clicked', async ()
 
   render(<AuthContainer />);
 
+  // Switch to register form
   fireEvent.click(screen.getByText('Create an account'));
 
   // Get input elements and simulate valid data
@@ -227,7 +232,7 @@ test('closes Snackbar from register page when close button is clicked', async ()
 
 
 /**
- * Test case to verify that input fields are reset after successful form submission.
+ * Test case to verify that input fields are reset after successful register form submission.
  */
 test('input fields are reset after successful submission of register form', async () => {
   // Mock a successful registration response
@@ -245,6 +250,7 @@ test('input fields are reset after successful submission of register form', asyn
 
   render(<AuthContainer />);
 
+  // Switch to register form
   fireEvent.click(screen.getByText('Create an account'));
 
   // Get input elements and simulate valid data
@@ -276,6 +282,9 @@ test('input fields are reset after successful submission of register form', asyn
 });
 
 
+/**
+ * Test case to validate the display of error messages for invalid input data in login form.
+ */
 test('displays error messages for invalid data in login form', () => {
   render(<AuthContainer />);
 
