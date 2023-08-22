@@ -1,15 +1,13 @@
 package com.oxygenxml.account.exception;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 /**
  * The InputValidationError class encapsulates information about a specific validation error related to user input.
  */
-@Data
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class InputValidationError {
 
 	/**
