@@ -1,7 +1,7 @@
 import "./GlobalStyle.css";
 
 import React from "react";
-import Header from "./Header.jsx";
+import AppHeader from "../header/AppHeader.jsx";
 import AuthCard from "./AuthCard.jsx";
 import { Grid } from "@mui/material";
 
@@ -17,7 +17,7 @@ export default function AuthContainer() {
     <Grid container direction="column">
       {/* Header Section */}
       <Grid item container>
-        <Header />
+        <AppHeader />
       </Grid>
 
       {/* Authentication Forms Section */}
