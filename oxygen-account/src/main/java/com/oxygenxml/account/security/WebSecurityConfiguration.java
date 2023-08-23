@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
 import com.oxygenxml.account.service.OxygenUserDetailsService;
 
@@ -60,6 +62,13 @@ public class WebSecurityConfiguration {
 	    return failureHandler;
 	}
 	
+	@Bean
+	public LogoutSuccessHandler logoutSuccessHandler() {
+	    SimpleUrlLogoutSuccessHandler successHandler = new SimpleUrlLogoutSuccessHandler();
+	    successHandler.setDefaultTargetUrl("/login");
+	    return successHandler;
+	}
+	
 	/**
 	 * This method defines security like disabling CSRF protection, defining which requests are allowed without authentication
 	 * @param http - the HttpSecurity instance
@@ -79,7 +88,7 @@ public class WebSecurityConfiguration {
 			    .passwordParameter("password")
 			    .failureHandler(authenticationFailureHandler())
 				.permitAll())
-		.logout(logout -> logout.logoutSuccessUrl("/login"));
+		.logout(logout -> logout.logoutSuccessHandler(logoutSuccessHandler()));
 
 		return http.build();
 	}

@@ -1,4 +1,5 @@
-import "./GlobalStyle.css";
+import "../css/AuthStyle.css";
+import "../css/GlobalStyle.css";
 
 import React from "react";
 import AppHeader from "../header/AppHeader.jsx";
