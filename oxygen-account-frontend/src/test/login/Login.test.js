@@ -41,9 +41,9 @@ test('displays error messages for invalid data in register form', () => {
   fireEvent.click(screen.getByText('Create account'));
 
   // Verify the presence of expected error messages
-  expect(screen.getByText('Invalid name.')).toBeInTheDocument();
-  expect(screen.getByText('Invalid email.')).toBeInTheDocument();
-  expect(screen.getByText('Password must be at least 8 characters.')).toBeInTheDocument();
+  expect(screen.getByText('Please provide a non-empty value.')).toBeInTheDocument();
+  expect(screen.getByText('Email should be valid.')).toBeInTheDocument();
+  expect(screen.getByText('Input field is too short. Please enter a longer value.')).toBeInTheDocument();
   expect(screen.getByText('Passwords do not match.')).toBeInTheDocument();
 });
 
@@ -88,7 +88,7 @@ test('sends registration request for valid data', async () => {
 
   // Wait for the success message to appear
   await waitFor(() => {
-      expect(screen.getByText('Account created successfully!')).toBeInTheDocument();
+    expect(screen.getByText('Account created successfully!')).toBeInTheDocument();
   });
 });
 
@@ -133,7 +133,7 @@ test('sends registration request with used email', async () => {
 
   // Wait for the error message to appear
   await waitFor(() => {
-      expect(screen.getByText('User with this email already exists.')).toBeInTheDocument();
+    expect(screen.getByText('User with this email already exists.')).toBeInTheDocument();
   });
 });
 
@@ -172,7 +172,7 @@ test('network error on register submit', async () => {
 
   // Wait for the error message to appear
   await waitFor(() => {
-      expect(screen.getByText('The connection could not be established.')).toBeInTheDocument();
+    expect(screen.getByText('The connection could not be established.')).toBeInTheDocument();
   });
 });
 
@@ -217,7 +217,7 @@ test('closes Snackbar from register page when close button is clicked', async ()
 
   // Wait for the success message to appear
   await waitFor(() => {
-      expect(screen.getByText('Account created successfully!')).toBeInTheDocument();
+    expect(screen.getByText('Account created successfully!')).toBeInTheDocument();
   });
 
   // Click the close button on the Snackbar
@@ -271,7 +271,7 @@ test('input fields are reset after successful submission of register form', asyn
 
   // Wait for the success message to appear
   await waitFor(() => {
-      expect(screen.getByText('Account created successfully!')).toBeInTheDocument();
+    expect(screen.getByText('Account created successfully!')).toBeInTheDocument();
   });
 
   // Verify that input fields are reset after successful submission
@@ -279,6 +279,70 @@ test('input fields are reset after successful submission of register form', asyn
   expect(screen.getByLabelText('Email')).toHaveValue('');
   expect(screen.getByLabelText('Password')).toHaveValue('');
   expect(screen.getByLabelText('Confirm Password')).toHaveValue('');
+});
+
+
+/**
+ * Test case to verify that input fields are reset after successful register form submission.
+ */
+test('handle input errors from server sign up form', async () => {
+  // Mock a successful registration response
+  server.use(
+    rest.post('/api/users/register', async (req, res, ctx) => {
+      return res(
+        ctx.json({
+          internalErrorCode: 1008,
+          errorMessage: 'Input validation failed',
+          messageId: 'INPUT_VALIDATION_FAILED',
+          errors: [
+            {
+              errorMessage: 'Please provide a non-empty value.',
+              fieldName: 'name',
+              messageId: 'EMPTY_FIELD',
+            },
+            {
+              errorMessage: 'Email should be valid.',
+              fieldName: 'email',
+              messageId: 'EMPTY_FIELD',
+            },
+            {
+              errorMessage: 'Input field is too short. Please enter a longer value.',
+              fieldName: 'password',
+              messageId: 'SHORT_FIELD',
+            },
+          ],
+        })
+      );
+    })
+  );
+
+  render(<AuthContainer />);
+
+  // Switch to register form
+  fireEvent.click(screen.getByText('Create an account'));
+
+  // Get input elements and simulate valid data
+  const inputName = screen.getByLabelText('Name');
+  fireEvent.change(inputName, { target: { value: '' } });
+
+  const inputEmail = screen.getByLabelText('Email');
+  fireEvent.change(inputEmail, { target: { value: 'costescumaryus558@yahoo' } });
+
+  const inputPassword = screen.getByLabelText('Password');
+  fireEvent.change(inputPassword, { target: { value: '1234567' } });
+
+  const inputConfirmPassword = screen.getByLabelText('Confirm Password');
+  fireEvent.change(inputConfirmPassword, { target: { value: '1234567' } });
+
+  // Click the "Create account" button
+  fireEvent.click(screen.getByText('Create account'));
+
+  // Verify that input fields are reset after successful submission
+  await waitFor(() => {
+    expect(screen.getByText('Please provide a non-empty value.')).toBeInTheDocument();
+    expect(screen.getByText('Email should be valid.')).toBeInTheDocument();
+    expect(screen.getByText('Input field is too short. Please enter a longer value.')).toBeInTheDocument();
+  });
 });
 
 

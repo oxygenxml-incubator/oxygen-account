@@ -122,13 +122,12 @@ function RegistrationForm({ toggleForm }) {
                 return response.json();
             })
             .then((data) => {
-
+                console.log(data);
+                setisLoadingActive(false);
               
                 if (data.errors){
                     validateFormatErrorsFromServer(data.errors);
-                }
-
-                if (data.errorMessage) {
+                } else if (data.errorMessage) {
                     throw new Error(data.errorMessage);
                 }
             })
@@ -145,7 +144,12 @@ function RegistrationForm({ toggleForm }) {
             });
     };
 
-
+    
+    /**
+     * Validates and assigns server-side errors to their respective frontend fields.
+     * 
+     * @param {Array} errorsList - An array of error objects from the server 
+     */
     const validateFormatErrorsFromServer = (errorsList) => {
         errorsList.forEach(error => {
             switch (error.fieldName) {
