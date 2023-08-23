@@ -122,7 +122,6 @@ function RegistrationForm({ toggleForm }) {
                 return response.json();
             })
             .then((data) => {
-                console.log(data);
                 setisLoadingActive(false);
               
                 if (data.errors){
@@ -191,7 +190,7 @@ function RegistrationForm({ toggleForm }) {
      */
     const handleClickButton = () => {
         // Validate the input fields before proceeding with registration.
-       // if (validateInputs()) {
+        if (validateInputs()) {
             setisLoadingActive(true);
 
             // Create a new user object.
@@ -202,7 +201,7 @@ function RegistrationForm({ toggleForm }) {
             };
 
             sendRegistrationRequest(newUser);
-        //}
+        }
 
     }
 

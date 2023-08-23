@@ -283,10 +283,10 @@ test('input fields are reset after successful submission of register form', asyn
 
 
 /**
- * Test case to verify that input fields are reset after successful register form submission.
+ * Test case to verify that the server send the correct errors for validation
  */
-test('handle input errors from server sign up form', async () => {
-  // Mock a successful registration response
+test('handle input errors from server for sign up form', async () => {
+  // Mock a errors list response from server
   server.use(
     rest.post('/api/users/register', async (req, res, ctx) => {
       return res(
@@ -337,7 +337,7 @@ test('handle input errors from server sign up form', async () => {
   // Click the "Create account" button
   fireEvent.click(screen.getByText('Create account'));
 
-  // Verify that input fields are reset after successful submission
+  // Verify that the errors message are associate with the fields
   await waitFor(() => {
     expect(screen.getByText('Please provide a non-empty value.')).toBeInTheDocument();
     expect(screen.getByText('Email should be valid.')).toBeInTheDocument();
