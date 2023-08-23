@@ -125,7 +125,7 @@ function RegistrationForm({ toggleForm }) {
                 setisLoadingActive(false);
               
                 if (data.errors){
-                    validateFormatErrorsFromServer(data.errors);
+                    displayInputErrorsFromServer(data.errors);
                 } else if (data.errorMessage) {
                     throw new Error(data.errorMessage);
                 }
@@ -149,7 +149,7 @@ function RegistrationForm({ toggleForm }) {
      * 
      * @param {Array} errorsList - An array of error objects from the server 
      */
-    const validateFormatErrorsFromServer = (errorsList) => {
+    const displayInputErrorsFromServer = (errorsList) => {
         errorsList.forEach(error => {
             switch (error.fieldName) {
                 case "name":
@@ -179,7 +179,7 @@ function RegistrationForm({ toggleForm }) {
         // Set an error message for each field if it is invalid.
         setNameError(isNameValid ? '' : 'Please provide a non-empty value.');
         setEmailError(isEmailValid ? '' : 'Email should be valid.');
-        setPasswordError(isPasswordValid ? '' : 'Input field is too short. Please enter a longer value.');
+        setPasswordError(isPasswordValid ? '' : 'Password must be at least 8 characters.');
         setConfirmPasswordError(isConfirmPasswordValid ? '' : 'Passwords do not match.');
 
         return isNameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid;

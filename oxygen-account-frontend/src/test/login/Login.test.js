@@ -43,7 +43,7 @@ test('displays error messages for invalid data in register form', () => {
   // Verify the presence of expected error messages
   expect(screen.getByText('Please provide a non-empty value.')).toBeInTheDocument();
   expect(screen.getByText('Email should be valid.')).toBeInTheDocument();
-  expect(screen.getByText('Input field is too short. Please enter a longer value.')).toBeInTheDocument();
+  expect(screen.getByText('Password must be at least 8 characters.')).toBeInTheDocument();
   expect(screen.getByText('Passwords do not match.')).toBeInTheDocument();
 });
 
@@ -321,18 +321,18 @@ test('handle input errors from server for sign up form', async () => {
   // Switch to register form
   fireEvent.click(screen.getByText('Create an account'));
 
-  // Get input elements and simulate valid data
+  // Get input elements and simulate valid data for frontend validation in order to check the response from server
   const inputName = screen.getByLabelText('Name');
-  fireEvent.change(inputName, { target: { value: '' } });
+  fireEvent.change(inputName, { target: { value: 'Marius Costescu' } });
 
   const inputEmail = screen.getByLabelText('Email');
-  fireEvent.change(inputEmail, { target: { value: 'costescumaryus558@yahoo' } });
+  fireEvent.change(inputEmail, { target: { value: 'costescumaryus558@yahoo.com' } });
 
   const inputPassword = screen.getByLabelText('Password');
-  fireEvent.change(inputPassword, { target: { value: '1234567' } });
+  fireEvent.change(inputPassword, { target: { value: '12345678' } });
 
   const inputConfirmPassword = screen.getByLabelText('Confirm Password');
-  fireEvent.change(inputConfirmPassword, { target: { value: '1234567' } });
+  fireEvent.change(inputConfirmPassword, { target: { value: '12345678' } });
 
   // Click the "Create account" button
   fireEvent.click(screen.getByText('Create account'));
