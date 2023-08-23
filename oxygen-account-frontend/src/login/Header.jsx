@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppBar, Typography, Toolbar, Container } from "@mui/material";
+import { AppBar, Typography, Toolbar, Grid } from "@mui/material";
 
 /**
  * Header component displaying the application's logo and title.
@@ -9,30 +9,33 @@ import { AppBar, Typography, Toolbar, Container } from "@mui/material";
 function Header() {
     return (
         /* App Bar for Header */
-        <AppBar position="static" style={{ backgroundColor: '#F0F0F0'}}>
-            <Container maxWidth="xl">
-                <Toolbar disableGutters>
+        <AppBar position="static" style={{ backgroundColor: '#F0F0F0' }}>
+            <Grid container style = {{marginLeft: "20px"}}>
+                <Toolbar disableGutters >
                     {/* Logo */}
-                    <img
-                        src="/img/logo.jpg"
-                        alt="Logo"
-                        style={{
-                            width: 40,
-                            height: "auto",
-                            marginRight: "1rem",
-                            display: { xs: 'none', md: 'flex' }
-                        }}
-                    />
-
+                    <Grid item>
+                        <img
+                            src="/img/logo.jpg"
+                            alt="Logo"
+                            style={{
+                                width: 40,
+                                height: "auto",
+                                marginRight: "1rem",
+                                display: { xs: 'none', md: 'flex' }
+                            }}
+                        />
+                    </Grid>
                     {/* Title */}
-                    <Typography 
-                        variant="h6" 
-                        component="div" 
-                        style={{ color: 'black' }}>
-                        Oxygen Account
-                    </Typography>
+                    <Grid item>
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            style={{ color: 'black' }}>
+                            Oxygen Account
+                        </Typography>
+                    </Grid>
                 </Toolbar>
-            </Container>
+            </Grid>
         </AppBar>
     );
 }

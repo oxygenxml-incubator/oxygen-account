@@ -122,6 +122,12 @@ function RegistrationForm({ toggleForm }) {
                 return response.json();
             })
             .then((data) => {
+
+              
+                if (data.errors){
+                    validateFormatErrorsFromServer(data.errors);
+                }
+
                 if (data.errorMessage) {
                     throw new Error(data.errorMessage);
                 }
@@ -140,6 +146,23 @@ function RegistrationForm({ toggleForm }) {
     };
 
 
+    const validateFormatErrorsFromServer = (errorsList) => {
+        errorsList.forEach(error => {
+            switch (error.fieldName) {
+                case "name":
+                    setNameError(error.errorMessage);
+                    break;
+                case "email":
+                    setEmailError(error.errorMessage);
+                    break;
+                case "password":
+                    setPasswordError(error.errorMessage);
+                    break;
+            }
+        });
+
+    }
+
     /**
     * Validates the input fields for user registration.
     * @returns {boolean} True if all input fields are valid, otherwise false.
@@ -151,9 +174,9 @@ function RegistrationForm({ toggleForm }) {
         let isConfirmPasswordValid = confirmPassword.trim() !== '' && password === confirmPassword;
 
         // Set an error message for each field if it is invalid.
-        setNameError(isNameValid ? '' : 'Invalid name.');
-        setEmailError(isEmailValid ? '' : 'Invalid email.');
-        setPasswordError(isPasswordValid ? '' : 'Password must be at least 8 characters.');
+        setNameError(isNameValid ? '' : 'Please provide a non-empty value.');
+        setEmailError(isEmailValid ? '' : 'Email should be valid.');
+        setPasswordError(isPasswordValid ? '' : 'Input field is too short. Please enter a longer value.');
         setConfirmPasswordError(isConfirmPasswordValid ? '' : 'Passwords do not match.');
 
         return isNameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid;
@@ -164,7 +187,7 @@ function RegistrationForm({ toggleForm }) {
      */
     const handleClickButton = () => {
         // Validate the input fields before proceeding with registration.
-        if (validateInputs()) {
+       // if (validateInputs()) {
             setisLoadingActive(true);
 
             // Create a new user object.
@@ -175,7 +198,7 @@ function RegistrationForm({ toggleForm }) {
             };
 
             sendRegistrationRequest(newUser);
-        }
+        //}
 
     }
 
