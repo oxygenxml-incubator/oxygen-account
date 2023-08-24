@@ -59,12 +59,7 @@ public enum Message {
 	/**
 	 * ID corresponding to the message indicating that the validation failed.
 	 */
-	INPUT_VALIDATION_FAILED("INPUT_VALIDATION_FAILED", "Input validation failed."),
-
-	/**
-	 * ID corresponding to the message indicating that the user isn't authenticated
-	 */
-	USER_NOT_AUTHENTICATED("USER_NOT_AUTHENTICATED", "User not authenticated.");
+	INPUT_VALIDATION_FAILED("INPUT_VALIDATION_FAILED", "Input validation failed.");
 
 	/**
 	 * Unique identifier corresponding to each type of message.

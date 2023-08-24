@@ -2,6 +2,7 @@ package com.oxygenxml.account.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,16 +63,27 @@ public class UserController {
      * 
      * @return The profile details of the authenticated user.
      */
-    @GetMapping("/profile")
-    public UserDto getProfileDetails() {
+    @GetMapping("/me")
+    public UserDto getCurrentUser() {
     	
-    	Authentication authentication = userService.checkUserAuthentication();
-        org.springframework.security.core.userdetails.User userDetails = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-        String userEmail = userDetails.getUsername();
-
-        User profileUser = userService.getUserByEmail(userEmail);
-
-        return userConverter.entityToDto(profileUser);
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object userPrincipal = authentication.getPrincipal();
+        
+        if (userPrincipal instanceof String) {
+        	String stringUser = (String) userPrincipal;
+        	
+        	if (stringUser.equals("anonymousUser")) {
+        		return  new UserDto("Anonymous User", "anonymousUser", null);
+        	} 
+        } else if (userPrincipal instanceof org.springframework.security.core.userdetails.User ) {
+        	
+        	org.springframework.security.core.userdetails.User currentUser = (org.springframework.security.core.userdetails.User) userPrincipal;
+        	String currentUserEmail = currentUser.getUsername();
+            
+            return userConverter.entityToDto(userService.getUserByEmail(currentUserEmail));
+        }
+        
+        return null;
     }
 }
 	
