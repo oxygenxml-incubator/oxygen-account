@@ -5,6 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import com.oxygenxml.account.exception.InternalErrorCode;
 import com.oxygenxml.account.exception.OxygenAccountException;
 import com.oxygenxml.account.messages.Message;
@@ -48,6 +51,22 @@ public class UserService {
 		return userRepository.save(newUser);
 		
 	}
+	
+	/**
+     * Checks if a user is authenticated.
+     *
+     * @return The authenticated user's details.
+     * @throws OxygenAccountException If the user is not authenticated.
+     */
+    public Authentication checkUserAuthentication() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+            throw new OxygenAccountException(Message.USER_NOT_AUTHENTICATED, HttpStatus.UNAUTHORIZED, InternalErrorCode.USER_NOT_AUTHENTICATED);
+        }
+
+        return auth;
+    }
 	
 	/**
 	 *  Retrieves a User entity based on the provided email from the database.

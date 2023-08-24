@@ -1,17 +1,18 @@
 package com.oxygenxml.account.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oxygenxml.account.model.User;	
-import com.oxygenxml.account.service.UserService;
-import com.oxygenxml.account.service.ValidationService;
-
 import com.oxygenxml.account.converter.UserConverter;
 import com.oxygenxml.account.dto.UserDto;
+import com.oxygenxml.account.model.User;
+import com.oxygenxml.account.service.UserService;
+import com.oxygenxml.account.service.ValidationService;
 
 /**
  * The UserControllerclass is a REST controller that manages HTTP requests related to users.
@@ -56,7 +57,24 @@ public class UserController {
 		return userConverter.entityToDto(registeredUser);
 	}
 	
+	/**
+     * Handles the GET request to fetch profile details of the authenticated user.
+     * 
+     * @return The profile details of the authenticated user.
+     */
+    @GetMapping("/profile")
+    public UserDto getProfileDetails() {
+    	
+    	Authentication authentication = userService.checkUserAuthentication();
+        org.springframework.security.core.userdetails.User userDetails = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+        String userEmail = userDetails.getUsername();
+
+        User profileUser = userService.getUserByEmail(userEmail);
+
+        return userConverter.entityToDto(profileUser);
+    }
+}
+	
 	
 
 	
-}

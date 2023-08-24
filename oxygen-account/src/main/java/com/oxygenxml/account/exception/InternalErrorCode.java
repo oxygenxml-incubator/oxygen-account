@@ -51,7 +51,12 @@ public enum InternalErrorCode {
 	/**
 	 * The error that occurs when the users isn't found when he trying to log in.
 	 */
-	USER_NOT_FOUND(1009);
+	USER_NOT_FOUND(1009),
+	
+	/**
+	 * The error that occurs when the user isn't authenticated
+	 */
+	USER_NOT_AUTHENTICATED(1010);
 	
 	/**
 	 * It represents the internal error code
