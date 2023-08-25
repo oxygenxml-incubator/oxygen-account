@@ -1,43 +1,21 @@
-import React, { useState, useEffect} from 'react';
-import { Grid, Card, CardHeader, CardContent, LinearProgress, Typography, Avatar } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Grid, Card, CardHeader, CardContent, LinearProgress, Typography, Snackbar, Alert } from '@mui/material';
+
+import OxygenAvatar from "../util/OxygenAvatar.jsx";
 
 /**
  * Component responsible for rendering the profile card containing current user info.
  * 
  * @returns {JSX.Element} The JSX representation of the ProfileCard component.
  */
-const stringToColor = (string) => {
-    let hash = 0;
-    let i;
-
-    for (i = 0; i < string.length; i += 1) {
-      hash = string.charCodeAt(i) + ((hash << 5) - hash);
-    }
-  
-    let color = '#';
-  
-    for (i = 0; i < 3; i += 1) {
-      const value = (hash >> (i * 8)) & 0xff;
-      color += `00${value.toString(16)}`.slice(-2);
-    }
-  
-    return color;
-  }
-
-  const stringAvatar = (name) => {
-    const names = name.split(' ');
-  
-    return {
-        sx: {
-            bgcolor: stringToColor(name),
-        },
-        children: `${name.split(' ')[0][0] || ''}${name.split(' ')[1] ? name.split(' ')[1][0] : ''}`,
-    };
-};
-
 function ProfileCard() {
     const [userData, setUserData] = useState(null);
     const [isLoadingActive, setIsLoadingActive] = useState(true);
+    // State variable for showing or hiding the Snackbar component.
+    const [showSnackbar, setShowSnackbar] = useState(false);
+
+    // State variable for storing the message to display in the Snackbar.
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
     useEffect(() => {
         setIsLoadingActive(true);
@@ -53,7 +31,22 @@ function ProfileCard() {
 
                 setIsLoadingActive(false);
             })
+            .catch(error => {
+                setIsLoadingActive(false);
+
+                setSnackbarMessage("Failed to display user data.");
+
+                setShowSnackbar(true);
+            });
+
     }, []);
+
+    /*
+     * Handle the Snackbar close event.
+     */
+    const handleSnackbarClose = () => {
+        setShowSnackbar(false);
+    };
 
     return (
         // Main container for the profile card
@@ -69,17 +62,36 @@ function ProfileCard() {
                         {isLoadingActive ? (
                             <LinearProgress />
                         ) : (
-                            <Grid container >
-                                <Grid item style={{ flex: '0 0 60px'}}> 
-                                {userData && <Avatar {...stringAvatar(userData.name)} />}
+                            <Grid container direction="row" spacing={2}>
+                                <Grid item style={{ maxWidth: 'fit-content' }}>
+                                    <OxygenAvatar name={userData.name} />
                                 </Grid>
 
-                                <Grid item style={{ flex: '1' }} container direction="column">
-                                    <Grid item>
-                                        <Typography> {userData.name} </Typography>
+                                <Grid item container style={{ maxWidth: 'fit-content' }}>
+                                    <Grid item container spacing={1}>
+                                        <Grid item>
+                                            <Typography className="boldTextTypography">
+                                                Name:
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            <Typography className="grayColorTextTypography">
+                                                {userData.name}
+                                            </Typography>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item>
-                                        <Typography> {userData.email} </Typography>
+
+                                    <Grid item container spacing={1}>
+                                        <Grid item>
+                                            <Typography className="boldTextTypography">
+                                                Email:
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            <Typography className="grayColorTextTypography">
+                                                {userData.email}
+                                            </Typography>
+                                        </Grid>
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -88,6 +100,29 @@ function ProfileCard() {
                     </CardContent>
                 </Card>
             </Grid>
+
+            {/* Conditionally render the Snackbar for showing error messages if showSnackbar is true */}
+            {showSnackbar &&
+                <Grid item>
+                    <Snackbar
+                        open={showSnackbar}
+                        autoHideDuration={5000}
+                        onClose={handleSnackbarClose}
+                        anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center"
+                        }}
+                    >
+                        <Alert
+                            elevation={6}
+                            variant="filled"
+                            onClose={handleSnackbarClose}
+                            severity="error"
+                        >
+                            {snackbarMessage}
+                        </Alert>
+                    </Snackbar>
+                </Grid>}
         </Grid>
     );
 }

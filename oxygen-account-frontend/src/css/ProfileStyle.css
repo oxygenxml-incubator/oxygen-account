@@ -1,0 +1,11 @@
+.MuiTypography-root.boldTextTypography {
+    font-weight: bold;
+}
+
+.MuiTypography-root.grayColorTextTypography {
+    color: gray;
+}
+
+.MuiCard-root {
+    min-height: 200px;
+}

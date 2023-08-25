@@ -1,7 +1,8 @@
 import "../css/GlobalStyle.css";
+import "../css/ProfileStyle.css";
 
 import React from "react";
-import AppHeader from "../header/AppHeader.jsx";
+import AppHeader from "../util/AppHeader.jsx";
 import ProfileCard from "./ProfileCard.jsx";
 import { Grid } from "@mui/material";
 
