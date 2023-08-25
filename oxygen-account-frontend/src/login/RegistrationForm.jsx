@@ -122,7 +122,11 @@ function RegistrationForm({ toggleForm }) {
                 return response.json();
             })
             .then((data) => {
-                if (data.errorMessage) {
+                setisLoadingActive(false);
+              
+                if (data.errors){
+                    displayInputErrorsFromServer(data.errors);
+                } else if (data.errorMessage) {
                     throw new Error(data.errorMessage);
                 }
             })
@@ -139,6 +143,28 @@ function RegistrationForm({ toggleForm }) {
             });
     };
 
+    
+    /**
+     * Validates and assigns server-side errors to their respective frontend fields.
+     * 
+     * @param {Array} errorsList - An array of error objects from the server 
+     */
+    const displayInputErrorsFromServer = (errorsList) => {
+        errorsList.forEach(error => {
+            switch (error.fieldName) {
+                case "name":
+                    setNameError(error.errorMessage);
+                    break;
+                case "email":
+                    setEmailError(error.errorMessage);
+                    break;
+                case "password":
+                    setPasswordError(error.errorMessage);
+                    break;
+            }
+        });
+
+    }
 
     /**
     * Validates the input fields for user registration.
@@ -151,8 +177,8 @@ function RegistrationForm({ toggleForm }) {
         let isConfirmPasswordValid = confirmPassword.trim() !== '' && password === confirmPassword;
 
         // Set an error message for each field if it is invalid.
-        setNameError(isNameValid ? '' : 'Invalid name.');
-        setEmailError(isEmailValid ? '' : 'Invalid email.');
+        setNameError(isNameValid ? '' : 'Please provide a non-empty value.');
+        setEmailError(isEmailValid ? '' : 'Email should be valid.');
         setPasswordError(isPasswordValid ? '' : 'Password must be at least 8 characters.');
         setConfirmPasswordError(isConfirmPasswordValid ? '' : 'Passwords do not match.');
 

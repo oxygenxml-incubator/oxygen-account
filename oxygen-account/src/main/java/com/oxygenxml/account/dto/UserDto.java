@@ -32,7 +32,6 @@ public class UserDto {
 	/**
 	 * The password of the user
 	 */
-	@NotBlank
 	@Size(min = 8)
 	private String password;
 }
