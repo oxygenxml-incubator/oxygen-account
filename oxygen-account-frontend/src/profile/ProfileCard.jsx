@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Grid, Card, CardHeader, CardContent, LinearProgress, Typography, Avatar } from '@mui/material';
 
 /**
@@ -6,6 +6,37 @@ import { Grid, Card, CardHeader, CardContent, LinearProgress, Typography, Avatar
  * 
  * @returns {JSX.Element} The JSX representation of the ProfileCard component.
  */
+function stringToColor(string) {
+    let hash = 0;
+    let i;
+
+    for (i = 0; i < string.length; i += 1) {
+      hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+  
+    let color = '#';
+  
+    for (i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff;
+      color += `00${value.toString(16)}`.slice(-2);
+    }
+  
+    return color;
+  }
+
+  function stringAvatar(name) {
+    const names = name.split(' ');
+    const firstInitial = names[0] ? names[0][0] : '';
+    const secondInitial = names[1] ? names[1][0] : '';
+  
+    return {
+        sx: {
+            bgcolor: stringToColor(name),
+        },
+        children: `${firstInitial}${secondInitial}`,
+    };
+}
+
 function ProfileCard() {
     const [userData, setUserData] = useState(null);
     const [isLoadingActive, setIsLoadingActive] = useState(true);
@@ -40,12 +71,12 @@ function ProfileCard() {
                         {isLoadingActive ? (
                             <LinearProgress />
                         ) : (
-                            <Grid container>
-                                <Grid item>
-                                    asd
+                            <Grid container >
+                                <Grid item xs={1}> 
+                                {userData && <Avatar {...stringAvatar(userData.name)} />}
                                 </Grid>
 
-                                <Grid item container direction="column">
+                                <Grid item xs={11} container direction="column">
                                     <Grid item>
                                         <Typography> {userData.name} </Typography>
                                     </Grid>
