@@ -6,7 +6,7 @@ import { AppBar, Typography, Toolbar, Button } from "@mui/material";
 
  * @returns {JSX.Element} The JSX representation of the Header component.
  */
-function AppHeader() {
+function AppHeader( {showLogoutButton} ) {
     return (
         /* App Bar for Header */
         <AppBar position="static" style={{ backgroundColor: '#F0F0F0' }}>
@@ -32,9 +32,11 @@ function AppHeader() {
                     Oxygen Account
                 </Typography>
 
+                
+                {showLogoutButton &&
                 <form action="/logout" method="post">
                     <Button type="submit" color="inherit" style={{ color: 'black' }}>Log out</Button>
-                </form>
+                </form>}
                 
             </Toolbar>
 
