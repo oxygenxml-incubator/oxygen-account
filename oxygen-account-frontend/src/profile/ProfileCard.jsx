@@ -6,7 +6,7 @@ import { Grid, Card, CardHeader, CardContent, LinearProgress, Typography, Avatar
  * 
  * @returns {JSX.Element} The JSX representation of the ProfileCard component.
  */
-function stringToColor(string) {
+const stringToColor = (string) => {
     let hash = 0;
     let i;
 
@@ -24,18 +24,16 @@ function stringToColor(string) {
     return color;
   }
 
-  function stringAvatar(name) {
+  const stringAvatar = (name) => {
     const names = name.split(' ');
-    const firstInitial = names[0] ? names[0][0] : '';
-    const secondInitial = names[1] ? names[1][0] : '';
   
     return {
         sx: {
             bgcolor: stringToColor(name),
         },
-        children: `${firstInitial}${secondInitial}`,
+        children: `${name.split(' ')[0][0] || ''}${name.split(' ')[1] ? name.split(' ')[1][0] : ''}`,
     };
-}
+};
 
 function ProfileCard() {
     const [userData, setUserData] = useState(null);
@@ -72,11 +70,11 @@ function ProfileCard() {
                             <LinearProgress />
                         ) : (
                             <Grid container >
-                                <Grid item xs={1}> 
+                                <Grid item style={{ flex: '0 0 60px'}}> 
                                 {userData && <Avatar {...stringAvatar(userData.name)} />}
                                 </Grid>
 
-                                <Grid item xs={11} container direction="column">
+                                <Grid item style={{ flex: '1' }} container direction="column">
                                     <Grid item>
                                         <Typography> {userData.name} </Typography>
                                     </Grid>
