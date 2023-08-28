@@ -142,7 +142,7 @@ function LoginForm({ toggleForm }) {
                     </Button>
                 </Grid>
 
-                {/* Conditionally render the Snackbar for showing success or error messages if showSnackbar is true */}
+                {/* Conditionally render the Snackbar for showing error messages if showSnackbar is true */}
                 {showSnackbar && 
                 <Grid item>
                     <Snackbar

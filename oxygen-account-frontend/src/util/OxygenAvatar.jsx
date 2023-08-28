@@ -2,7 +2,20 @@ import React from "react";
 
 import { Avatar } from "@mui/material";
 
+
+/**
+ * Generates an avatar with a color and initials based on a given name.
+ *
+ * @param {string} name - The name used to generate the avatar color and initials.
+ * @returns {JSX.Element} The JSX representation of the OxygenAvatar component.
+ */
 function OxygenAvatar( {name} ) {
+    /**
+     * Converts a string to a color code.
+     *
+     * @param {string} string - The input string.
+     * @returns {string} The color code generated from the input string.
+     */
     const stringToColor = (string) => {
         let hash = 0;
         let i;
@@ -21,6 +34,12 @@ function OxygenAvatar( {name} ) {
         return color;
     }
     
+    /**
+     * Generates an object with color and initials for the avatar.
+     *
+     * @param {string} name - The name used to generate the initials.
+     * @returns {Object} The object for the avatar.
+     */
     const stringAvatar = (name) => {
         return {
             sx: {
@@ -31,6 +50,7 @@ function OxygenAvatar( {name} ) {
     };
 
     return (
+        // Render the Avatar component
         <Avatar {...stringAvatar(name)} />
     );
 }

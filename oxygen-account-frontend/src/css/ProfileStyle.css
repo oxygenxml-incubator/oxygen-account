@@ -1,11 +1,14 @@
+/* CSS class for bold text typography */
 .MuiTypography-root.boldTextTypography {
     font-weight: bold;
 }
 
+/* CSS class for gray color text typography */
 .MuiTypography-root.grayColorTextTypography {
     color: gray;
 }
 
+/* CSS class for card styling */
 .MuiCard-root {
     min-height: 200px;
 }

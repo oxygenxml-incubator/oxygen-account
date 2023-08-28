@@ -13,8 +13,8 @@ function AppHeader({ showLogoutButton }) {
             <Toolbar>
                 <Grid container justifyContent="space-between">
                     <Grid item container wrap="nowrap" style={{ maxWidth: 'fit-content', alignItems: 'center' }}>
+                        {/* Logo */}
                         <Grid item>
-                            {/* Logo */}
                             <img
                                 src="/img/logo.jpg"
                                 alt="Logo"
@@ -25,8 +25,9 @@ function AppHeader({ showLogoutButton }) {
                                 }}
                             />
                         </Grid>
+
+                        {/* Title */}
                         <Grid item>
-                            {/* Title */}
                             <Typography
                                 variant="h6"
                                 align='center'
@@ -37,11 +38,11 @@ function AppHeader({ showLogoutButton }) {
                     </Grid>
 
                     {showLogoutButton &&
-                    <Grid item container style={{ maxWidth: 'fit-content' }}>
-                        <form action="/logout" method="post">
-                            <Button type="submit" variant="outlined" style={{ color: 'black', textTransform: 'none' }}>Log out</Button>
-                        </form>
-                    </Grid>}
+                        <Grid item container style={{ maxWidth: 'fit-content' }}>
+                            <form action="/logout" method="post">
+                                <Button type="submit" variant="outlined" style={{ color: 'black', textTransform: 'none' }}>Log out</Button>
+                            </form>
+                        </Grid>}
                 </Grid>
             </Toolbar>
 
