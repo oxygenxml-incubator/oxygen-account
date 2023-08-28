@@ -1,7 +1,7 @@
 import "../css/GlobalStyle.css";
 
 import React from "react";
-import AppHeader from "../util/AppHeader.jsx";
+import AppHeader from "../shared/AppHeader.jsx";
 import AuthCard from "./AuthCard.jsx";
 import { Grid } from "@mui/material";
 

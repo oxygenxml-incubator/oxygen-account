@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Card, CardHeader, CardContent, LinearProgress, Typography, Snackbar, Alert } from '@mui/material';
 
-import OxygenAvatar from "../util/OxygenAvatar.jsx";
+import OxygenAvatar from "../shared/OxygenAvatar.jsx";
 
 /**
  * Component responsible for rendering the profile card containing current user info.
@@ -78,12 +78,12 @@ function ProfileCard() {
                                 <Grid item container style={{ maxWidth: 'fit-content' }}>
                                     <Grid item container spacing={1}>
                                         <Grid item>
-                                            <Typography className="boldTextTypography">
+                                            <Typography className="infoLabel">
                                                 Name:
                                             </Typography>
                                         </Grid>
                                         <Grid item>
-                                            <Typography className="grayColorTextTypography">
+                                            <Typography id="name-info" className="userInfo">
                                                 {userData.name}
                                             </Typography>
                                         </Grid>
@@ -91,12 +91,12 @@ function ProfileCard() {
 
                                     <Grid item container spacing={1}>
                                         <Grid item>
-                                            <Typography className="boldTextTypography">
+                                            <Typography className="infoLabel">
                                                 Email:
                                             </Typography>
                                         </Grid>
                                         <Grid item>
-                                            <Typography className="grayColorTextTypography">
+                                            <Typography id="email-info" className="userInfo">
                                                 {userData.email}
                                             </Typography>
                                         </Grid>

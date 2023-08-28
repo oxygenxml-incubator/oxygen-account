@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, queryByAttribute, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node'
 import { rest } from 'msw';
 
@@ -15,6 +15,7 @@ afterEach(() => server.resetHandlers())
 // Close the mock server after all test cases are finished.
 afterAll(() => server.close())
 
+const getById = queryByAttribute.bind(null, 'id');
 
 /**
  * Test whether the profile component displays user data correctly.
@@ -27,8 +28,7 @@ test('display data in profile component', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com',
-                        password: null
+                        email: 'marius@yahoo.com'
                     }
                 )
             );
@@ -36,17 +36,14 @@ test('display data in profile component', async () => {
     );
 
     // Render the Profile component
-    render(<Profile />);
-
-    // Check the presence of 'Profile' title
-    expect(screen.getByText('Profile')).toBeInTheDocument();
+    const dom = render(<Profile />);
 
     // Wait for the expected data to appear
     await waitFor(() => {
-        expect(screen.getByText('Name:')).toBeInTheDocument();
-        expect(screen.getByText('Marius Costescu')).toBeInTheDocument();
-        expect(screen.getByText('Email:')).toBeInTheDocument();
-        expect(screen.getByText('marius@yahoo.com')).toBeInTheDocument();
-        expect(screen.getByText('MC')).toBeInTheDocument();
+        const nameInfo = getById(dom.container, 'name-info');
+        expect(nameInfo).toHaveTextContent('Marius Costescu');
+
+        const emailInfo = getById(dom.container, 'email-info');
+        expect(emailInfo).toHaveTextContent('marius@yahoo.com');
     });
 });

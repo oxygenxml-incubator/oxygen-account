@@ -1,10 +1,10 @@
 /* CSS class for bold text typography */
-.MuiTypography-root.boldTextTypography {
+.MuiTypography-root.infoLabel {
     font-weight: bold;
 }
 
 /* CSS class for gray color text typography */
-.MuiTypography-root.grayColorTextTypography {
+.MuiTypography-root.userInfo {
     color: gray;
 }
 
