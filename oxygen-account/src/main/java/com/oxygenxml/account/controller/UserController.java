@@ -5,11 +5,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oxygenxml.account.converter.UserConverter;
+import com.oxygenxml.account.dto.UpdateUserDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.service.UserService;
@@ -81,6 +83,26 @@ public class UserController {
         	String currentUserEmail = currentUser.getUsername();
             
             return userConverter.entityToDto(userService.getUserByEmail(currentUserEmail));
+        }
+        
+        return null;
+    }
+    
+    @PutMapping("/profile")
+    public UserDto updateUserName(@RequestBody UpdateUserDto nameChange ) {
+    	
+    	validationService.validate(nameChange);
+    	
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object userPrincipal = authentication.getPrincipal();
+
+     if( userPrincipal instanceof org.springframework.security.core.userdetails.User ) {
+        	
+        	org.springframework.security.core.userdetails.User currentUser = (org.springframework.security.core.userdetails.User) userPrincipal;
+        	String currentUserEmail = currentUser.getUsername();
+        	
+        	User updatedUser = userService.updateCurrentUserName(currentUserEmail, nameChange.getName());
+        	return userConverter.entityToDto(updatedUser);
         }
         
         return null;

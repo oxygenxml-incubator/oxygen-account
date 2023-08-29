@@ -58,4 +58,15 @@ public class UserService {
 	public User getUserByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
+	
+	public User updateUser(User user) {
+		return userRepository.save(user);
+	}
+	
+	public User updateCurrentUserName(String email, String newName) {
+		User existingUser = getUserByEmail(email);
+		existingUser.setName(newName);
+		
+		return updateUser(existingUser);
+	}
 }

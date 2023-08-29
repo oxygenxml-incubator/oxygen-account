@@ -30,6 +30,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	 * @param email The email of the User entity to find in the database.
 	 * @return A User entity that matches the provided email, or null if no matching User entity is found.
 	 */
-	User findByEmail(String email);
+	public User findByEmail(String email);
 
 }
