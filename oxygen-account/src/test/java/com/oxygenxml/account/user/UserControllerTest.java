@@ -1,20 +1,25 @@
 package com.oxygenxml.account.user;
 
 import static org.hamcrest.Matchers.is;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import static org.hamcrest.Matchers.hasItem;
 
@@ -179,6 +184,54 @@ public class UserControllerTest {
         .andExpect(jsonPath("$.errors[?(@.fieldName == 'email')].messageId", hasItem(Message.EMAIL_INVALID.getId())))
         .andExpect(jsonPath("$.errors[?(@.fieldName == 'password')].errorMessage", hasItem(Message.SHORT_FIELD.getMessage())))
         .andExpect(jsonPath("$.errors[?(@.fieldName == 'password')].messageId", hasItem(Message.SHORT_FIELD.getId())));
+	}
+	
+	/**
+	 * The testShowDetailsAboutUser tests whether the user's name and email are displayed after logging in
+	 * @throws Exception
+	 */
+	@Test
+	void testShowDetailsAboutUser() throws Exception {
+		UserDto newUserDto = new UserDto();
+		newUserDto.setName("User");
+		newUserDto.setEmail("test@email.com");
+		newUserDto.setPassword("password");
+
+		mockMvc.perform(post("/api/users/register")
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(newUserDto)));
+
+		ResultActions sessionAccess = mockMvc.perform(get("/profile"))
+				.andExpect(status().isFound()) 
+				.andExpect(redirectedUrlPattern("**/login"));
+
+		MvcResult result = sessionAccess.andReturn();
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+
+		mockMvc.perform(post("/login").session(session)
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "test@email.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrlPattern("**/profile?continue"));
+
+		mockMvc.perform(get("/api/users/me").session(session))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.name", is("User")))
+		.andExpect(jsonPath("$.email", is("test@email.com")));
+	}
+
+	/**
+	 * The testAnonymousUserDetails tests what is displayed to an unknown user who accesses this area of ​​the application
+	 * @throws Exception
+	 */
+	@Test
+	void testAnonymousUserDetails() throws Exception {
+
+		mockMvc.perform(get("/api/users/me"))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.name", is("Anonymous User")))
+		.andExpect(jsonPath("$.email", is("anonymousUser")));
 	}
 }
 

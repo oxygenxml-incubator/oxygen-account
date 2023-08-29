@@ -1,17 +1,19 @@
 package com.oxygenxml.account.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oxygenxml.account.model.User;	
-import com.oxygenxml.account.service.UserService;
-import com.oxygenxml.account.service.ValidationService;
-
 import com.oxygenxml.account.converter.UserConverter;
 import com.oxygenxml.account.dto.UserDto;
+import com.oxygenxml.account.model.User;
+import com.oxygenxml.account.service.UserService;
+import com.oxygenxml.account.service.ValidationService;
 
 /**
  * The UserControllerclass is a REST controller that manages HTTP requests related to users.
@@ -56,7 +58,35 @@ public class UserController {
 		return userConverter.entityToDto(registeredUser);
 	}
 	
+	/**
+     * Handles the GET request to fetch profile details of the authenticated user.
+     * 
+     * @return The profile details of the authenticated user.
+     */
+    @GetMapping("/me")
+    public UserDto getCurrentUser() {
+    	
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object userPrincipal = authentication.getPrincipal();
+        
+        if (userPrincipal instanceof String) {
+        	String stringUser = (String) userPrincipal;
+        	
+        	if (stringUser.equals("anonymousUser")) {
+        		return  new UserDto("Anonymous User", "anonymousUser", null);
+        	} 
+        } else if (userPrincipal instanceof org.springframework.security.core.userdetails.User ) {
+        	
+        	org.springframework.security.core.userdetails.User currentUser = (org.springframework.security.core.userdetails.User) userPrincipal;
+        	String currentUserEmail = currentUser.getUsername();
+            
+            return userConverter.entityToDto(userService.getUserByEmail(currentUserEmail));
+        }
+        
+        return null;
+    }
+}
+	
 	
 
 	
-}

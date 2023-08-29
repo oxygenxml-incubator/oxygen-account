@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node'
 import { rest } from 'msw';
 
-import AuthContainer from '../../login/AuthContainer';
+import AuthContainer from '../../login/AuthContainer.jsx';
 
 // Create a mock server for handling API requests and responses
 const server = setupServer();

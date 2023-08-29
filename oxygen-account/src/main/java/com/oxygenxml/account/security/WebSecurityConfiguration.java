@@ -69,16 +69,17 @@ public class WebSecurityConfiguration {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-		.csrf((csrf) -> csrf.disable())
+		.csrf(csrf -> csrf.disable())
 		.authorizeHttpRequests(authz->authz
-				.requestMatchers("/api/users/register").permitAll()
+				.requestMatchers("/api/users/register", "api/users/me").permitAll()
 				.anyRequest().authenticated())
-		.formLogin((form) -> form
+		.formLogin(form -> form
 				.loginPage("/login")
 				.usernameParameter("email")
 			    .passwordParameter("password")
 			    .failureHandler(authenticationFailureHandler())
-				.permitAll());
+				.permitAll())
+		.logout(logout -> logout.logoutSuccessUrl("/login"));
 
 		return http.build();
 	}
