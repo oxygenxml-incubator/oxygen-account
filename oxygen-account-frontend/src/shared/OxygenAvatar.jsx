@@ -9,7 +9,7 @@ import { Avatar } from "@mui/material";
  * @param {string} name - The name used to generate the avatar color and initials.
  * @returns {JSX.Element} The JSX representation of the OxygenAvatar component.
  */
-function OxygenAvatar( {name} ) {
+function OxygenAvatar( {name, size} ) {
     /**
      * Converts a string to a color code.
      *
@@ -48,7 +48,11 @@ function OxygenAvatar( {name} ) {
         // Render the Avatar component
         <Avatar
             children = {stringAvatar(name)}
-            sx= {{bgcolor: stringToColor(name)}}
+            sx= {{bgcolor: stringToColor(name), 
+                width: size, 
+                height: size, 
+                fontSize: `${parseInt(size) / 4}px`
+            }}
         />
     );
 }
