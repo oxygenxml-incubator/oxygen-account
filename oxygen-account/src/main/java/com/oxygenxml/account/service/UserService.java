@@ -59,10 +59,23 @@ public class UserService {
 		return userRepository.findByEmail(email);
 	}
 	
+	/**
+	 * Saves or updates the given user entity in the repository.
+	 * 
+	 * @param user the user entity to be saved or updated.
+	 * @return the saved or updated user entity.
+	 */
 	public User updateUser(User user) {
 		return userRepository.save(user);
 	}
 	
+	/**
+     * Updates the name of the user identified by the given email.
+     * 
+     * @param email the email address used to identify the user.
+     * @param newName the new name to be set for the user.
+     * @return the updated user entity.
+     */
 	public User updateCurrentUserName(String email, String newName) {
 		User existingUser = getUserByEmail(email);
 		existingUser.setName(newName);

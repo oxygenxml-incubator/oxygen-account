@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,12 +27,13 @@ import static org.hamcrest.Matchers.hasItem;
 
 
 import com.oxygenxml.account.OxygenAccountApplication;
+import com.oxygenxml.account.dto.UpdateUserDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.utility.JsonUtil;
 import com.oxygenxml.account.messages.Message;
 
 /**
- * The UserControllerTest class tests the functionality of UserController
+ * UserControllerTest class tests the functionality of UserController
  *
  */
 @SpringBootTest(classes=OxygenAccountApplication.class)
@@ -46,13 +48,13 @@ import com.oxygenxml.account.messages.Message;
 public class UserControllerTest {
 
 	/**
-	 * The MockMvc instance is used for simulating HTPP requests
+	 * MockMvc instance is used for simulating HTPP requests
 	 */
 	@Autowired
 	private MockMvc mockMvc;
 
 	/**
-	 * The testRegisterUser method tests the user registration functionality.
+	 *  testRegisterUser method tests the user registration functionality.
 	 *  It attempts to register a new user
 	 * @throws Exception if the test encounters any errors.
 	 */
@@ -71,7 +73,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * The testRegisterSameEmail method tests whether another user with the same email can be registered
+	 * testRegisterSameEmail method tests whether another user with the same email can be registered
 	 * It registers an initial user, then attempts to register a new user with the same email.
 	 * @throws Exception if the test encounters any errors
 	 */
@@ -93,7 +95,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * The testInvalidEmail method tests the registration with an invalid email.
+	 * testInvalidEmail method tests the registration with an invalid email.
 	 * @throws Exception
 	 */
 	@Test
@@ -116,7 +118,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * The testInvalidPassword tests the registration with an invalid password.
+	 * testInvalidPassword tests the registration with an invalid password.
 	 * @throws Exception
 	 */
 	@Test
@@ -139,7 +141,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * The testEmptyField tests the registration with an invalid password.
+	 * testEmptyField tests the registration with an invalid password.
 	 * @throws Exception
 	 */
 	@Test
@@ -162,7 +164,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * The testMultipleErrors tests that the MultipleOxygenAccountException is throwen correctly
+	 * testMultipleErrors tests that the MultipleOxygenAccountException is throwen correctly
 	 * @throws Exception
 	 */
 	@Test
@@ -187,7 +189,7 @@ public class UserControllerTest {
 	}
 	
 	/**
-	 * The testShowDetailsAboutUser tests whether the user's name and email are displayed after logging in
+	 * testShowDetailsAboutUser tests whether the user's name and email are displayed after logging in
 	 * @throws Exception
 	 */
 	@Test
@@ -222,7 +224,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * The testAnonymousUserDetails tests what is displayed to an unknown user who accesses this area of ​​the application
+	 * testAnonymousUserDetails tests what is displayed to an unknown user who accesses this area of ​​the application
 	 * @throws Exception
 	 */
 	@Test
@@ -232,6 +234,90 @@ public class UserControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.name", is("Anonymous User")))
 		.andExpect(jsonPath("$.email", is("anonymousUser")));
+	}
+	
+	/**
+	 * testChangeName tests if a User can change his name
+	 * @throws Exception
+	 */
+	@Test
+	void testChangeName() throws Exception {
+		UserDto newUserDto = new UserDto();
+		newUserDto.setName("User");
+		newUserDto.setEmail("test@email.com");
+		newUserDto.setPassword("password");
+
+		mockMvc.perform(post("/api/users/register")
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(newUserDto)));
+		
+		ResultActions sessionAccess = mockMvc.perform(get("/profile"))
+				.andExpect(status().isFound()) 
+				.andExpect(redirectedUrlPattern("**/login"));
+
+		MvcResult result = sessionAccess.andReturn();
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+
+		mockMvc.perform(post("/login").session(session)
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "test@email.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrlPattern("**/profile?continue"));
+		
+		UpdateUserDto updateNameDto = new UpdateUserDto();
+		updateNameDto.setName("New User");
+		
+		mockMvc.perform(put("/api/users/profile").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(updateNameDto)))
+		.andExpect(status().isOk());
+		
+		mockMvc.perform(get("/api/users/me").session(session))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.name", is("New User")))
+		.andExpect(jsonPath("$.email", is("test@email.com")));
+	}
+	
+	/**
+	 * testChangeEmptyName tests the situation in which a User enters an empty name
+	 * @throws Exception
+	 */
+	@Test
+	void testChangeEmptyName() throws Exception {
+		UserDto newUserDto = new UserDto();
+		newUserDto.setName("User");
+		newUserDto.setEmail("test@email.com");
+		newUserDto.setPassword("password");
+
+		mockMvc.perform(post("/api/users/register")
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(newUserDto)));
+		
+		ResultActions sessionAccess = mockMvc.perform(get("/profile"))
+				.andExpect(status().isFound()) 
+				.andExpect(redirectedUrlPattern("**/login"));
+
+		MvcResult result = sessionAccess.andReturn();
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+
+		mockMvc.perform(post("/login").session(session)
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "test@email.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrlPattern("**/profile?continue"));
+		
+		UpdateUserDto updateNameDto = new UpdateUserDto();
+		updateNameDto.setName("");
+		
+		mockMvc.perform(put("/api/users/profile").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(updateNameDto)))
+		.andExpect(status().isUnprocessableEntity())
+		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
+		.andExpect(jsonPath("$.errors[?(@.fieldName == 'name')].errorMessage", hasItem(Message.EMPTY_FIELD.getMessage())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'name')].messageId", hasItem(Message.EMPTY_FIELD.getId())));
 	}
 }
 

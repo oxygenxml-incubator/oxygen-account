@@ -88,6 +88,13 @@ public class UserController {
         return null;
     }
     
+    /**
+     * Updates the name of the currently authenticated user based on the provided {@link UpdateUserDto}.
+     * 
+     * @param nameChange  A DTO containing the new name for the user.
+     * @return A DTO representation of the updated user or null if the user is not recognized.
+     * @throws Exception if validation fails. 
+     */
     @PutMapping("/profile")
     public UserDto updateUserName(@RequestBody UpdateUserDto nameChange ) {
     	
