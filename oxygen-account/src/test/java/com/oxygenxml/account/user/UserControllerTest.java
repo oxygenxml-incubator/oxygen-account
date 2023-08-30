@@ -1,11 +1,15 @@
 package com.oxygenxml.account.user;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,15 +26,14 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import static org.hamcrest.Matchers.hasItem;
-
-
 
 import com.oxygenxml.account.OxygenAccountApplication;
 import com.oxygenxml.account.dto.UpdateUserDto;
 import com.oxygenxml.account.dto.UserDto;
-import com.oxygenxml.account.utility.JsonUtil;
 import com.oxygenxml.account.messages.Message;
+import com.oxygenxml.account.model.User;
+import com.oxygenxml.account.service.UserService;
+import com.oxygenxml.account.utility.JsonUtil;
 
 /**
  * UserControllerTest class tests the functionality of UserController
@@ -52,6 +55,9 @@ public class UserControllerTest {
 	 */
 	@Autowired
 	private MockMvc mockMvc;
+	
+	@Autowired
+	private UserService userService;
 
 	/**
 	 *  testRegisterUser method tests the user registration functionality.
@@ -81,8 +87,8 @@ public class UserControllerTest {
 	void testRegisterSameEmail() throws Exception{
 		UserDto newUser = new UserDto();
 
-		newUser.setName("Test");
-		newUser.setEmail("test@gmail.com");
+		newUser.setName("Denis Mateescu");
+		newUser.setEmail("denismateescu@gmail.com");
 		newUser.setPassword("password");
 
 		ResultActions resultAction = mockMvc.perform(post("/api/users/register")
@@ -242,31 +248,18 @@ public class UserControllerTest {
 	 */
 	@Test
 	void testChangeName() throws Exception {
-		UserDto newUserDto = new UserDto();
-		newUserDto.setName("User");
-		newUserDto.setEmail("test@email.com");
-		newUserDto.setPassword("password");
-
-		mockMvc.perform(post("/api/users/register")
-				.contentType("application/json")
-				.content(JsonUtil.asJsonString(newUserDto)));
-		
-		ResultActions sessionAccess = mockMvc.perform(get("/profile"))
-				.andExpect(status().isFound()) 
-				.andExpect(redirectedUrlPattern("**/login"));
-
-		MvcResult result = sessionAccess.andReturn();
-		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
-
-		mockMvc.perform(post("/login").session(session)
+		MvcResult result = mockMvc.perform(post("/login")
 				.contentType(APPLICATION_FORM_URLENCODED)
-				.param("email", "test@email.com")
+				.param("email", "denismateescu@gmail.com")
 				.param("password", "password"))
 		.andExpect(status().isFound())
-		.andExpect(redirectedUrlPattern("**/profile?continue"));
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
+		
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
 		
 		UpdateUserDto updateNameDto = new UpdateUserDto();
-		updateNameDto.setName("New User");
+		updateNameDto.setName("Marius Costescu");
 		
 		mockMvc.perform(put("/api/users/profile").session(session)
 				.contentType("application/json")
@@ -275,8 +268,12 @@ public class UserControllerTest {
 		
 		mockMvc.perform(get("/api/users/me").session(session))
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.name", is("New User")))
-		.andExpect(jsonPath("$.email", is("test@email.com")));
+		.andExpect(jsonPath("$.name", is("Marius Costescu")))
+		.andExpect(jsonPath("$.email", is("denismateescu@gmail.com")));
+		
+		User user = userService.getUserByEmail("denismateescu@gmail.com");
+		
+		assertThat(user.getName(), equalTo("Marius Costescu"));
 	}
 	
 	/**
@@ -285,28 +282,15 @@ public class UserControllerTest {
 	 */
 	@Test
 	void testChangeEmptyName() throws Exception {
-		UserDto newUserDto = new UserDto();
-		newUserDto.setName("User");
-		newUserDto.setEmail("test@email.com");
-		newUserDto.setPassword("password");
-
-		mockMvc.perform(post("/api/users/register")
-				.contentType("application/json")
-				.content(JsonUtil.asJsonString(newUserDto)));
-		
-		ResultActions sessionAccess = mockMvc.perform(get("/profile"))
-				.andExpect(status().isFound()) 
-				.andExpect(redirectedUrlPattern("**/login"));
-
-		MvcResult result = sessionAccess.andReturn();
-		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
-
-		mockMvc.perform(post("/login").session(session)
+		MvcResult result = mockMvc.perform(post("/login")
 				.contentType(APPLICATION_FORM_URLENCODED)
-				.param("email", "test@email.com")
+				.param("email", "denismateescu@gmail.com")
 				.param("password", "password"))
 		.andExpect(status().isFound())
-		.andExpect(redirectedUrlPattern("**/profile?continue"));
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
+		
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
 		
 		UpdateUserDto updateNameDto = new UpdateUserDto();
 		updateNameDto.setName("");
