@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { render, queryByAttribute, waitFor, fireEvent } from '@testing-library/react';
+import { render, queryByAttribute, waitFor, fireEvent, screen } from '@testing-library/react';
 import { setupServer } from 'msw/node'
 import { rest } from 'msw';
 
@@ -53,7 +53,7 @@ test('display data in profile component', async () => {
  * Test case to simulate changing name.
  */
 test('edit name', async () => {
-    // Mock a server response for user profile data
+    // Mock a server response for user profile data and a server response for saving the new name
     server.use(
         rest.get('/api/users/me', async (req, res, ctx) => {
             return res(
@@ -64,15 +64,8 @@ test('edit name', async () => {
                     }
                 )
             );
-        })
-    );
-
-    // Render the Profile component
-    const dom = render(<Profile />);
-
-    // Mock a server response for saving the new name
-    server.use(
-        rest.get('/api/users/profile', async (req, res, ctx) => {
+        }),
+        rest.put('/api/users/profile', async (req, res, ctx) => {
             return res(
                 ctx.json(
                     {
@@ -85,7 +78,10 @@ test('edit name', async () => {
         })
     );
 
-    // Edit name and Wait for the expected data to appear
+    // Render the Profile component
+    const dom = render(<Profile />);
+
+    // Edit name 
     await waitFor(() => {
         const editButton = getById(dom.container, 'edit-button');
         fireEvent.click(editButton);
@@ -95,10 +91,76 @@ test('edit name', async () => {
 
         const saveButton = getById(dom.container, 'save-button');
         fireEvent.click(saveButton);
+    });
 
+    // Wait for the expected data to appear
+    await waitFor(() => {
+        const nameInfo = getById(dom.container, 'name-info');
         expect(nameInfo).toHaveValue('Constantin-Marius Costescu');
 
         const emailInfo = getById(dom.container, 'email-info');
         expect(emailInfo).toHaveValue('marius@yahoo.com');
+
+        expect(screen.queryByText('Profile has been updated!')).toBeInTheDocument();
+    });
+});
+
+
+/**
+ * Test case to simulate edit error using an empty name.
+ */
+test('edit error empty name', async () => {
+    // Mock a server response for user profile data and a server response for saving the new name
+    server.use(
+        rest.get('/api/users/me', async (req, res, ctx) => {
+            return res(
+                ctx.json(
+                    {
+                        name: 'Marius Costescu',
+                        email: 'marius@yahoo.com'
+                    }
+                )
+            );
+        }),
+        rest.put('/api/users/profile', async (req, res, ctx) => {
+            return res(
+                ctx.json(
+                    {
+                        internalErrorCode: 1008,
+                        errorMessage: "Input validation failed.",
+                        messageId: "INPUT_VALIDATION_FAILED",
+                        errors: [
+                            {
+                                fieldName: "name",
+                                errorMessage: "Please provide a non-empty value.",
+                                messageId: "EMPTY_FIELD"
+                            }
+                        ]
+                    }
+                )
+            );
+        })
+    );
+
+    // Render the Profile component
+    const dom = render(<Profile />);
+
+    // Edit name
+    await waitFor(() => {
+        const editButton = getById(dom.container, 'edit-button');
+        fireEvent.click(editButton);
+
+        const nameInfo = getById(dom.container, 'name-info');
+        // Simulate valid data for frontend validation in order to check the response from server
+        fireEvent.change(nameInfo, { target: { value: '-' } });
+
+        const saveButton = getById(dom.container, 'save-button');
+
+        fireEvent.click(saveButton);
+    });
+
+    // Wait for the expected error message to appear
+    await waitFor(() => {
+        expect(screen.queryByText('Please provide a non-empty value.')).toBeInTheDocument();
     });
 });

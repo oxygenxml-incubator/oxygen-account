@@ -280,9 +280,9 @@ function ProfileCard() {
 
                                 {/* Display a progress bar during edit submission */}
                                 {isEditSubmissionInProgress &&
-                                <Grid item xs>
-                                    <LinearProgress />
-                                </Grid>}
+                                    <Grid item xs>
+                                        <LinearProgress />
+                                    </Grid>}
                             </Grid>
 
                         )}
