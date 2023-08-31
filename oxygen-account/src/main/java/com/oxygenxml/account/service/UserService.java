@@ -5,6 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import com.oxygenxml.account.exception.InternalErrorCode;
 import com.oxygenxml.account.exception.OxygenAccountException;
 import com.oxygenxml.account.messages.Message;
@@ -81,5 +84,29 @@ public class UserService {
 		existingUser.setName(newName);
 		
 		return updateUser(existingUser);
+	}
+	
+	public User updateCurrentUserPassword(String email, String oldPassword, String newPassword) {
+		User existingUser = getUserByEmail(email);
+		
+		if(!passwordEncoder.matches(oldPassword, existingUser.getPassword())) {
+			throw new OxygenAccountException(Message.INCORRECT_PASSWORD, HttpStatus.BAD_REQUEST, InternalErrorCode.INCORRECT_PASSWORD);
+		}
+		
+		existingUser.setPassword(passwordEncoder.encode(newPassword));
+		
+		return updateUser(existingUser);
+	}
+	
+	public String getCurrentUserEmail() {
+		
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    
+	    if (authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.User) {
+	        org.springframework.security.core.userdetails.User currentUser = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+	        return currentUser.getUsername();
+	    }
+	    
+	    return null;
 	}
 }

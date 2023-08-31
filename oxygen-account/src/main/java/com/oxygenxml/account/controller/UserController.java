@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oxygenxml.account.converter.UserConverter;
-import com.oxygenxml.account.dto.UpdateUserDto;
+import com.oxygenxml.account.dto.ChangePasswordDto;
+import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.service.UserService;
@@ -68,51 +69,46 @@ public class UserController {
     @GetMapping("/me")
     public UserDto getCurrentUser() {
     	
-    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object userPrincipal = authentication.getPrincipal();
+    	 String currentUserEmail = userService.getCurrentUserEmail();
         
-        if (userPrincipal instanceof String) {
-        	String stringUser = (String) userPrincipal;
+        if (currentUserEmail == null) {
+        	 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         	
-        	if (stringUser.equals("anonymousUser")) {
+        	if ("anonymousUser".equals(authentication.getPrincipal())) {
         		return  new UserDto("Anonymous User", "anonymousUser", null);
         	} 
-        } else if (userPrincipal instanceof org.springframework.security.core.userdetails.User ) {
-        	
-        	org.springframework.security.core.userdetails.User currentUser = (org.springframework.security.core.userdetails.User) userPrincipal;
-        	String currentUserEmail = currentUser.getUsername();
+        } 
             
             return userConverter.entityToDto(userService.getUserByEmail(currentUserEmail));
-        }
-        
-        return null;
     }
     
     /**
-     * Updates the name of the currently authenticated user based on the provided {@link UpdateUserDto}.
+     * Updates the name of the currently authenticated user based on the provided {@link UpdateUserNameDto}.
      * 
      * @param nameChange  A DTO containing the new name for the user.
      * @return A DTO representation of the updated user or null if the user is not recognized.
      * @throws Exception if validation fails. 
      */
     @PutMapping("/profile")
-    public UserDto updateUserName(@RequestBody UpdateUserDto nameChange ) {
-    	
-    	validationService.validate(nameChange);
-    	
-    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object userPrincipal = authentication.getPrincipal();
+    public UserDto updateUserName(@RequestBody UpdateUserNameDto nameChange ) {
 
-     if( userPrincipal instanceof org.springframework.security.core.userdetails.User ) {
-        	
-        	org.springframework.security.core.userdetails.User currentUser = (org.springframework.security.core.userdetails.User) userPrincipal;
-        	String currentUserEmail = currentUser.getUsername();
-        	
-        	User updatedUser = userService.updateCurrentUserName(currentUserEmail, nameChange.getName());
-        	return userConverter.entityToDto(updatedUser);
-        }
-        
-        return null;
+    	validationService.validate(nameChange);
+
+    	String currentUserEmail = userService.getCurrentUserEmail();
+
+    	User updatedUser = userService.updateCurrentUserName(currentUserEmail, nameChange.getName());
+    	return userConverter.entityToDto(updatedUser);
+    }
+
+    @PutMapping("/password")
+    public UserDto changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
+
+    	validationService.validate(changePasswordDto);
+
+    	String currentUserEmail = userService.getCurrentUserEmail();
+
+    	User updatedUser = userService.updateCurrentUserPassword(currentUserEmail, changePasswordDto.getOldPassword(), changePasswordDto.getNewPassword());
+    	return userConverter.entityToDto(updatedUser);
     }
 }
 	

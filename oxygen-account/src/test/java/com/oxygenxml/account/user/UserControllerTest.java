@@ -28,7 +28,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.oxygenxml.account.OxygenAccountApplication;
-import com.oxygenxml.account.dto.UpdateUserDto;
+import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
@@ -258,7 +258,7 @@ public class UserControllerTest {
 		
 		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
 		
-		UpdateUserDto updateNameDto = new UpdateUserDto();
+		UpdateUserNameDto updateNameDto = new UpdateUserNameDto();
 		updateNameDto.setName("Marius Costescu");
 		
 		mockMvc.perform(put("/api/users/profile").session(session)
@@ -292,7 +292,7 @@ public class UserControllerTest {
 		
 		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
 		
-		UpdateUserDto updateNameDto = new UpdateUserDto();
+		UpdateUserNameDto updateNameDto = new UpdateUserNameDto();
 		updateNameDto.setName("");
 		
 		mockMvc.perform(put("/api/users/profile").session(session)
