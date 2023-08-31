@@ -41,6 +41,20 @@ function ProfileCard() {
     // State variable indicating whether the edit submission is in progress.
     const [isEditSubmissionInProgress, setIsEditSubmissionInProgress] = useState(false);
 
+    const [isChangePasswordActive, setIsChangePasswordActive] = useState(false);
+
+    const [currentPassword, setCurrentPassword] = useState('');
+
+    const [newPassword, setNewPassword] = useState('');
+
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
+
+    const [currentPasswordError, setCurrentPasswordError] = useState('');
+
+    const [newPasswordError, setNewPasswordError] = useState('');
+
+    const [confirmNewPasswordError, setConfirmNewPasswordError] = useState('');
+
     /**
      * Fetch user data on component mount
      */
@@ -93,6 +107,30 @@ function ProfileCard() {
 
             if (editedNameError !== '') {
                 setEditedNameError('');
+            }
+        }
+
+        else if (id === "current-password") {
+            setCurrentPassword(value);
+
+            if (currentPasswordError !== '') {
+                 setCurrentPasswordError('');
+             }
+        }
+
+        else if (id === "new-password") {
+            setNewPassword(value);
+
+            if (newPasswordError !== '') {
+                setNewPasswordError('');
+            }
+        }
+
+        else if (id === "confirm-new-password") {
+            setConfirmNewPassword(value);
+
+            if (confirmNewPasswordError !== '') {
+                setConfirmNewPasswordError('');
             }
         }
     }
@@ -190,6 +228,22 @@ function ProfileCard() {
         }
     }
 
+    const handleChangePasswordClick = () => {
+        setIsChangePasswordActive(true);
+    }
+
+    const handleCancelChangePasswordClick = () => {
+        setIsChangePasswordActive(false);
+
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+
+        setCurrentPasswordError('');
+        setNewPasswordError('');
+        setConfirmNewPasswordError('');
+    }
+
     return (
         // Main container for the profile card
         <Grid container justifyContent="center" alignItems="center">
@@ -205,84 +259,173 @@ function ProfileCard() {
                         {isDataLoadingActive ? (
                             <LinearProgress />
                         ) : (
-                            <Grid container spacing={2}>
-                                <Grid item container direction="row" spacing={2}>
-                                    {/* Display user avatar */}
-                                    <Grid item style={{ maxWidth: 'fit-content' }}>
-                                        <OxygenAvatar
-                                            name={currentUserData.name}
-                                            size={"100px"}
-                                        />
-                                    </Grid>
-
-                                    {/* Display user info */}
-                                    <Grid item container style={{ flexGrow: 1, flexBasis: 0 }} direction='column' spacing={2}>
-                                        {/* Input field for showing and editing the name */}
-                                        <Grid item>
-                                            <TextField
-                                                id="name-info"
-                                                label="Name"
-                                                variant="outlined"
-                                                value={editedUserName}
-                                                InputProps={{ readOnly: !isEditActive }}
-                                                onChange={handleInputChange}
-                                                error={Boolean(editedNameError)}
-                                                helperText={editedNameError}
-                                                fullWidth
+                            <Grid container>
+                                <Grid item container spacing={2}>
+                                    <Grid item container direction="row" spacing={2}>
+                                        {/* Display user avatar */}
+                                        <Grid item style={{ maxWidth: 'fit-content' }}>
+                                            <OxygenAvatar
+                                                name={currentUserData.name}
+                                                size={"100px"}
                                             />
                                         </Grid>
 
-                                        {/* Display user's email */}
-                                        <Grid item>
-                                            <TextField
-                                                id="email-info"
-                                                label="Email"
-                                                variant="outlined"
-                                                value={currentUserData.email}
-                                                InputProps={{ readOnly: true }}
-                                                fullWidth
-                                            />
+                                        {/* Display user info */}
+                                        <Grid item container style={{ flexGrow: 1, flexBasis: 0 }} direction='column' spacing={2}>
+                                            {/* Input field for showing and editing the name */}
+                                            <Grid item>
+                                                <TextField
+                                                    id="name-info"
+                                                    label="Name"
+                                                    variant="outlined"
+                                                    value={editedUserName}
+                                                    InputProps={{ readOnly: !isEditActive }}
+                                                    onChange={handleInputChange}
+                                                    error={Boolean(editedNameError)}
+                                                    helperText={editedNameError}
+                                                    fullWidth
+                                                />
+                                            </Grid>
+
+                                            {/* Display user's email */}
+                                            <Grid item>
+                                                <TextField
+                                                    id="email-info"
+                                                    label="Email"
+                                                    variant="outlined"
+                                                    value={currentUserData.email}
+                                                    InputProps={{ readOnly: true }}
+                                                    fullWidth
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+
+                                    {/* Conditionally render buttons based on Edit Mode */}
+                                    <Grid item container justifyContent="flex-end">
+                                        {isEditActive ? (
+                                            <Grid item container style={{ maxWidth: 'fit-content' }} spacing={1}>
+                                                {/* Cancel button */}
+                                                <Grid item>
+                                                    <Button
+                                                        variant="contained"
+                                                        onClick={handleClickCancelEditButton}
+                                                        disabled={isEditSubmissionInProgress}
+                                                        style={{ background: 'lightgray', color: 'black' }}>
+                                                        Cancel
+                                                    </Button>
+                                                </Grid>
+
+                                                {/* Save button */}
+                                                <Grid item>
+                                                    <Button id="save-button" 
+                                                            variant="contained" 
+                                                            disabled={isEditSubmissionInProgress} 
+                                                            onClick={handleClickSaveButton}>
+                                                        Save
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+
+                                        ) : (
+                                            // Edit button
+                                            <Grid item>
+                                                <Button id="edit-button" variant="contained" onClick={handleClickEditButton}>
+                                                    Edit
+                                                </Button>
+                                            </Grid>
+                                        )}
+                                    </Grid>
+
+                                    {/* Display a progress bar during edit submission */}
+                                    {isEditSubmissionInProgress &&
+                                        <Grid item xs>
+                                            <LinearProgress />
+                                        </Grid>}
+                                </Grid>
+
+                                <Grid item container direction={'column'} spacing={2} style={{ borderTop: "2px solid #333", marginTop: "20px", paddingTop: "20px" }}>
+                                    <Grid item>
+                                        <Typography variant="h6">
+                                            Security
+                                        </Typography>
+                                    </Grid>
+
+                                    {isChangePasswordActive &&
+                                        <Grid item container direction="column" spacing={3}>
+                                            <Grid item>
+                                                <TextField
+                                                    id="current-password"
+                                                    label="Current Password"
+                                                    type="password"
+                                                    value={currentPassword}
+                                                    onChange={handleInputChange}
+                                                    error={Boolean(currentPasswordError)}
+                                                    helperText={currentPasswordError}
+                                                    fullWidth
+                                                />
+                                            </Grid>
+                                            <Grid item>
+                                                <TextField
+                                                    id="new-password"
+                                                    label="New Password"
+                                                    type="password"
+                                                    value={newPassword}
+                                                    onChange={handleInputChange}
+                                                    error={Boolean(newPasswordError)}
+                                                    helperText={newPasswordError}
+                                                    fullWidth
+                                                />
+                                            </Grid>
+
+                                            <Grid item>
+                                                <TextField
+                                                    id="confirm-new-password"
+                                                    label="Confirm New Password"
+                                                    type="password"
+                                                    value={confirmNewPassword}
+                                                    onChange={handleInputChange}
+                                                    error={Boolean(confirmNewPasswordError)}
+                                                    helperText={confirmNewPasswordError}
+                                                    fullWidth
+                                                />
+                                            </Grid>
+                                        </Grid>}
+
+                                    <Grid item container justifyContent="flex-end">
+                                        <Grid item container justifyContent="flex-end">
+                                            {isChangePasswordActive ? (
+                                                <Grid item container style={{ maxWidth: 'fit-content' }} spacing={1}>
+                                                    <Grid item>
+                                                        <Button
+                                                            variant="contained"
+                                                            onClick={handleCancelChangePasswordClick}
+                                                            style={{ background: 'lightgray', color: 'black' }}>
+                                                            Cancel
+                                                        </Button>
+                                                    </Grid>
+
+                                                    <Grid item>
+                                                        <Button 
+                                                            disabled = {currentPassword === '' || newPassword === '' || confirmNewPassword === ''}
+                                                            variant="contained">
+                                                            Save Password
+                                                        </Button>
+                                                    </Grid>
+                                                </Grid>
+
+                                            ) : (
+                                                <Grid item>
+                                                    <Button 
+                                                        variant="contained"
+                                                        onClick={handleChangePasswordClick}>
+                                                        Change Password
+                                                    </Button>
+                                                </Grid>
+                                            )}
                                         </Grid>
                                     </Grid>
                                 </Grid>
-
-                                {/* Conditionally render buttons based on Edit Mode */}
-                                <Grid item container justifyContent="flex-end">
-                                    {isEditActive ? (
-                                        <Grid item container style={{ maxWidth: 'fit-content' }} spacing={1}>
-                                            {/* Cancel button */}
-                                            <Grid item>
-                                                <Button
-                                                    variant="contained"
-                                                    onClick={handleClickCancelEditButton}
-                                                    style={{ background: 'lightgray', color: 'black' }}>
-                                                    Cancel
-                                                </Button>
-                                            </Grid>
-
-                                            {/* Save button */}
-                                            <Grid item>
-                                                <Button id="save-button" variant="contained" onClick={handleClickSaveButton}>
-                                                    Save
-                                                </Button>
-                                            </Grid>
-                                        </Grid>
-
-                                    ) : (
-                                        // Edit button
-                                        <Grid item>
-                                            <Button id="edit-button" variant="contained" onClick={handleClickEditButton}>
-                                                Edit
-                                            </Button>
-                                        </Grid>
-                                    )}
-                                </Grid>
-
-                                {/* Display a progress bar during edit submission */}
-                                {isEditSubmissionInProgress &&
-                                    <Grid item xs>
-                                        <LinearProgress />
-                                    </Grid>}
                             </Grid>
 
                         )}
