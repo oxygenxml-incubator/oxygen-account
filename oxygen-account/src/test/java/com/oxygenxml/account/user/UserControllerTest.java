@@ -313,6 +313,10 @@ public class UserControllerTest {
         .andExpect(jsonPath("$.errors[?(@.fieldName == 'name')].messageId", hasItem(Message.EMPTY_FIELD.getId())));
 	}
 	
+	/**
+	 * testChangePassword tests the situation when a user want to change his password
+	 * @throws Exception
+	 */
 	@Test
 	void testChangePassword() throws Exception {
 		MvcResult result = mockMvc.perform(post("/login")
@@ -339,6 +343,10 @@ public class UserControllerTest {
 		assertTrue(passwordEncoder.matches("password1234", user.getPassword()));
 	}
 	
+	/**
+	 * testChangePasswordIncorrectOldPassword tests the situation when a user inserts a wrong password
+	 * @throws Exception
+	 */
 	@Test
 	void testChangePasswordIncorrectOldPassword() throws Exception {
 		MvcResult result = mockMvc.perform(post("/login")
@@ -367,6 +375,10 @@ public class UserControllerTest {
 		 assertTrue(passwordEncoder.matches("password", user.getPassword()));
 	}
 	
+	/**
+	 * testSameNewAndOldPasswords tests the situation when a user inserts the new password the same as the old password
+	 * @throws Exception
+	 */
 	@Test
 	void testSameNewAndOldPasswords() throws Exception {
 		MvcResult result = mockMvc.perform(post("/login")
@@ -395,6 +407,10 @@ public class UserControllerTest {
 		 assertTrue(passwordEncoder.matches("password", user.getPassword()));
 	}
 	
+	/**
+	 * testSameNewAndOldPasswords tests the situation when a user left empty the old password field and inserts a short new password
+	 * @throws Exception
+	 */
 	@Test
 	void testValidatePasswords() throws Exception {
 		MvcResult result = mockMvc.perform(post("/login")
@@ -414,8 +430,8 @@ public class UserControllerTest {
 		mockMvc.perform(put("/api/users/password").session(session)
 				.contentType("application/json")
 				.content(JsonUtil.asJsonString(changePassword)))
-		.andExpect(status().isForbidden())
-		.andExpect(jsonPath("$.internalErrorCode", is(1010)))
+		.andExpect(status().isUnprocessableEntity())
+		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
 		.andExpect(jsonPath("$.errors[?(@.fieldName == 'oldPassword')].errorMessage", hasItem(Message.EMPTY_FIELD.getMessage())))
         .andExpect(jsonPath("$.errors[?(@.fieldName == 'oldPassword')].messageId", hasItem(Message.EMPTY_FIELD.getId())))
         .andExpect(jsonPath("$.errors[?(@.fieldName == 'newPassword')].errorMessage", hasItem(Message.SHORT_FIELD.getMessage())))

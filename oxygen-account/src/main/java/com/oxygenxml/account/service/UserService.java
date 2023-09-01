@@ -129,6 +129,7 @@ public class UserService {
 	
 	public UserDto updateCurrentUserPassword(ChangePasswordDto changePasswordDto) {
 		User currentUser = getCurrentUser();
+		validationService.validate(changePasswordDto);
 		
 		 if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), currentUser.getPassword())) {
 			throw new OxygenAccountException(Message.INCORRECT_PASSWORD, HttpStatus.FORBIDDEN, InternalErrorCode.INCORRECT_PASSWORD);
