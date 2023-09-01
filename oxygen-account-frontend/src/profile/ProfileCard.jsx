@@ -41,7 +41,7 @@ function ProfileCard() {
     // State variable indicating whether the edit submission is in progress.
     const [isEditSubmissionInProgress, setIsEditSubmissionInProgress] = useState(false);
 
-    const [isChangePasswordActive, setIsChangePasswordActive] = useState(false);
+    const [isChangePasswordViewActive, setIsChangePasswordViewActive] = useState(false);
 
     const [currentPassword, setCurrentPassword] = useState('');
 
@@ -54,6 +54,8 @@ function ProfileCard() {
     const [newPasswordError, setNewPasswordError] = useState('');
 
     const [confirmNewPasswordError, setConfirmNewPasswordError] = useState('');
+
+    const [isChangePasswordSubmissionInProgress, setIsChangePasswordSubmissionInProgress] = useState(false);
 
     /**
      * Fetch user data on component mount
@@ -114,8 +116,8 @@ function ProfileCard() {
             setCurrentPassword(value);
 
             if (currentPasswordError !== '') {
-                 setCurrentPasswordError('');
-             }
+                setCurrentPasswordError('');
+            }
         }
 
         else if (id === "new-password") {
@@ -229,12 +231,10 @@ function ProfileCard() {
     }
 
     const handleChangePasswordClick = () => {
-        setIsChangePasswordActive(true);
+        setIsChangePasswordViewActive(true);
     }
 
-    const handleCancelChangePasswordClick = () => {
-        setIsChangePasswordActive(false);
-
+    const clearPasswordFileds = () => {
         setCurrentPassword('');
         setNewPassword('');
         setConfirmNewPassword('');
@@ -242,6 +242,97 @@ function ProfileCard() {
         setCurrentPasswordError('');
         setNewPasswordError('');
         setConfirmNewPasswordError('');
+    }
+
+    const handleCancelChangePasswordClick = () => {
+        setIsChangePasswordViewActive(false);
+
+        clearPasswordFileds();
+    }
+
+    const validateNewPassword = () => {
+        let isNewPasswordValid = /^.{8,}$/.test(newPassword.trim());
+        let isConfirmNewPasswordValid = newPassword === confirmNewPassword;
+        let isNewPasswordUsed = currentPassword === newPassword;
+
+        if (!isNewPasswordValid) {
+            setNewPasswordError('Input field is too short. Please enter a longer value.');
+        } else if (isNewPasswordUsed) {
+            setNewPasswordError('Please enter a different password.');
+        } else {
+            setNewPasswordError('');
+        }
+        setConfirmNewPasswordError(isConfirmNewPasswordValid ? '' : 'Passwords do not match.');
+
+        return isNewPasswordValid && isConfirmNewPasswordValid && !isNewPasswordUsed;
+    }
+
+    const sendChangePasswordRequest = () => {
+        setIsChangePasswordSubmissionInProgress(true);
+
+        const updatePasswordInfo = {
+            oldPassword: currentPassword.trim(),
+            newPassword: newPassword.trim(),
+        };
+
+        return fetch('api/users/password', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatePasswordInfo),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    setIsChangePasswordSubmissionInProgress(false);
+                    setIsChangePasswordViewActive(false);
+                    clearPasswordFileds();
+
+                    setIsSuccessSnackbar(true);
+                    setSnackbarMessage('The password has been changed successfully.');
+                    setShowSnackbar(true);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setIsChangePasswordSubmissionInProgress(false);
+
+                if (data.errors) {
+                    data.errors.forEach(error => {
+                        switch (error.fieldName) {
+                            case "oldPassword":
+                                setCurrentPasswordError(error.errorMessage);
+                                break;
+                            case "newPassword":
+                                setNewPasswordError(error.errorMessage);
+                                break;
+                        }
+                    });
+                } else if (data.messageId === "INCORRECT_PASSWORD") {
+                    setCurrentPasswordError(data.errorMessage);
+                } else if (data.messageId === "PASSWORD_SAME_AS_OLD") {
+                    setNewPasswordError(data.errorMessage);
+                } else if (data.errorMessage) {
+                    throw new Error(data.errorMessage);
+                }
+            })
+            .catch(error => {
+                setIsChangePasswordSubmissionInProgress(false);
+
+                setIsSuccessSnackbar(false);
+
+                // If the error name is 'TypeError', it means there was a connection error.
+                // Otherwise, display the error message from the error object.
+                setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
+
+                setShowSnackbar(true);
+            });
+    };
+
+    const handleSavePasswordClick = () => {
+        if (validateNewPassword()) {
+            sendChangePasswordRequest();
+        }
     }
 
     return (
@@ -261,6 +352,11 @@ function ProfileCard() {
                         ) : (
                             <Grid container>
                                 <Grid item container spacing={2}>
+                                    <Grid item>
+                                        <Typography variant="h6">
+                                            General
+                                        </Typography>
+                                    </Grid>
                                     <Grid item container direction="row" spacing={2}>
                                         {/* Display user avatar */}
                                         <Grid item style={{ maxWidth: 'fit-content' }}>
@@ -318,10 +414,10 @@ function ProfileCard() {
 
                                                 {/* Save button */}
                                                 <Grid item>
-                                                    <Button id="save-button" 
-                                                            variant="contained" 
-                                                            disabled={isEditSubmissionInProgress} 
-                                                            onClick={handleClickSaveButton}>
+                                                    <Button id="save-button"
+                                                        variant="contained"
+                                                        disabled={isEditSubmissionInProgress}
+                                                        onClick={handleClickSaveButton}>
                                                         Save
                                                     </Button>
                                                 </Grid>
@@ -351,7 +447,7 @@ function ProfileCard() {
                                         </Typography>
                                     </Grid>
 
-                                    {isChangePasswordActive &&
+                                    {isChangePasswordViewActive &&
                                         <Grid item container direction="column" spacing={3}>
                                             <Grid item>
                                                 <TextField
@@ -394,7 +490,7 @@ function ProfileCard() {
 
                                     <Grid item container justifyContent="flex-end">
                                         <Grid item container justifyContent="flex-end">
-                                            {isChangePasswordActive ? (
+                                            {isChangePasswordViewActive ? (
                                                 <Grid item container style={{ maxWidth: 'fit-content' }} spacing={1}>
                                                     <Grid item>
                                                         <Button
@@ -406,9 +502,10 @@ function ProfileCard() {
                                                     </Grid>
 
                                                     <Grid item>
-                                                        <Button 
-                                                            disabled = {currentPassword === '' || newPassword === '' || confirmNewPassword === ''}
-                                                            variant="contained">
+                                                        <Button
+                                                            disabled={currentPassword === '' || newPassword === '' || confirmNewPassword === ''}
+                                                            variant="contained"
+                                                            onClick={handleSavePasswordClick}>
                                                             Save Password
                                                         </Button>
                                                     </Grid>
@@ -416,7 +513,7 @@ function ProfileCard() {
 
                                             ) : (
                                                 <Grid item>
-                                                    <Button 
+                                                    <Button
                                                         variant="contained"
                                                         onClick={handleChangePasswordClick}>
                                                         Change Password
@@ -425,6 +522,11 @@ function ProfileCard() {
                                             )}
                                         </Grid>
                                     </Grid>
+
+                                    {isChangePasswordSubmissionInProgress &&
+                                        <Grid item xs>
+                                            <LinearProgress />
+                                        </Grid>}
                                 </Grid>
                             </Grid>
 
