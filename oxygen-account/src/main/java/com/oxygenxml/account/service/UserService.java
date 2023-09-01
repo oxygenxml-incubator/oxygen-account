@@ -7,7 +7,12 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import com.oxygenxml.account.converter.UserConverter;
+import com.oxygenxml.account.dto.ChangePasswordDto;
+import com.oxygenxml.account.dto.UpdateUserNameDto;
+import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.exception.InternalErrorCode;
 import com.oxygenxml.account.exception.OxygenAccountException;
 import com.oxygenxml.account.messages.Message;
@@ -31,6 +36,18 @@ public class UserService {
 	 */
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	/**
+     * UserConverter instance responsible for converting between UserDto objects and User entities.
+     */
+	@Autowired
+	private UserConverter userConverter;
+	
+	/**
+     * ValidationService instance responsible for validating the incoming UserDto objects.
+     */
+	@Autowired
+	private ValidationService validationService;
 	
 	
 	/**
@@ -72,6 +89,27 @@ public class UserService {
 		return userRepository.save(user);
 	}
 	
+	public User getCurrentUser() {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.User userPrincipal) {
+		        return userRepository.findByEmail(userPrincipal.getUsername());
+		}
+		
+		throw new UsernameNotFoundException(Message.INVALID_USER.getMessage());
+	}
+	
+	public UserDto getCurrentUserDto() {
+		try {
+			User currentUser = getCurrentUser();
+	        return userConverter.entityToDto(currentUser);
+			
+		} catch (UsernameNotFoundException e) {
+			return new UserDto("Anonymous User", "anonymousUser", null);
+		}
+	}
+	
 	/**
      * Updates the name of the user identified by the given email.
      * 
@@ -79,37 +117,30 @@ public class UserService {
      * @param newName the new name to be set for the user.
      * @return the updated user entity.
      */
-	public User updateCurrentUserName(String email, String newName) {
-		User existingUser = getUserByEmail(email);
-		existingUser.setName(newName);
+	public UserDto updateUserName(UpdateUserNameDto nameChange) {
 		
-		return updateUser(existingUser);
+		validationService.validate(nameChange);
+		
+		User currentUser = getCurrentUser();
+		currentUser.setName(nameChange.getName());
+		userRepository.save(currentUser);
+		return userConverter.entityToDto(currentUser);
 	}
 	
-	public User updateCurrentUserPassword(String email, String oldPassword, String newPassword) {
-		User existingUser = getUserByEmail(email);
+	public UserDto updateCurrentUserPassword(ChangePasswordDto changePasswordDto) {
+		User currentUser = getCurrentUser();
 		
-		if(!passwordEncoder.matches(oldPassword, existingUser.getPassword())) {
-			throw new OxygenAccountException(Message.INCORRECT_PASSWORD, HttpStatus.BAD_REQUEST, InternalErrorCode.INCORRECT_PASSWORD);
+		 if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), currentUser.getPassword())) {
+			throw new OxygenAccountException(Message.INCORRECT_PASSWORD, HttpStatus.FORBIDDEN, InternalErrorCode.INCORRECT_PASSWORD);
 			
-		} else if(passwordEncoder.matches(newPassword, existingUser.getPassword())) {
-			throw new OxygenAccountException(Message.PASSWORD_SAME_AS_OLD, HttpStatus.BAD_REQUEST, InternalErrorCode.PASSWORD_SAME_AS_OLD);
+		} else if (changePasswordDto.getOldPassword().equals(changePasswordDto.getNewPassword())) {
+			throw new OxygenAccountException(Message.PASSWORD_SAME_AS_OLD, HttpStatus.FORBIDDEN, InternalErrorCode.PASSWORD_SAME_AS_OLD);
 		}
 		
-		existingUser.setPassword(passwordEncoder.encode(newPassword));
+		 currentUser.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+		 
+		 userRepository.save(currentUser);
 		
-		return updateUser(existingUser);
-	}
-	
-	public String getCurrentUserEmail() {
-		
-	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    
-	    if (authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.User) {
-	        org.springframework.security.core.userdetails.User currentUser = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-	        return currentUser.getUsername();
-	    }
-	    
-	    return null;
+		 return userConverter.entityToDto(currentUser);
 	}
 }

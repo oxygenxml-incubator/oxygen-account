@@ -358,14 +358,72 @@ public class UserControllerTest {
 		mockMvc.perform(put("/api/users/password").session(session)
 				.contentType("application/json")
 				.content(JsonUtil.asJsonString(changePassword)))
-		.andExpect(status().isBadRequest())
+		.andExpect(status().isForbidden())
 		.andExpect(jsonPath("$.errorMessage", is(Message.INCORRECT_PASSWORD.getMessage())));;
 		
 		
 		 User user = userService.getUserByEmail("denismateescu@gmail.com");
 		
 		 assertTrue(passwordEncoder.matches("password", user.getPassword()));
+	}
+	
+	@Test
+	void testSameNewAndOldPasswords() throws Exception {
+		MvcResult result = mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "denismateescu@gmail.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
 		
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+		
+		ChangePasswordDto changePassword = new ChangePasswordDto();
+		changePassword.setOldPassword("password");
+		changePassword.setNewPassword("password");
+		
+		mockMvc.perform(put("/api/users/password").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(changePassword)))
+		.andExpect(status().isForbidden())
+		.andExpect(jsonPath("$.errorMessage", is(Message.PASSWORD_SAME_AS_OLD.getMessage())));;
+		
+		
+		 User user = userService.getUserByEmail("denismateescu@gmail.com");
+		
+		 assertTrue(passwordEncoder.matches("password", user.getPassword()));
+	}
+	
+	@Test
+	void testValidatePasswords() throws Exception {
+		MvcResult result = mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "denismateescu@gmail.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
+		
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+		
+		ChangePasswordDto changePassword = new ChangePasswordDto();
+		changePassword.setOldPassword("");
+		changePassword.setNewPassword("pass");
+		
+		mockMvc.perform(put("/api/users/password").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(changePassword)))
+		.andExpect(status().isForbidden())
+		.andExpect(jsonPath("$.internalErrorCode", is(1010)))
+		.andExpect(jsonPath("$.errors[?(@.fieldName == 'oldPassword')].errorMessage", hasItem(Message.EMPTY_FIELD.getMessage())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'oldPassword')].messageId", hasItem(Message.EMPTY_FIELD.getId())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'newPassword')].errorMessage", hasItem(Message.SHORT_FIELD.getMessage())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'newPassword')].messageId", hasItem(Message.SHORT_FIELD.getId())));
+		
+		 User user = userService.getUserByEmail("denismateescu@gmail.com");
+		
+		 assertTrue(passwordEncoder.matches("password", user.getPassword()));
 	}
 }
 

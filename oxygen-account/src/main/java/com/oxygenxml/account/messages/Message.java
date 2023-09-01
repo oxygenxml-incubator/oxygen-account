@@ -63,7 +63,9 @@ public enum Message {
 	
 	INCORRECT_PASSWORD("INCORRECT_PASSWORD","Incorrect password."),
 	
-	PASSWORD_SAME_AS_OLD("PASSWORD_SAME_AS_OLD", "Please enter a different password.");
+	PASSWORD_SAME_AS_OLD("PASSWORD_SAME_AS_OLD", "The new password is the same as the old one."),
+	
+	INVALID_USER("INVALID_USER", "The user does not exist.");
 
 	/**
 	 * Unique identifier corresponding to each type of message.

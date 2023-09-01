@@ -1,8 +1,6 @@
 package com.oxygenxml.account.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -68,18 +66,7 @@ public class UserController {
      */
     @GetMapping("/me")
     public UserDto getCurrentUser() {
-    	
-    	 String currentUserEmail = userService.getCurrentUserEmail();
-        
-        if (currentUserEmail == null) {
-        	 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        	
-        	if ("anonymousUser".equals(authentication.getPrincipal())) {
-        		return  new UserDto("Anonymous User", "anonymousUser", null);
-        	} 
-        } 
-            
-            return userConverter.entityToDto(userService.getUserByEmail(currentUserEmail));
+    	return userService.getCurrentUserDto();
     }
     
     /**
@@ -91,13 +78,7 @@ public class UserController {
      */
     @PutMapping("/profile")
     public UserDto updateUserName(@RequestBody UpdateUserNameDto nameChange ) {
-
-    	validationService.validate(nameChange);
-
-    	String currentUserEmail = userService.getCurrentUserEmail();
-
-    	User updatedUser = userService.updateCurrentUserName(currentUserEmail, nameChange.getName());
-    	return userConverter.entityToDto(updatedUser);
+    	return userService.updateUserName(nameChange);
     }
 
     /**
@@ -108,13 +89,7 @@ public class UserController {
      */
     @PutMapping("/password")
     public UserDto changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
-
-    	validationService.validate(changePasswordDto);
-
-    	String currentUserEmail = userService.getCurrentUserEmail();
-
-    	User updatedUser = userService.updateCurrentUserPassword(currentUserEmail, changePasswordDto.getOldPassword(), changePasswordDto.getNewPassword());
-    	return userConverter.entityToDto(updatedUser);
+    	return userService.updateCurrentUserPassword(changePasswordDto);
     }
 }
 	
