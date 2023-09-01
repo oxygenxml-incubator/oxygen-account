@@ -70,6 +70,19 @@ public class UserService {
 	}
 	
 	/**
+	 * Registers a new user based on the provided DTO and then converts the registered user back to a DTO.
+	 *
+	 * @param newUserDto The data transfer object containing user details to be registered.
+	 * @return UserDto representing the registered user.
+	 */
+	public UserDto registerAndConverttUser(UserDto newUserDto) {
+		validationService.validate(newUserDto);
+		User newUser = userConverter.dtoToEntity(newUserDto);		
+		User registeredUser = registerUser(newUser);
+		return userConverter.entityToDto(registeredUser);
+	}
+	
+	/**
 	 *  Retrieves a User entity based on the provided email from the database.
 	 *  
 	 * @param email The email of the User entity to retrieve.
@@ -89,6 +102,11 @@ public class UserService {
 		return userRepository.save(user);
 	}
 	
+	/**
+	 * Retrieves the currently authenticated user from the security context.
+	 * 
+	 * @return The authenticated User entity.
+	 */
 	public User getCurrentUser() {
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -100,6 +118,11 @@ public class UserService {
 		throw new UsernameNotFoundException(Message.INVALID_USER.getMessage());
 	}
 	
+	/**
+	 * Retrieves the DTO representation of the currently authenticated user.
+	 * 
+	 * @return A UserDto representation of the authenticated user. If the user is not found, a default anonymous UserDto is returned.
+	 */
 	public UserDto getCurrentUserDto() {
 		try {
 			User currentUser = getCurrentUser();
@@ -127,6 +150,12 @@ public class UserService {
 		return userConverter.entityToDto(currentUser);
 	}
 	
+	/**
+	 * Updates the password of the currently authenticated user after validating the input data.
+	 * 
+	 * @param changePasswordDto Data transfer object containing details about the old and new passwords.
+	 * @return A UserDto representation of the user after the password has been updated.
+	 */
 	public UserDto updateCurrentUserPassword(ChangePasswordDto changePasswordDto) {
 		User currentUser = getCurrentUser();
 		validationService.validate(changePasswordDto);

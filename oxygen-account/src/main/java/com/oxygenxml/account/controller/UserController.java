@@ -8,13 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oxygenxml.account.converter.UserConverter;
 import com.oxygenxml.account.dto.ChangePasswordDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
-import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.service.UserService;
-import com.oxygenxml.account.service.ValidationService;
 
 /**
  * The UserControllerclass is a REST controller that manages HTTP requests related to users.
@@ -32,19 +29,6 @@ public class UserController {
 	private UserService userService;
 	
 	/**
-     * UserConverter instance responsible for converting between UserDto objects and User entities.
-     */
-	@Autowired
-	private UserConverter userConverter;
-	
-	/**
-     * ValidationService instance responsible for validating the incoming UserDto objects.
-     */
-	@Autowired
-	private ValidationService validationService;
-	
-
-	/**
      * Handles the POST request to register a new user.
      * 
      * @param newUser the user to be registered.
@@ -52,11 +36,7 @@ public class UserController {
      */
 	@PostMapping("/register")
 	public UserDto registerUser(@RequestBody UserDto newUserDto){
-        
-		validationService.validate(newUserDto);
-		User newUser = userConverter.dtoToEntity(newUserDto);		
-		User registeredUser = userService.registerUser(newUser);
-		return userConverter.entityToDto(registeredUser);
+		return userService.registerAndConverttUser(newUserDto);
 	}
 	
 	/**
