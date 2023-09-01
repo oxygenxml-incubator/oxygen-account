@@ -61,7 +61,9 @@ public enum Message {
 	 */
 	INPUT_VALIDATION_FAILED("INPUT_VALIDATION_FAILED", "Input validation failed."),
 	
-	INCORRECT_PASSWORD("INCORRECT_PASSWORD","Incorrect password.");
+	INCORRECT_PASSWORD("INCORRECT_PASSWORD","Incorrect password."),
+	
+	PASSWORD_SAME_AS_OLD("PASSWORD_SAME_AS_OLD", "Please enter a different password.");
 
 	/**
 	 * Unique identifier corresponding to each type of message.

@@ -53,7 +53,9 @@ public enum InternalErrorCode {
 	 */
 	USER_NOT_FOUND(1009),
 	
-	INCORRECT_PASSWORD(1010);
+	INCORRECT_PASSWORD(1010),
+	
+	PASSWORD_SAME_AS_OLD(1011);
 	
 	/**
 	 * It represents the internal error code

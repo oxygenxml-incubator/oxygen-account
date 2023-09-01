@@ -91,6 +91,9 @@ public class UserService {
 		
 		if(!passwordEncoder.matches(oldPassword, existingUser.getPassword())) {
 			throw new OxygenAccountException(Message.INCORRECT_PASSWORD, HttpStatus.BAD_REQUEST, InternalErrorCode.INCORRECT_PASSWORD);
+			
+		} else if(passwordEncoder.matches(newPassword, existingUser.getPassword())) {
+			throw new OxygenAccountException(Message.PASSWORD_SAME_AS_OLD, HttpStatus.BAD_REQUEST, InternalErrorCode.PASSWORD_SAME_AS_OLD);
 		}
 		
 		existingUser.setPassword(passwordEncoder.encode(newPassword));

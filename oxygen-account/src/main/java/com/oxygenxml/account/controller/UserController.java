@@ -100,6 +100,12 @@ public class UserController {
     	return userConverter.entityToDto(updatedUser);
     }
 
+    /**
+     * Updates the password of the currently authenticated user based on the provided {@link ChangePasswordDto}
+     * 
+     * @param changePasswordDto A DTO containing the new password and the old password.
+     * @return A DTO representation of the updated user or null if the user is not recognized.
+     */
     @PutMapping("/password")
     public UserDto changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
 

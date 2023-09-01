@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -28,6 +30,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.oxygenxml.account.OxygenAccountApplication;
+import com.oxygenxml.account.dto.ChangePasswordDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.messages.Message;
@@ -58,6 +61,12 @@ public class UserControllerTest {
 	
 	@Autowired
 	private UserService userService;
+	
+	/**
+     * The password encoder that will be used to encode passwords
+     */
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 	/**
 	 *  testRegisterUser method tests the user registration functionality.
@@ -302,6 +311,61 @@ public class UserControllerTest {
 		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
 		.andExpect(jsonPath("$.errors[?(@.fieldName == 'name')].errorMessage", hasItem(Message.EMPTY_FIELD.getMessage())))
         .andExpect(jsonPath("$.errors[?(@.fieldName == 'name')].messageId", hasItem(Message.EMPTY_FIELD.getId())));
+	}
+	
+	@Test
+	void testChangePassword() throws Exception {
+		MvcResult result = mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "denismateescu@gmail.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
+		
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+		
+		ChangePasswordDto changePassword = new ChangePasswordDto();
+		changePassword.setOldPassword("password");
+		changePassword.setNewPassword("password1234");
+		
+		mockMvc.perform(put("/api/users/password").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(changePassword)))
+		.andExpect(status().isOk());
+		
+		User user = userService.getUserByEmail("denismateescu@gmail.com");
+		
+		assertTrue(passwordEncoder.matches("password1234", user.getPassword()));
+	}
+	
+	@Test
+	void testChangePasswordIncorrectOldPassword() throws Exception {
+		MvcResult result = mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "denismateescu@gmail.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
+		
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+		
+		ChangePasswordDto changePassword = new ChangePasswordDto();
+		changePassword.setOldPassword("wrongPassword");
+		changePassword.setNewPassword("password1234");
+		
+		mockMvc.perform(put("/api/users/password").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(changePassword)))
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.errorMessage", is(Message.INCORRECT_PASSWORD.getMessage())));;
+		
+		
+		 User user = userService.getUserByEmail("denismateescu@gmail.com");
+		
+		 assertTrue(passwordEncoder.matches("password", user.getPassword()));
+		
 	}
 }
 
