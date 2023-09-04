@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateUserDto {
+public class UpdateUserNameDto {
 	
 	/**
 	 * The new name for the user
