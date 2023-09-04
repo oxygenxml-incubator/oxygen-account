@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     Grid, Card, CardHeader, CardContent,
     LinearProgress, Typography, Snackbar, Alert,
-    TextField,
-    Button
+    TextField, Button
 } from '@mui/material';
 
 import OxygenAvatar from "../shared/OxygenAvatar.jsx";
@@ -41,20 +40,28 @@ function ProfileCard() {
     // State variable indicating whether the edit submission is in progress.
     const [isEditSubmissionInProgress, setIsEditSubmissionInProgress] = useState(false);
 
+    // State variable indicating whether the change password view is active or not.
     const [isChangePasswordViewActive, setIsChangePasswordViewActive] = useState(false);
 
+    // State variable for holding the current password.
     const [currentPassword, setCurrentPassword] = useState('');
 
+    // State variable for holding the new password.
     const [newPassword, setNewPassword] = useState('');
 
+    // State variable for confirming the new password.
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
+    // State variable for holding the error message related to the current password.
     const [currentPasswordError, setCurrentPasswordError] = useState('');
 
+    // State variable for holding the error message related to the new password.
     const [newPasswordError, setNewPasswordError] = useState('');
 
+    // State variable for holding the error message for confirming the new password.
     const [confirmNewPasswordError, setConfirmNewPasswordError] = useState('');
 
+    // State variable indicating whether a change password submission is in progress.
     const [isChangePasswordSubmissionInProgress, setIsChangePasswordSubmissionInProgress] = useState(false);
 
     /**
@@ -230,10 +237,16 @@ function ProfileCard() {
         }
     }
 
+    /**
+     * Activates the change password view.
+     */
     const handleChangePasswordClick = () => {
         setIsChangePasswordViewActive(true);
     }
 
+    /**
+     * Clears all password-related fields and errors.
+     */
     const clearPasswordFileds = () => {
         setCurrentPassword('');
         setNewPassword('');
@@ -244,12 +257,20 @@ function ProfileCard() {
         setConfirmNewPasswordError('');
     }
 
+
+    /**
+     * Deactivates the change password view and clears fields.
+     */
     const handleCancelChangePasswordClick = () => {
         setIsChangePasswordViewActive(false);
 
         clearPasswordFileds();
     }
 
+    /**
+     * Validates the new password.
+     * @returns {boolean} - True if the new password is valid; otherwise, false.
+     */
     const validateNewPassword = () => {
         let isNewPasswordValid = /^.{8,}$/.test(newPassword.trim());
         let isConfirmNewPasswordValid = newPassword === confirmNewPassword;
@@ -258,7 +279,7 @@ function ProfileCard() {
         if (!isNewPasswordValid) {
             setNewPasswordError('Input field is too short. Please enter a longer value.');
         } else if (isNewPasswordUsed) {
-            setNewPasswordError('Please enter a different password.');
+            setNewPasswordError('The new password is the same as the old one.');
         } else {
             setNewPasswordError('');
         }
@@ -267,6 +288,9 @@ function ProfileCard() {
         return isNewPasswordValid && isConfirmNewPasswordValid && !isNewPasswordUsed;
     }
 
+    /**
+     * Sends a request to change the password.
+     */
     const sendChangePasswordRequest = () => {
         setIsChangePasswordSubmissionInProgress(true);
 
@@ -308,10 +332,6 @@ function ProfileCard() {
                                 break;
                         }
                     });
-                } else if (data.messageId === "INCORRECT_PASSWORD") {
-                    setCurrentPasswordError(data.errorMessage);
-                } else if (data.messageId === "PASSWORD_SAME_AS_OLD") {
-                    setNewPasswordError(data.errorMessage);
                 } else if (data.errorMessage) {
                     throw new Error(data.errorMessage);
                 }
@@ -329,6 +349,10 @@ function ProfileCard() {
             });
     };
 
+    /**
+    * Handles the click event for saving the new password.
+     * Validates the new password and initiates the change password request if valid.
+     */
     const handleSavePasswordClick = () => {
         if (validateNewPassword()) {
             sendChangePasswordRequest();
@@ -350,14 +374,15 @@ function ProfileCard() {
                         {isDataLoadingActive ? (
                             <LinearProgress />
                         ) : (
-                            <Grid container>
-                                <Grid item container spacing={2}>
+                            <Grid container direction='column' gap='50px'>
+                                {/* General section */}
+                                <Grid item container direction = 'column' gap='20px'>
                                     <Grid item>
                                         <Typography variant="h6">
                                             General
                                         </Typography>
                                     </Grid>
-                                    <Grid item container direction="row" spacing={2}>
+                                    <Grid item container gap='10px'>
                                         {/* Display user avatar */}
                                         <Grid item style={{ maxWidth: 'fit-content' }}>
                                             <OxygenAvatar
@@ -367,7 +392,7 @@ function ProfileCard() {
                                         </Grid>
 
                                         {/* Display user info */}
-                                        <Grid item container style={{ flexGrow: 1, flexBasis: 0 }} direction='column' spacing={2}>
+                                        <Grid item container style={{ flexGrow: 1, flexBasis: 0 }} direction='column' gap='15px'>
                                             {/* Input field for showing and editing the name */}
                                             <Grid item>
                                                 <TextField
@@ -400,7 +425,7 @@ function ProfileCard() {
                                     {/* Conditionally render buttons based on Edit Mode */}
                                     <Grid item container justifyContent="flex-end">
                                         {isEditActive ? (
-                                            <Grid item container style={{ maxWidth: 'fit-content' }} spacing={1}>
+                                            <Grid item container style={{ maxWidth: 'fit-content' }} gap='10px'>
                                                 {/* Cancel button */}
                                                 <Grid item>
                                                     <Button
@@ -440,15 +465,19 @@ function ProfileCard() {
                                         </Grid>}
                                 </Grid>
 
-                                <Grid item container direction={'column'} spacing={2} style={{ borderTop: "2px solid #333", marginTop: "20px", paddingTop: "20px" }}>
+                                {/* Security section */}
+                                <Grid item container direction='column' style={{ borderTop: "1px solid #333"}} gap='20px'>
+                                    {/* Security Title */}
                                     <Grid item>
                                         <Typography variant="h6">
                                             Security
                                         </Typography>
                                     </Grid>
 
+                                    {/* Change Password Input Fields */}
                                     {isChangePasswordViewActive &&
-                                        <Grid item container direction="column" spacing={3}>
+                                        <Grid item container direction="column" gap='15px'>
+                                            {/* Current Password Input */}
                                             <Grid item>
                                                 <TextField
                                                     id="current-password"
@@ -461,6 +490,8 @@ function ProfileCard() {
                                                     fullWidth
                                                 />
                                             </Grid>
+
+                                            {/* New Password Input */}
                                             <Grid item>
                                                 <TextField
                                                     id="new-password"
@@ -474,6 +505,7 @@ function ProfileCard() {
                                                 />
                                             </Grid>
 
+                                            {/* Confirm New Password Input */}
                                             <Grid item>
                                                 <TextField
                                                     id="confirm-new-password"
@@ -488,10 +520,12 @@ function ProfileCard() {
                                             </Grid>
                                         </Grid>}
 
+                                    {/* Conditionally render buttons based on Change Password Mode */}
                                     <Grid item container justifyContent="flex-end">
                                         <Grid item container justifyContent="flex-end">
                                             {isChangePasswordViewActive ? (
-                                                <Grid item container style={{ maxWidth: 'fit-content' }} spacing={1}>
+                                                <Grid item container style={{ maxWidth: 'fit-content' }} gap='10px'>
+                                                    { /*  Save and Cancel Buttons */}
                                                     <Grid item>
                                                         <Button
                                                             variant="contained"
@@ -503,6 +537,7 @@ function ProfileCard() {
 
                                                     <Grid item>
                                                         <Button
+                                                            id = "save-password-button"
                                                             disabled={currentPassword === '' || newPassword === '' || confirmNewPassword === ''}
                                                             variant="contained"
                                                             onClick={handleSavePasswordClick}>
@@ -512,8 +547,10 @@ function ProfileCard() {
                                                 </Grid>
 
                                             ) : (
+                                                // Change Password Button
                                                 <Grid item>
                                                     <Button
+                                                        id = "change-password-button"
                                                         variant="contained"
                                                         onClick={handleChangePasswordClick}>
                                                         Change Password
@@ -523,6 +560,7 @@ function ProfileCard() {
                                         </Grid>
                                     </Grid>
 
+                                    {/* Display a Progress Bar during Change Password Submission */}
                                     {isChangePasswordSubmissionInProgress &&
                                         <Grid item xs>
                                             <LinearProgress />
