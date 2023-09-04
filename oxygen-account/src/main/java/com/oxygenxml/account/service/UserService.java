@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.oxygenxml.account.dto.ChangePasswordDto;
+import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.exception.InternalErrorCode;
 import com.oxygenxml.account.exception.OxygenAccountException;
 import com.oxygenxml.account.exception.UserNotAuthenticatedException;
@@ -85,7 +86,7 @@ public class UserService {
 		        return userRepository.findByEmail(userPrincipal.getUsername());
 		}
 		
-		throw new UserNotAuthenticatedException(Message.USER_NOT_AUTHENTICATED);
+		throw new UserNotAuthenticatedException();
 	}
 	
 	/**
@@ -95,9 +96,9 @@ public class UserService {
      * @param newName the new name to be set for the user.
      * @return the updated user entity.
      */
-	public User updateUserName( User user) {
+	public User updateCurrentUserName( UpdateUserNameDto newName) {
 		User currentUser = getCurrentUser();
-	    currentUser.setName(user.getName());
+	    currentUser.setName(newName.getName());
 	    userRepository.save(currentUser);
 	    return currentUser;
 	}

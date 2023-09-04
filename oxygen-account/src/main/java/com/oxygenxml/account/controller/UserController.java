@@ -85,7 +85,7 @@ public class UserController {
     @PutMapping("/profile")
     public UserDto updateUserName(@RequestBody UpdateUserNameDto nameChange ) {
     	validationService.validate(nameChange);
-    	User updatedUser = userService.updateUserName(userConverter.updateUserNameDtoToEntity(nameChange));
+    	User updatedUser = userService.updateCurrentUserName(nameChange);
         return userConverter.entityToDto(updatedUser);
     }
 
