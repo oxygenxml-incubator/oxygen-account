@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateUserNameDto {
+public class UpdateUserDto {
 	
 	/**
-	 * The name of the user. This field cannot be blank.
+	 * The new name for the user
 	 */
 	@NotBlank
 	private String name;
