@@ -2,6 +2,7 @@ package com.oxygenxml.account.converter;
 
 import org.springframework.stereotype.Component;
 
+import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.model.User;
 
@@ -47,6 +48,17 @@ public class UserConverter {
 		return user;
 	}
 	
+	/**
+	 * Converts a {@link UpdateUserNameDto} object to a {@link User} object.
+	 * 
+	 * @param the UpdateUserNameDto object to be converted
+	 * @return the corresponding User object with the updated name
+	 */
+	public User updateUserNameDtoToEntity(UpdateUserNameDto updateUserNameDto) {
+	    User user = new User();
+	    user.setName(updateUserNameDto.getName());
+	    return user;
+	}
 
 	
 

@@ -8,10 +8,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oxygenxml.account.converter.UserConverter;
 import com.oxygenxml.account.dto.ChangePasswordDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
+import com.oxygenxml.account.exception.UserNotAuthenticatedException;
+import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.service.UserService;
+import com.oxygenxml.account.service.ValidationService;
 
 /**
  * The UserControllerclass is a REST controller that manages HTTP requests related to users.
@@ -27,6 +31,18 @@ public class UserController {
 	 */
 	@Autowired
 	private UserService userService;
+
+	/**
+     * UserConverter instance responsible for converting between UserDto objects and User entities.
+     */
+	@Autowired
+	private UserConverter userConverter;
+	
+	/**
+     * ValidationService instance responsible for validating the incoming UserDto objects.
+     */
+	@Autowired
+	private ValidationService validationService;
 	
 	/**
      * Handles the POST request to register a new user.
@@ -36,7 +52,10 @@ public class UserController {
      */
 	@PostMapping("/register")
 	public UserDto registerUser(@RequestBody UserDto newUserDto){
-		return userService.registerAndConverttUser(newUserDto);
+		validationService.validate(newUserDto);
+		User newUser = userConverter.dtoToEntity(newUserDto);		
+		User registeredUser = userService.registerUser(newUser);
+		return userConverter.entityToDto(registeredUser);
 	}
 	
 	/**
@@ -44,10 +63,17 @@ public class UserController {
      * 
      * @return The profile details of the authenticated user.
      */
-    @GetMapping("/me")
-    public UserDto getCurrentUser() {
-    	return userService.getCurrentUserDto();
-    }
+	@GetMapping("/me")
+	public UserDto getCurrentUser() {
+		try {
+			User currentUser = userService.getCurrentUser();
+			return userConverter.entityToDto(currentUser);
+
+		} catch (UserNotAuthenticatedException e) {
+			return new UserDto("Anonymous User", "anonymousUser", null);
+		}
+	}
+    
     
     /**
      * Updates the name of the currently authenticated user based on the provided {@link UpdateUserNameDto}.
@@ -58,7 +84,9 @@ public class UserController {
      */
     @PutMapping("/profile")
     public UserDto updateUserName(@RequestBody UpdateUserNameDto nameChange ) {
-    	return userService.updateUserName(nameChange);
+    	validationService.validate(nameChange);
+    	User updatedUser = userService.updateUserName(userConverter.updateUserNameDtoToEntity(nameChange));
+        return userConverter.entityToDto(updatedUser);
     }
 
     /**
@@ -69,7 +97,9 @@ public class UserController {
      */
     @PutMapping("/password")
     public UserDto changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
-    	return userService.updateCurrentUserPassword(changePasswordDto);
+    	validationService.validate(changePasswordDto);
+    	User updatedUser = userService.updateCurrentUserPassword(changePasswordDto);
+    	return userConverter.entityToDto(updatedUser);
     }
 }
 	
