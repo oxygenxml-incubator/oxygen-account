@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
     Grid, Card, CardHeader, CardContent,
     LinearProgress, Typography, Snackbar, Alert,
-    TextField, Button
+    TextField, Button,
+    Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText
 } from '@mui/material';
 
 import OxygenAvatar from "../shared/OxygenAvatar.jsx";
@@ -63,6 +64,12 @@ function ProfileCard() {
 
     // State variable indicating whether a change password submission is in progress.
     const [isChangePasswordSubmissionInProgress, setIsChangePasswordSubmissionInProgress] = useState(false);
+
+    const [isDeleteAccountDialogActive, setIsDeleteAccountDialogActive] = useState(false);
+
+    const [deletePassword, setDeletePassword] = useState('');
+
+    const [deletePasswordError, setDeletePasswordError] = useState('');
 
     /**
      * Fetch user data on component mount
@@ -140,6 +147,14 @@ function ProfileCard() {
 
             if (confirmNewPasswordError !== '') {
                 setConfirmNewPasswordError('');
+            }
+        }
+
+        else if (id === "delete-password") {
+            setDeletePassword(value);
+
+            if (deletePasswordError !== '') {
+                setDeletePasswordError('');
             }
         }
     }
@@ -359,6 +374,15 @@ function ProfileCard() {
         }
     }
 
+    const handleDeleteAccountClick = () => {
+        setIsDeleteAccountDialogActive(true);
+    }
+
+    const handleCloseDeleteAccountDialog = () => {
+        setIsDeleteAccountDialogActive(false);
+    }
+
+
     return (
         // Main container for the profile card
         <Grid container justifyContent="center" alignItems="center">
@@ -374,10 +398,10 @@ function ProfileCard() {
                         {isDataLoadingActive ? (
                             <LinearProgress />
                         ) : (
-                            <Grid container direction='column' gap='50px'>
+                            <Grid container direction='column' gap='30px'>
                                 {/* General section */}
-                                <Grid item container direction = 'column' gap='20px'>
-                                    <Grid item>
+                                <Grid item container direction='column' gap='20px'>
+                                    <Grid item style={{ padding: '10px' }}>
                                         <Typography variant="h6">
                                             General
                                         </Typography>
@@ -466,9 +490,9 @@ function ProfileCard() {
                                 </Grid>
 
                                 {/* Security section */}
-                                <Grid item container direction='column' style={{ borderTop: "1px solid #333"}} gap='20px'>
+                                <Grid item container direction='column' style={{ borderTop: "1px solid #333" }} gap='15px'>
                                     {/* Security Title */}
-                                    <Grid item>
+                                    <Grid item style={{ padding: '10px' }}>
                                         <Typography variant="h6">
                                             Security
                                         </Typography>
@@ -537,7 +561,7 @@ function ProfileCard() {
 
                                                     <Grid item>
                                                         <Button
-                                                            id = "save-password-button"
+                                                            id="save-password-button"
                                                             disabled={currentPassword === '' || newPassword === '' || confirmNewPassword === ''}
                                                             variant="contained"
                                                             onClick={handleSavePasswordClick}>
@@ -550,7 +574,7 @@ function ProfileCard() {
                                                 // Change Password Button
                                                 <Grid item>
                                                     <Button
-                                                        id = "change-password-button"
+                                                        id="change-password-button"
                                                         variant="contained"
                                                         onClick={handleChangePasswordClick}>
                                                         Change Password
@@ -565,6 +589,66 @@ function ProfileCard() {
                                         <Grid item xs>
                                             <LinearProgress />
                                         </Grid>}
+                                </Grid>
+
+                                <Grid item container direction='column' style={{ borderTop: "1px solid #333" }} gap='15px'>
+                                    <Grid item style={{ padding: '10px' }}>
+                                        <Typography variant="h6">
+                                            Delete account
+                                        </Typography>
+                                    </Grid>
+
+                                    <Grid item container justifyContent="flex-end">
+                                        <Grid item>
+                                            <Button
+                                                id="delete-account-button"
+                                                variant="contained"
+                                                onClick={handleDeleteAccountClick}>
+                                                Delete
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+
+                                    <Grid item>
+                                        <Dialog
+                                            open={isDeleteAccountDialogActive}
+                                            onClose={handleCloseDeleteAccountDialog}
+                                        >
+                                            <DialogTitle>
+                                                {"Delete account"}
+                                            </DialogTitle>
+                                            <DialogContent>
+                                                <Grid container direction='column' gap='15px'>
+                                                    <Grid item>
+                                                        <DialogContentText style={{ marginRight: '70px' }}>
+                                                            Insert your password to delete your account:
+                                                        </DialogContentText>
+                                                    </Grid>
+
+                                                    <Grid item>
+                                                        <TextField
+                                                            id="delete-password"
+                                                            label="Password"
+                                                            type="password"
+                                                            value={deletePassword}
+                                                            onChange={handleInputChange}
+                                                            error={Boolean(deletePasswordError)}
+                                                            helperText={deletePasswordError}
+                                                            fullWidth
+                                                        />
+                                                    </Grid>
+                                                </Grid>
+
+
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleCloseDeleteAccountDialog}>Cancel</Button>
+                                                <Button autoFocus>
+                                                    Delete account
+                                                </Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    </Grid>
                                 </Grid>
                             </Grid>
 
