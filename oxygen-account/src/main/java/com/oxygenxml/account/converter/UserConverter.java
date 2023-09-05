@@ -25,6 +25,7 @@ public class UserConverter {
 		
 		userDto.setName(user.getName());
 		userDto.setEmail(user.getEmail());
+		userDto.setStatus(user.getStatus());
 		
 		return userDto;
 	}
