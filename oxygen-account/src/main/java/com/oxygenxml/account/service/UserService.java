@@ -133,7 +133,7 @@ public class UserService {
             throw new OxygenAccountException(Message.INCORRECT_PASSWORD, HttpStatus.FORBIDDEN, InternalErrorCode.INCORRECT_PASSWORD);
         }
         
-        currentUser.setStatus("delete");
+        currentUser.setStatus("deleted");
         currentUser.setDeletionDate(new Timestamp(System.currentTimeMillis()));
         
         return userRepository.save(currentUser);
