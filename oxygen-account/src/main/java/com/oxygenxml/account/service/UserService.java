@@ -2,11 +2,16 @@ package com.oxygenxml.account.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.oxygenxml.account.dto.ChangePasswordDto;
+import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.exception.InternalErrorCode;
 import com.oxygenxml.account.exception.OxygenAccountException;
+import com.oxygenxml.account.exception.UserNotAuthenticatedException;
 import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
@@ -28,7 +33,6 @@ public class UserService {
 	 */
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
 	
 	/**
 	 * Register a new user in the system.
@@ -70,16 +74,52 @@ public class UserService {
 	}
 	
 	/**
+	 * Retrieves the currently authenticated user from the security context.
+	 * 
+	 * @return The authenticated User entity.
+	 */
+	public User getCurrentUser() {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.User userPrincipal) {
+		        return userRepository.findByEmail(userPrincipal.getUsername());
+		}
+		
+		throw new UserNotAuthenticatedException();
+	}
+	
+	/**
      * Updates the name of the user identified by the given email.
      * 
      * @param email the email address used to identify the user.
      * @param newName the new name to be set for the user.
      * @return the updated user entity.
      */
-	public User updateCurrentUserName(String email, String newName) {
-		User existingUser = getUserByEmail(email);
-		existingUser.setName(newName);
+	public User updateCurrentUserName( UpdateUserNameDto newName) {
+		User currentUser = getCurrentUser();
+	    currentUser.setName(newName.getName());
+	    userRepository.save(currentUser);
+	    return currentUser;
+	}
+	
+	/**
+	 * Updates the password of the currently authenticated user after validating the input data.
+	 * 
+	 * @param changePasswordDto Data transfer object containing details about the old and new passwords.
+	 * @return A UserDto representation of the user after the password has been updated.
+	 */
+	public User updateCurrentUserPassword(ChangePasswordDto changePasswordDto) {
+		User currentUser = getCurrentUser();
 		
-		return updateUser(existingUser);
+		 if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), currentUser.getPassword())) {
+			throw new OxygenAccountException(Message.INCORRECT_PASSWORD, HttpStatus.FORBIDDEN, InternalErrorCode.INCORRECT_PASSWORD);
+			
+		} else if (changePasswordDto.getOldPassword().equals(changePasswordDto.getNewPassword())) {
+			throw new OxygenAccountException(Message.PASSWORD_SAME_AS_OLD, HttpStatus.FORBIDDEN, InternalErrorCode.PASSWORD_SAME_AS_OLD);
+		}
+		 currentUser.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+		 
+		 return userRepository.save(currentUser);
 	}
 }

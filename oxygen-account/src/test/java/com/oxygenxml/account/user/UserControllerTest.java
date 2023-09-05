@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -28,7 +30,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.oxygenxml.account.OxygenAccountApplication;
-import com.oxygenxml.account.dto.UpdateUserDto;
+import com.oxygenxml.account.dto.ChangePasswordDto;
+import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
@@ -58,9 +61,15 @@ public class UserControllerTest {
 	
 	@Autowired
 	private UserService userService;
+	
+	/**
+     * The password encoder that will be used to encode passwords
+     */
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 	/**
-	 *  testRegisterUser method tests the user registration functionality.
+	 *  Tests the user registration functionality.
 	 *  It attempts to register a new user
 	 * @throws Exception if the test encounters any errors.
 	 */
@@ -79,7 +88,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * testRegisterSameEmail method tests whether another user with the same email can be registered
+	 * Tests whether another user with the same email can be registered
 	 * It registers an initial user, then attempts to register a new user with the same email.
 	 * @throws Exception if the test encounters any errors
 	 */
@@ -101,7 +110,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * testInvalidEmail method tests the registration with an invalid email.
+	 * Tests the registration with an invalid email.
 	 * @throws Exception
 	 */
 	@Test
@@ -124,7 +133,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * testInvalidPassword tests the registration with an invalid password.
+	 * Tests the registration with an invalid password.
 	 * @throws Exception
 	 */
 	@Test
@@ -147,7 +156,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * testEmptyField tests the registration with an invalid password.
+	 * Tests the registration with an invalid password.
 	 * @throws Exception
 	 */
 	@Test
@@ -170,7 +179,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * testMultipleErrors tests that the MultipleOxygenAccountException is throwen correctly
+	 * Tests that the MultipleOxygenAccountException is throwen correctly
 	 * @throws Exception
 	 */
 	@Test
@@ -195,7 +204,7 @@ public class UserControllerTest {
 	}
 	
 	/**
-	 * testShowDetailsAboutUser tests whether the user's name and email are displayed after logging in
+	 * Tests whether the user's name and email are displayed after logging in
 	 * @throws Exception
 	 */
 	@Test
@@ -230,7 +239,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * testAnonymousUserDetails tests what is displayed to an unknown user who accesses this area of ​​the application
+	 * Tests what is displayed to an unknown user who accesses this area of ​​the application
 	 * @throws Exception
 	 */
 	@Test
@@ -243,7 +252,7 @@ public class UserControllerTest {
 	}
 	
 	/**
-	 * testChangeName tests if a User can change his name
+	 * Tests if a User can change his name
 	 * @throws Exception
 	 */
 	@Test
@@ -258,7 +267,7 @@ public class UserControllerTest {
 		
 		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
 		
-		UpdateUserDto updateNameDto = new UpdateUserDto();
+		UpdateUserNameDto updateNameDto = new UpdateUserNameDto();
 		updateNameDto.setName("Marius Costescu");
 		
 		mockMvc.perform(put("/api/users/profile").session(session)
@@ -277,7 +286,7 @@ public class UserControllerTest {
 	}
 	
 	/**
-	 * testChangeEmptyName tests the situation in which a User enters an empty name
+	 * Tests the situation in which a User enters an empty name
 	 * @throws Exception
 	 */
 	@Test
@@ -292,7 +301,7 @@ public class UserControllerTest {
 		
 		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
 		
-		UpdateUserDto updateNameDto = new UpdateUserDto();
+		UpdateUserNameDto updateNameDto = new UpdateUserNameDto();
 		updateNameDto.setName("");
 		
 		mockMvc.perform(put("/api/users/profile").session(session)
@@ -302,6 +311,135 @@ public class UserControllerTest {
 		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
 		.andExpect(jsonPath("$.errors[?(@.fieldName == 'name')].errorMessage", hasItem(Message.EMPTY_FIELD.getMessage())))
         .andExpect(jsonPath("$.errors[?(@.fieldName == 'name')].messageId", hasItem(Message.EMPTY_FIELD.getId())));
+	}
+	
+	/**
+	 * Tests the situation when a user want to change his password
+	 * @throws Exception
+	 */
+	@Test
+	void testChangePassword() throws Exception {
+		MvcResult result = mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "denismateescu@gmail.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
+		
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+		
+		ChangePasswordDto changePassword = new ChangePasswordDto();
+		changePassword.setOldPassword("password");
+		changePassword.setNewPassword("password1234");
+		
+		mockMvc.perform(put("/api/users/password").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(changePassword)))
+		.andExpect(status().isOk());
+		
+		User user = userService.getUserByEmail("denismateescu@gmail.com");
+		
+		assertTrue(passwordEncoder.matches("password1234", user.getPassword()));
+	}
+	
+	/**
+	 * Tests the situation when a user inserts a wrong password
+	 * @throws Exception
+	 */
+	@Test
+	void testChangePasswordIncorrectOldPassword() throws Exception {
+		MvcResult result = mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "denismateescu@gmail.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
+		
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+		
+		ChangePasswordDto changePassword = new ChangePasswordDto();
+		changePassword.setOldPassword("wrongPassword");
+		changePassword.setNewPassword("password1234");
+		
+		mockMvc.perform(put("/api/users/password").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(changePassword)))
+		.andExpect(status().isForbidden())
+		.andExpect(jsonPath("$.errorMessage", is(Message.INCORRECT_PASSWORD.getMessage())));;
+		
+		
+		 User user = userService.getUserByEmail("denismateescu@gmail.com");
+		
+		 assertTrue(passwordEncoder.matches("password", user.getPassword()));
+	}
+	
+	/**
+	 * Tests the situation when a user inserts the new password the same as the old password
+	 * @throws Exception
+	 */
+	@Test
+	void testSameNewAndOldPasswords() throws Exception {
+		MvcResult result = mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "denismateescu@gmail.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
+		
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+		
+		ChangePasswordDto changePassword = new ChangePasswordDto();
+		changePassword.setOldPassword("password");
+		changePassword.setNewPassword("password");
+		
+		mockMvc.perform(put("/api/users/password").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(changePassword)))
+		.andExpect(status().isForbidden())
+		.andExpect(jsonPath("$.errorMessage", is(Message.PASSWORD_SAME_AS_OLD.getMessage())));;
+		
+		
+		 User user = userService.getUserByEmail("denismateescu@gmail.com");
+		
+		 assertTrue(passwordEncoder.matches("password", user.getPassword()));
+	}
+	
+	/**
+	 * Tests the situation when a user left empty the old password field and inserts a short new password
+	 * @throws Exception
+	 */
+	@Test
+	void testValidatePasswords() throws Exception {
+		MvcResult result = mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "denismateescu@gmail.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
+		
+		MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+		
+		ChangePasswordDto changePassword = new ChangePasswordDto();
+		changePassword.setOldPassword("");
+		changePassword.setNewPassword("pass");
+		
+		mockMvc.perform(put("/api/users/password").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(changePassword)))
+		.andExpect(status().isUnprocessableEntity())
+		.andExpect(jsonPath("$.internalErrorCode", is(1008)))
+		.andExpect(jsonPath("$.errors[?(@.fieldName == 'oldPassword')].errorMessage", hasItem(Message.EMPTY_FIELD.getMessage())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'oldPassword')].messageId", hasItem(Message.EMPTY_FIELD.getId())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'newPassword')].errorMessage", hasItem(Message.SHORT_FIELD.getMessage())))
+        .andExpect(jsonPath("$.errors[?(@.fieldName == 'newPassword')].messageId", hasItem(Message.SHORT_FIELD.getId())));
+		
+		 User user = userService.getUserByEmail("denismateescu@gmail.com");
+		
+		 assertTrue(passwordEncoder.matches("password", user.getPassword()));
 	}
 }
 
