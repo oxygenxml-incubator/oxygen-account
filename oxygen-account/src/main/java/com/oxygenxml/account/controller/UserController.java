@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.oxygenxml.account.converter.UserConverter;
 import com.oxygenxml.account.dto.ChangePasswordDto;
@@ -18,6 +19,8 @@ import com.oxygenxml.account.exception.UserNotAuthenticatedException;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.service.UserService;
 import com.oxygenxml.account.service.ValidationService;
+
+import jakarta.servlet.http.HttpSession;
 
 /**
  * The UserControllerclass is a REST controller that manages HTTP requests related to users.
@@ -105,10 +108,10 @@ public class UserController {
     }
     
     @DeleteMapping("/delete")
-
-    public void deleteUser(@RequestBody DeleteUserDto deleteUserDto) {
-
+    public RedirectView deleteUser(@RequestBody DeleteUserDto deleteUserDto, HttpSession session) {
         userService.deleteUser(deleteUserDto);
+        session.invalidate();
+        return new RedirectView("/login");
     }
 }
 	
