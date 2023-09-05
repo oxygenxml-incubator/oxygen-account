@@ -380,6 +380,56 @@ function ProfileCard() {
 
     const handleCloseDeleteAccountDialog = () => {
         setIsDeleteAccountDialogActive(false);
+
+        setDeletePassword('');
+        setDeletePasswordError('');
+    }
+
+    const sendDeleteAccountRequest = () => {
+        //setIsChangePasswordSubmissionInProgress(true);
+
+        const deletePasswordInfo = {
+            password: deletePassword.trim()
+        };
+
+        return fetch('api/users/delete', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(deletePasswordInfo),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    window.location.reload();
+                }
+
+                return response.json();
+            })
+            .then((data) => {
+                if (data.errorMessage) {
+                    if(data.messageId === 'INCORRECT_PASSWORD') {
+                        setDeletePasswordError(data.errorMessage);
+                    } else {
+                        throw new Error(data.errorMessage);
+                    }
+                }
+
+            })
+            .catch(error => {
+                setIsSuccessSnackbar(false);
+
+                // If the error name is 'TypeError', it means there was a connection error.
+                // Otherwise, display the error message from the error object.
+                //setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
+
+                setSnackbarMessage(error.message);
+                setShowSnackbar(true);
+            });
+    };
+
+    const handleConfirmDeleteAccount = () => {
+        sendDeleteAccountRequest();
     }
 
 
@@ -642,8 +692,15 @@ function ProfileCard() {
 
                                             </DialogContent>
                                             <DialogActions>
-                                                <Button onClick={handleCloseDeleteAccountDialog}>Cancel</Button>
-                                                <Button autoFocus>
+                                                <Button
+                                                    style={{color:'gray'}}
+                                                    onClick={handleCloseDeleteAccountDialog}>
+                                                    Cancel
+                                                </Button>
+                                                <Button
+                                                    disabled = {deletePassword === ''}
+                                                    onClick={handleConfirmDeleteAccount}
+                                                    autoFocus>
                                                     Delete account
                                                 </Button>
                                             </DialogActions>
