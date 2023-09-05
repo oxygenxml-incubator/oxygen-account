@@ -53,9 +53,20 @@ public enum InternalErrorCode {
 	 */
 	USER_NOT_FOUND(1009),
 	
+	/**
+	 * The error that occurs when the password is incorrect
+	 */
 	INCORRECT_PASSWORD(1010),
 	
-	PASSWORD_SAME_AS_OLD(1011);
+	/**
+	 * The error that occurs when the user inserts the same password as the old one
+	 */
+	PASSWORD_SAME_AS_OLD(1011),
+	
+	/**
+	 * The error that occurs when the users isn't authenticated
+	 */
+	USER_NOT_AUTHENTICATED(1012);
 	
 	/**
 	 * It represents the internal error code

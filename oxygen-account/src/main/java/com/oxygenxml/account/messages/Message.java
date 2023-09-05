@@ -61,11 +61,20 @@ public enum Message {
 	 */
 	INPUT_VALIDATION_FAILED("INPUT_VALIDATION_FAILED", "Input validation failed."),
 	
+	/**
+	 * ID corresponding to the message indicating that the password is incorrect.
+	 */
 	INCORRECT_PASSWORD("INCORRECT_PASSWORD","Incorrect password."),
 	
+	/**
+	 * ID corresponding to the message indicating that the new password is the same as the old one
+	 */
 	PASSWORD_SAME_AS_OLD("PASSWORD_SAME_AS_OLD", "The new password is the same as the old one."),
 	
-	INVALID_USER("INVALID_USER", "The user does not exist.");
+	/**
+	 * ID corresponding to the message indicating that the user is not authenticated
+	 */
+	USER_NOT_AUTHENTICATED("USER_NOT_AUTHENTICATED", "User not authenticated.");
 
 	/**
 	 * Unique identifier corresponding to each type of message.

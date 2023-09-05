@@ -69,7 +69,7 @@ public class UserControllerTest {
     private PasswordEncoder passwordEncoder;
 
 	/**
-	 *  testRegisterUser method tests the user registration functionality.
+	 *  Tests the user registration functionality.
 	 *  It attempts to register a new user
 	 * @throws Exception if the test encounters any errors.
 	 */
@@ -88,7 +88,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * testRegisterSameEmail method tests whether another user with the same email can be registered
+	 * Tests whether another user with the same email can be registered
 	 * It registers an initial user, then attempts to register a new user with the same email.
 	 * @throws Exception if the test encounters any errors
 	 */
@@ -110,7 +110,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * testInvalidEmail method tests the registration with an invalid email.
+	 * Tests the registration with an invalid email.
 	 * @throws Exception
 	 */
 	@Test
@@ -133,7 +133,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * testInvalidPassword tests the registration with an invalid password.
+	 * Tests the registration with an invalid password.
 	 * @throws Exception
 	 */
 	@Test
@@ -156,7 +156,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * testEmptyField tests the registration with an invalid password.
+	 * Tests the registration with an invalid password.
 	 * @throws Exception
 	 */
 	@Test
@@ -179,7 +179,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * testMultipleErrors tests that the MultipleOxygenAccountException is throwen correctly
+	 * Tests that the MultipleOxygenAccountException is throwen correctly
 	 * @throws Exception
 	 */
 	@Test
@@ -204,7 +204,7 @@ public class UserControllerTest {
 	}
 	
 	/**
-	 * testShowDetailsAboutUser tests whether the user's name and email are displayed after logging in
+	 * Tests whether the user's name and email are displayed after logging in
 	 * @throws Exception
 	 */
 	@Test
@@ -239,7 +239,7 @@ public class UserControllerTest {
 	}
 
 	/**
-	 * testAnonymousUserDetails tests what is displayed to an unknown user who accesses this area of ​​the application
+	 * Tests what is displayed to an unknown user who accesses this area of ​​the application
 	 * @throws Exception
 	 */
 	@Test
@@ -252,7 +252,7 @@ public class UserControllerTest {
 	}
 	
 	/**
-	 * testChangeName tests if a User can change his name
+	 * Tests if a User can change his name
 	 * @throws Exception
 	 */
 	@Test
@@ -286,7 +286,7 @@ public class UserControllerTest {
 	}
 	
 	/**
-	 * testChangeEmptyName tests the situation in which a User enters an empty name
+	 * Tests the situation in which a User enters an empty name
 	 * @throws Exception
 	 */
 	@Test
@@ -314,7 +314,7 @@ public class UserControllerTest {
 	}
 	
 	/**
-	 * testChangePassword tests the situation when a user want to change his password
+	 * Tests the situation when a user want to change his password
 	 * @throws Exception
 	 */
 	@Test
@@ -344,7 +344,7 @@ public class UserControllerTest {
 	}
 	
 	/**
-	 * testChangePasswordIncorrectOldPassword tests the situation when a user inserts a wrong password
+	 * Tests the situation when a user inserts a wrong password
 	 * @throws Exception
 	 */
 	@Test
@@ -376,7 +376,7 @@ public class UserControllerTest {
 	}
 	
 	/**
-	 * testSameNewAndOldPasswords tests the situation when a user inserts the new password the same as the old password
+	 * Tests the situation when a user inserts the new password the same as the old password
 	 * @throws Exception
 	 */
 	@Test
@@ -408,7 +408,7 @@ public class UserControllerTest {
 	}
 	
 	/**
-	 * testSameNewAndOldPasswords tests the situation when a user left empty the old password field and inserts a short new password
+	 * Tests the situation when a user left empty the old password field and inserts a short new password
 	 * @throws Exception
 	 */
 	@Test
