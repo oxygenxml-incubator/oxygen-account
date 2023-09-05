@@ -15,6 +15,7 @@ import com.oxygenxml.account.exception.UserNotAuthenticatedException;
 import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
+import com.oxygenxml.account.dto.DeleteUserDto;
 
 /**
  *  Service class for user-related operations.
@@ -122,4 +123,14 @@ public class UserService {
 		 
 		 return userRepository.save(currentUser);
 	}
+	
+	public void deleteUser(DeleteUserDto deleteUserDto) {
+        User currentUser = getCurrentUser();
+
+        if (!passwordEncoder.matches(deleteUserDto.getPassword(), currentUser.getPassword())) {
+            throw new OxygenAccountException(Message.INCORRECT_PASSWORD, HttpStatus.FORBIDDEN, InternalErrorCode.INCORRECT_PASSWORD);
+        }
+
+         userRepository.delete(currentUser);
+    }
 }

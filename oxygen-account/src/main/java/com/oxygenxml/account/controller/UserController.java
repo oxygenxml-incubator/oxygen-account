@@ -1,6 +1,7 @@
 package com.oxygenxml.account.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.oxygenxml.account.converter.UserConverter;
 import com.oxygenxml.account.dto.ChangePasswordDto;
+import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.exception.UserNotAuthenticatedException;
@@ -100,6 +102,13 @@ public class UserController {
     	validationService.validate(changePasswordDto);
     	User updatedUser = userService.updateCurrentUserPassword(changePasswordDto);
     	return userConverter.entityToDto(updatedUser);
+    }
+    
+    @DeleteMapping("/delete")
+
+    public void deleteUser(@RequestBody DeleteUserDto deleteUserDto) {
+
+        userService.deleteUser(deleteUserDto);
     }
 }
 	
