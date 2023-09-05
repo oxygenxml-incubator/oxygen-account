@@ -1,15 +1,12 @@
 package com.oxygenxml.account.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.oxygenxml.account.converter.UserConverter;
 import com.oxygenxml.account.dto.ChangePasswordDto;
@@ -20,8 +17,6 @@ import com.oxygenxml.account.exception.UserNotAuthenticatedException;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.service.UserService;
 import com.oxygenxml.account.service.ValidationService;
-
-import jakarta.servlet.http.HttpSession;
 
 /**
  * The UserControllerclass is a REST controller that manages HTTP requests related to users.
@@ -108,12 +103,18 @@ public class UserController {
     	return userConverter.entityToDto(updatedUser);
     }
     
-    @DeleteMapping("/delete")
-    public ResponseEntity<Object> deleteUser(@RequestBody DeleteUserDto deleteUserDto, HttpSession session) {
-        userService.deleteUser(deleteUserDto);
-        session.invalidate();
-
-        return ResponseEntity.ok().build();
+    @PutMapping("/delete")
+    public UserDto deleteUser(@RequestBody DeleteUserDto deleteUserDto) {
+        User deletedUser = userService.deleteUser(deleteUserDto);
+        
+        return userConverter.entityToDto(deletedUser);
+    }
+    
+    @PutMapping("/recover")
+    public UserDto deleteUser() {
+        User recoveredUser = userService.recoverUser();
+        
+        return userConverter.entityToDto(recoveredUser);
     }
 }
 	

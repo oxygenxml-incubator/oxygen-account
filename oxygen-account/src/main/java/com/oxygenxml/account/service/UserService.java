@@ -1,5 +1,7 @@
 package com.oxygenxml.account.service;
 
+import java.sql.Timestamp;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -124,13 +126,26 @@ public class UserService {
 		 return userRepository.save(currentUser);
 	}
 	
-	public void deleteUser(DeleteUserDto deleteUserDto) {
+	public User deleteUser(DeleteUserDto deleteUserDto) {
         User currentUser = getCurrentUser();
 
         if (!passwordEncoder.matches(deleteUserDto.getPassword(), currentUser.getPassword())) {
             throw new OxygenAccountException(Message.INCORRECT_PASSWORD, HttpStatus.FORBIDDEN, InternalErrorCode.INCORRECT_PASSWORD);
         }
+        
+        currentUser.setStatus("delete");
+        currentUser.setDeletionDate(new Timestamp(System.currentTimeMillis()));
+        
+        return userRepository.save(currentUser);
+    }
+	
+	public User recoverUser() {
+        User currentUser = getCurrentUser();
 
-         userRepository.delete(currentUser);
+        currentUser.setStatus("active");
+        currentUser.setDeletionDate(null);
+        
+        return userRepository.save(currentUser);
+        
     }
 }

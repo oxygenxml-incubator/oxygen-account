@@ -393,7 +393,7 @@ function ProfileCard() {
         };
 
         return fetch('api/users/delete', {
-            method: 'DELETE',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },

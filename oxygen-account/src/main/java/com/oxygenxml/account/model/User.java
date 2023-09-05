@@ -59,6 +59,12 @@ public class User {
 	 *  The password of the user.
 	 */
 	private String password;
+	
+	@Column( name = "status", insertable = false)
+	private String status;
+	
+	@Column(name = "deletion_date", insertable = false)
+	private Timestamp deletionDate;
 
 	
 
