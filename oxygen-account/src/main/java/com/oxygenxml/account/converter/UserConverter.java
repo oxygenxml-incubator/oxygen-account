@@ -33,10 +33,10 @@ public class UserConverter {
 		userDto.setEmail(user.getEmail());
 		userDto.setStatus(user.getStatus());
 		
-		if (UserStatus.DELETED.equals(user.getStatus())) {
+		if (UserStatus.DELETED.getStatus().equals(user.getStatus())) {
 	        int daysLeft = daysLeftBefore.getDaysLeftForRecovery(user);
 	        userDto.setDaysLeftForRecovery(daysLeft);
-	    } else if (UserStatus.ACTIVE.equals(user.getStatus())) {
+	    } else if (UserStatus.ACTIVE.getStatus().equals(user.getStatus())) {
 	    	userDto.setDaysLeftForRecovery(-1);
 	    }
 		
