@@ -1,5 +1,7 @@
 package com.oxygenxml.account.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.oxygenxml.account.model.User;
@@ -31,5 +33,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	 * @return A User entity that matches the provided email, or null if no matching User entity is found.
 	 */
 	public User findByEmail(String email);
+	
+	public List<User> findByStatus(String status);
 
 }

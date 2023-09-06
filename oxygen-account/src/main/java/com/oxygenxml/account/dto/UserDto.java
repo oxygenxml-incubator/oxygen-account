@@ -36,4 +36,6 @@ public class UserDto {
 	private String password;
 	
 	private String status;
+	
+	private int daysLeftForRecovery;
 }

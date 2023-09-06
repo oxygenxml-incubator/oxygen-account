@@ -1,9 +1,11 @@
 package com.oxygenxml.account.converter;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.model.User;
+import com.oxygenxml.account.service.UserService;
 
 /**
  * A utility class that provides methods for converting between {@link UserDto} and {@link User}
@@ -12,6 +14,8 @@ import com.oxygenxml.account.model.User;
 @Component
 public class UserConverter {
 	
+	@Autowired
+	private UserService userService;
 	/**
 	 * Converts a {@link User} object to a {@link UserDto} object.
 	 * 
@@ -26,6 +30,13 @@ public class UserConverter {
 		userDto.setName(user.getName());
 		userDto.setEmail(user.getEmail());
 		userDto.setStatus(user.getStatus());
+		
+		if ("deleted".equals(user.getStatus())) {
+	        int daysLeft = userService.getDaysLeftForRecovery(user);
+	        userDto.setDaysLeftForRecovery(daysLeft);
+	    } else if ("active".equals(user.getStatus())) {
+	    	userDto.setDaysLeftForRecovery(-1);
+	    }
 		
 		return userDto;
 	}

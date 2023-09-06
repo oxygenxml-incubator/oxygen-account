@@ -71,7 +71,7 @@ public class UserController {
 			return userConverter.entityToDto(currentUser);
 
 		} catch (UserNotAuthenticatedException e) {
-			return new UserDto("Anonymous User", "anonymousUser", null, null);
+			return new UserDto("Anonymous User", "anonymousUser", null, null, -1);
 		}
 	}
     

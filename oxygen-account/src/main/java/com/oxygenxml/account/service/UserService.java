@@ -1,9 +1,11 @@
 package com.oxygenxml.account.service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +38,8 @@ public class UserService {
 	 */
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	private final static int DAYS_UNTIL_DELETION = 7;
 	
 	/**
 	 * Register a new user in the system.
@@ -146,6 +150,27 @@ public class UserService {
         currentUser.setDeletionDate(null);
         
         return userRepository.save(currentUser);
-        
     }
+
+	public int getDaysLeftForRecovery(User user) {
+		long millisInDay = 24L * 60L * 60L * 1000L;
+		long timeSinceDeletion = System.currentTimeMillis() - user.getDeletionDate().getTime();
+		int daysSinceDeletion = (int) (timeSinceDeletion / millisInDay);
+		int daysLeft = DAYS_UNTIL_DELETION - daysSinceDeletion;
+
+		return Math.max(daysLeft, 0); 
+	}
+	
+	@Scheduled(cron = "0 0 0 * * ?")
+	public void processDeletedUsers() {
+		List<User> deletedUsers = userRepository.findByStatus("deleted");
+
+		for (User user : deletedUsers) {
+			int daysLeft = getDaysLeftForRecovery(user);
+
+			if (daysLeft == 0) {
+				userRepository.delete(user);
+			}
+		}
+	}
 }
