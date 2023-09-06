@@ -75,6 +75,10 @@ function ProfileCard() {
 
     const [isDeleteAccountSubmissionInProgress, setIsDeleteAccountSubmissionInProgress] = useState(false);
 
+    const [daysLeftForRecovery, setDaysLeftForRecovery] = useState(-1);
+
+    const [isRecoverAccountSubmissionInProgress, setIsRecoverAccountSubmissionInProgress] = useState(false);
+
     /**
      * Fetch user data on component mount
      */
@@ -101,6 +105,7 @@ function ProfileCard() {
                 } else if (data.status === 'deleted') {
                     setIsUserDeleted(true);
                 }
+                setDaysLeftForRecovery(data.daysLeftForRecovery);
 
             })
             .catch(error => {
@@ -445,7 +450,7 @@ function ProfileCard() {
     }
 
     const sendRecoverAccountRequest = () => {
-        //setIsChangePasswordSubmissionInProgress(true);
+        setIsRecoverAccountSubmissionInProgress(true);
 
         return fetch('api/users/recover', {
             method: 'PUT',
@@ -455,19 +460,21 @@ function ProfileCard() {
         })
             .then((response) => {
                 if (response.ok) {
+                    setIsRecoverAccountSubmissionInProgress(false);
                     window.location.reload();
                 }
 
- 
                 return response.json();
             })
             .then((data) => {
+                setIsRecoverAccountSubmissionInProgress(false);
                 if (data.errorMessage) {
                     throw new Error(data.errorMessage);
                 }
 
             })
             .catch(error => {
+                setIsRecoverAccountSubmissionInProgress(false);
                 setIsSuccessSnackbar(false);
 
                 // If the error name is 'TypeError', it means there was a connection error.
@@ -699,9 +706,10 @@ function ProfileCard() {
                                 {isUserDeleted ? (
                                     <Grid item container direction='column' style={{ borderTop: "1px solid #333" }} gap='15px'>
                                         <Grid item style={{ padding: '10px' }}>
-                                            <Typography variant="h6">
-                                                Your account is marked as deleted. It will be permanent deleted in x days!
-                                            </Typography>
+                                            { daysLeftForRecovery !== -1 &&
+                                            <Typography variant="h6" style={{ fontSize: "19px", color: "red", fontWeight: "bold" }}>
+                                                Your account is marked as deleted. It will be permanent deleted in { daysLeftForRecovery } days!
+                                            </Typography>}
                                         </Grid>
 
                                         <Grid item container justifyContent="flex-end">
@@ -714,6 +722,11 @@ function ProfileCard() {
                                                 </Button>
                                             </Grid>
                                         </Grid>
+
+                                        {isRecoverAccountSubmissionInProgress &&
+                                        <Grid item xs>
+                                            <LinearProgress />
+                                        </Grid>}
                                     </Grid>
                                 ) : (
                                     <Grid item container direction='column' style={{ borderTop: "1px solid #333" }} gap='15px'>
@@ -734,6 +747,7 @@ function ProfileCard() {
                                             </Grid>
                                         </Grid>
 
+                                        {isDeleteAccountDialogActive &&
                                         <Grid item>
                                             <Dialog
                                                 open={isDeleteAccountDialogActive}
@@ -785,7 +799,7 @@ function ProfileCard() {
                                                     </Button>
                                                 </DialogActions>
                                             </Dialog>
-                                        </Grid>
+                                        </Grid>}
                                     </Grid>
                                 )}
                             </Grid>
