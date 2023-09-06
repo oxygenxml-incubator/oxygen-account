@@ -1,5 +1,7 @@
 package com.oxygenxml.account.dto;
 
+import java.sql.Timestamp;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -37,5 +39,5 @@ public class UserDto {
 	
 	private String status;
 	
-	private int daysLeftForRecovery;
+	private Timestamp deletionDate;
 }
