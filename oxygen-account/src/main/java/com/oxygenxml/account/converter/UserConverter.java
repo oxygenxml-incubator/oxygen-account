@@ -7,6 +7,7 @@ import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.service.UserService;
 import com.oxygenxml.account.utility.DaysLeftUtility;
+import com.oxygenxml.account.utility.UserStatus;
 
 /**
  * A utility class that provides methods for converting between {@link UserDto} and {@link User}
@@ -32,10 +33,10 @@ public class UserConverter {
 		userDto.setEmail(user.getEmail());
 		userDto.setStatus(user.getStatus());
 		
-		if ("deleted".equals(user.getStatus())) {
+		if (UserStatus.DELETED.equals(user.getStatus())) {
 	        int daysLeft = daysLeftBefore.getDaysLeftForRecovery(user);
 	        userDto.setDaysLeftForRecovery(daysLeft);
-	    } else if ("active".equals(user.getStatus())) {
+	    } else if (UserStatus.ACTIVE.equals(user.getStatus())) {
 	    	userDto.setDaysLeftForRecovery(-1);
 	    }
 		
