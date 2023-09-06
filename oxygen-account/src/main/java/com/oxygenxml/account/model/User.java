@@ -65,7 +65,4 @@ public class User {
 	
 	@Column(name = "deletion_date", insertable = false)
 	private Timestamp deletionDate;
-
-	
-
 }

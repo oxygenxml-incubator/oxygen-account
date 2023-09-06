@@ -773,7 +773,7 @@ function ProfileCard() {
                                                                 onChange={handleInputChange}
                                                                 error={Boolean(deletePasswordError)}
                                                                 helperText={deletePasswordError}
-                                                                fullWidth
+                                                                fullWidth                                                           
                                                             />
                                                         </Grid>
 

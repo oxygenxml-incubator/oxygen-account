@@ -1,17 +1,16 @@
 package com.oxygenxml.account.service;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.oxygenxml.account.dto.ChangePasswordDto;
+import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.exception.InternalErrorCode;
 import com.oxygenxml.account.exception.OxygenAccountException;
@@ -19,7 +18,7 @@ import com.oxygenxml.account.exception.UserNotAuthenticatedException;
 import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
-import com.oxygenxml.account.dto.DeleteUserDto;
+import com.oxygenxml.account.utility.UserStatus;
 
 /**
  *  Service class for user-related operations.
@@ -38,8 +37,6 @@ public class UserService {
 	 */
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
-	private final static int DAYS_UNTIL_DELETION = 7;
 	
 	/**
 	 * Register a new user in the system.
@@ -137,7 +134,7 @@ public class UserService {
             throw new OxygenAccountException(Message.INCORRECT_PASSWORD, HttpStatus.FORBIDDEN, InternalErrorCode.INCORRECT_PASSWORD);
         }
         
-        currentUser.setStatus("deleted");
+        currentUser.setStatus(UserStatus.DELETED.getStatus());
         currentUser.setDeletionDate(new Timestamp(System.currentTimeMillis()));
         
         return userRepository.save(currentUser);
@@ -146,31 +143,9 @@ public class UserService {
 	public User recoverUser() {
         User currentUser = getCurrentUser();
 
-        currentUser.setStatus("active");
+        currentUser.setStatus(UserStatus.ACTIVE.getStatus());
         currentUser.setDeletionDate(null);
         
         return userRepository.save(currentUser);
     }
-
-	public int getDaysLeftForRecovery(User user) {
-		long millisInDay = 24L * 60L * 60L * 1000L;
-		long timeSinceDeletion = System.currentTimeMillis() - user.getDeletionDate().getTime();
-		int daysSinceDeletion = (int) (timeSinceDeletion / millisInDay);
-		int daysLeft = DAYS_UNTIL_DELETION - daysSinceDeletion;
-
-		return Math.max(daysLeft, 0); 
-	}
-	
-	@Scheduled(cron = "0 0 0 * * ?")
-	public void processDeletedUsers() {
-		List<User> deletedUsers = userRepository.findByStatus("deleted");
-
-		for (User user : deletedUsers) {
-			int daysLeft = getDaysLeftForRecovery(user);
-
-			if (daysLeft == 0) {
-				userRepository.delete(user);
-			}
-		}
-	}
 }
