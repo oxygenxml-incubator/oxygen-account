@@ -71,19 +71,23 @@ function ProfileCard() {
 
     const [deletePasswordError, setDeletePasswordError] = useState('');
 
-    const [isUserDeleted, setIsUserDeleted] = useState(false);
+    //const [isUserDeleted, setIsUserDeleted] = useState(false);
 
     const [isDeleteAccountSubmissionInProgress, setIsDeleteAccountSubmissionInProgress] = useState(false);
 
     const [daysLeftForRecovery, setDaysLeftForRecovery] = useState(-1);
 
     const [isRecoverAccountSubmissionInProgress, setIsRecoverAccountSubmissionInProgress] = useState(false);
-
     /**
      * Fetch user data on component mount
      */
     useEffect(() => {
-        setIsDataLoadingActive(true);
+		getUserCurrentData();
+    }, []);
+
+
+	const getUserCurrentData = () => {
+		setIsDataLoadingActive(true);
 
         fetch('api/users/me', {
             method: 'GET'
@@ -100,13 +104,7 @@ function ProfileCard() {
 
                 setCurrentUserData(data);
                 setEditedUserName(data.name);
-                if (data.status === 'active') {
-                    setIsUserDeleted(false);
-                } else if (data.status === 'deleted') {
-                    setIsUserDeleted(true);
-                }
                 setDaysLeftForRecovery(data.daysLeftForRecovery);
-
             })
             .catch(error => {
                 setIsDataLoadingActive(false);
@@ -115,8 +113,7 @@ function ProfileCard() {
 
                 setShowSnackbar(true);
             });
-
-    }, []);
+	}
 
     /*
      * Handle the Snackbar close event.
@@ -413,39 +410,39 @@ function ProfileCard() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(deletePasswordInfo),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    setIsDeleteAccountSubmissionInProgress(false);
-                    window.location.reload();
+        }).then((response) => {
+            setIsDeleteAccountSubmissionInProgress(false);
+
+            return response.json();
+        }).then((data) => {
+			console.log(data);
+            if (data.errorMessage) {
+                if (data.messageId === 'INCORRECT_PASSWORD') {
+                    setDeletePasswordError(data.errorMessage);
+                } else {
+                    throw new Error(data.errorMessage);
                 }
+            } else {
+				setCurrentUserData({
+					...currentUserData,
+					...data,
+				});
+			}
+        }).catch(error => {
+            setIsDeleteAccountSubmissionInProgress(false);
+            setIsSuccessSnackbar(false);
 
-                return response.json();
-            })
-            .then((data) => {
-                setIsDeleteAccountSubmissionInProgress(false);
-                if (data.errorMessage) {
-                    if (data.messageId === 'INCORRECT_PASSWORD') {
-                        setDeletePasswordError(data.errorMessage);
-                    } else {
-                        throw new Error(data.errorMessage);
-                    }
-                }
-            })
-            .catch(error => {
-                setIsDeleteAccountSubmissionInProgress(false);
-                setIsSuccessSnackbar(false);
+            // If the error name is 'TypeError', it means there was a connection error.
+            // Otherwise, display the error message from the error object.
+            //setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
 
-                // If the error name is 'TypeError', it means there was a connection error.
-                // Otherwise, display the error message from the error object.
-                //setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
-
-                setSnackbarMessage(error.message);
-                setShowSnackbar(true);
-            });
+            setSnackbarMessage(error.message);
+            setShowSnackbar(true);
+        });
     };
 
     const handleConfirmDeleteAccount = () => {
+		handleCloseDeleteAccountDialog();
         sendDeleteAccountRequest();
     }
 
@@ -457,33 +454,29 @@ function ProfileCard() {
             headers: {
                 'Content-Type': 'application/json',
             },
-        })
-            .then((response) => {
-                if (response.ok) {
-                    setIsRecoverAccountSubmissionInProgress(false);
-                    window.location.reload();
-                }
-
-                return response.json();
-            })
-            .then((data) => {
+        }).then((response) => {
                 setIsRecoverAccountSubmissionInProgress(false);
+                return response.json();
+        }).then((data) => {
                 if (data.errorMessage) {
                     throw new Error(data.errorMessage);
-                }
+                } else {
+					setCurrentUserData({
+						...currentUserData,
+						...data,
+					});
+				}
+        }).catch(error => {
+            setIsRecoverAccountSubmissionInProgress(false);
+            setIsSuccessSnackbar(false);
 
-            })
-            .catch(error => {
-                setIsRecoverAccountSubmissionInProgress(false);
-                setIsSuccessSnackbar(false);
+            // If the error name is 'TypeError', it means there was a connection error.
+            // Otherwise, display the error message from the error object.
+            //setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
 
-                // If the error name is 'TypeError', it means there was a connection error.
-                // Otherwise, display the error message from the error object.
-                //setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
-
-                setSnackbarMessage(error.message);
-                setShowSnackbar(true);
-            });
+            setSnackbarMessage(error.message);
+            setShowSnackbar(true);
+        });
     };
 
     const handleRecoverAccountClick = () => {
@@ -586,7 +579,7 @@ function ProfileCard() {
                                                     id="edit-button"
                                                     variant="contained"
                                                     onClick={handleClickEditButton}
-                                                    disabled={isUserDeleted}>
+                                                    disabled={currentUserData.status === 'deleted'}>
                                                     Edit
                                                 </Button>
                                             </Grid>
@@ -688,7 +681,7 @@ function ProfileCard() {
                                                         id="change-password-button"
                                                         variant="contained"
                                                         onClick={handleChangePasswordClick}
-                                                        disabled={isUserDeleted}>
+                                                        disabled={(currentUserData.status === 'deleted')}>
                                                         Change Password
                                                     </Button>
                                                 </Grid>
@@ -703,13 +696,21 @@ function ProfileCard() {
                                         </Grid>}
                                 </Grid>
 
-                                {isUserDeleted ? (
+                                {(currentUserData.status === 'deleted') ? (
                                     <Grid item container direction='column' style={{ borderTop: "1px solid #333" }} gap='15px'>
-                                        <Grid item style={{ padding: '10px' }}>
-                                            { daysLeftForRecovery !== -1 &&
-                                            <Typography variant="h6" style={{ fontSize: "19px", color: "red", fontWeight: "bold" }}>
-                                                Your account is marked as deleted. It will be permanent deleted in { daysLeftForRecovery } days!
-                                            </Typography>}
+                                        <Grid item container direction='column' style={{ padding: '10px' }}>
+                                            <Grid item>
+                                                <Typography variant="h6">
+                                                    Recover account
+                                                </Typography>
+                                            </Grid>
+
+                                            {daysLeftForRecovery !== -1 &&
+                                                <Grid item>
+                                                    <Typography variant="h6" style={{ fontSize: "18px" }}>
+                                                        Your account is marked as deleted. It will be permanent deleted in {daysLeftForRecovery} days!
+                                                    </Typography>
+                                                </Grid>}
                                         </Grid>
 
                                         <Grid item container justifyContent="flex-end">
@@ -718,15 +719,15 @@ function ProfileCard() {
                                                     id="recover-account-button"
                                                     variant="contained"
                                                     onClick={handleRecoverAccountClick}>
-                                                    Recover account
+                                                    Recover
                                                 </Button>
                                             </Grid>
                                         </Grid>
 
                                         {isRecoverAccountSubmissionInProgress &&
-                                        <Grid item xs>
-                                            <LinearProgress />
-                                        </Grid>}
+                                            <Grid item xs>
+                                                <LinearProgress />
+                                            </Grid>}
                                     </Grid>
                                 ) : (
                                     <Grid item container direction='column' style={{ borderTop: "1px solid #333" }} gap='15px'>
@@ -741,6 +742,7 @@ function ProfileCard() {
                                                 <Button
                                                     id="delete-account-button"
                                                     variant="contained"
+                                                    color='error'
                                                     onClick={handleDeleteAccountClick}>
                                                     Delete
                                                 </Button>
@@ -748,58 +750,59 @@ function ProfileCard() {
                                         </Grid>
 
                                         {isDeleteAccountDialogActive &&
-                                        <Grid item>
-                                            <Dialog
-                                                open={isDeleteAccountDialogActive}
-                                                onClose={handleCloseDeleteAccountDialog}
-                                            >
-                                                <DialogTitle>
-                                                    {"Delete account"}
-                                                </DialogTitle>
-                                                <DialogContent>
-                                                    <Grid container direction='column' gap='15px'>
-                                                        <Grid item>
-                                                            <DialogContentText style={{ marginRight: '70px' }}>
-                                                                Insert password to delete your account
-                                                            </DialogContentText>
+                                            <Grid item>
+                                                <Dialog
+                                                    open={isDeleteAccountDialogActive}
+                                                    onClose={handleCloseDeleteAccountDialog}
+                                                >
+                                                    <DialogTitle>
+                                                        {"Delete account"}
+                                                    </DialogTitle>
+                                                    <DialogContent>
+                                                        <Grid container direction='column' gap='15px'>
+                                                            <Grid item>
+                                                                <DialogContentText style={{ marginRight: '70px' }}>
+                                                                    Insert password to delete your account
+                                                                </DialogContentText>
+                                                            </Grid>
+
+                                                            <Grid item>
+                                                                <TextField
+                                                                    id="delete-password"
+                                                                    label="Password"
+                                                                    type="password"
+                                                                    value={deletePassword}
+                                                                    onChange={handleInputChange}
+                                                                    error={Boolean(deletePasswordError)}
+                                                                    helperText={deletePasswordError}
+                                                                    fullWidth
+                                                                />
+                                                            </Grid>
+
+                                                            {isDeleteAccountSubmissionInProgress &&
+                                                                <Grid item xs>
+                                                                    <LinearProgress />
+                                                                </Grid>}
                                                         </Grid>
 
-                                                        <Grid item>
-                                                            <TextField
-                                                                id="delete-password"
-                                                                label="Password"
-                                                                type="password"
-                                                                value={deletePassword}
-                                                                onChange={handleInputChange}
-                                                                error={Boolean(deletePasswordError)}
-                                                                helperText={deletePasswordError}
-                                                                fullWidth                                                           
-                                                            />
-                                                        </Grid>
-
-                                                        {isDeleteAccountSubmissionInProgress &&
-                                                        <Grid item xs>
-                                                            <LinearProgress />
-                                                        </Grid>}
-                                                    </Grid>
-
-                                                </DialogContent>
-                                                <DialogActions>
-                                                    <Button
-                                                        style={{ color: 'gray' }}
-                                                        onClick={handleCloseDeleteAccountDialog}
-                                                        disabled = {isDeleteAccountSubmissionInProgress}>
-                                                        Cancel
-                                                    </Button>
-                                                    <Button
-                                                        disabled={isDeleteAccountSubmissionInProgress || deletePassword === ''}
-                                                        onClick={handleConfirmDeleteAccount}
-                                                        autoFocus>
-                                                        Delete account
-                                                    </Button>
-                                                </DialogActions>
-                                            </Dialog>
-                                        </Grid>}
+                                                    </DialogContent>
+                                                    <DialogActions>
+                                                        <Button
+                                                            color='inherit'
+                                                            onClick={handleCloseDeleteAccountDialog}
+                                                            disabled={isDeleteAccountSubmissionInProgress}>
+                                                            Cancel
+                                                        </Button>
+                                                        <Button
+                                                            disabled={isDeleteAccountSubmissionInProgress || deletePassword === ''}
+                                                            onClick={handleConfirmDeleteAccount}
+                                                            color='error'
+                                                            autoFocus>
+                                                            Delete account
+                                                        </Button>
+                                                    </DialogActions>
+                                                </Dialog>
+                                            </Grid>}
                                     </Grid>
                                 )}
                             </Grid>
