@@ -3,14 +3,14 @@ package com.oxygenxml.account.utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.oxygenxml.account.Config.AppConfig;
+import com.oxygenxml.account.Config.OxygenAccountPorpertiesConfig;
 import com.oxygenxml.account.model.User;
 
 @Component
-public class DaysLeftUtility {
+public class DateUtility {
 	
 	@Autowired
-	private AppConfig appConfig;
+	private OxygenAccountPorpertiesConfig appConfig;
 	
 	private final static long MILIS_IN_DAY = 24L * 60L * 60L * 1000L;
 	

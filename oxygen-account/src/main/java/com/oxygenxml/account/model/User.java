@@ -63,6 +63,6 @@ public class User {
 	@Column( name = "status", insertable = false)
 	private String status;
 	
-	@Column(name = "deletion_date", insertable = false)
+	@Column(name = "deletion_date")
 	private Timestamp deletionDate;
 }

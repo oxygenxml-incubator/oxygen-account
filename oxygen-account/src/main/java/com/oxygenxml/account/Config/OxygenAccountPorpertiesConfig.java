@@ -7,8 +7,8 @@ import lombok.Data;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "app")
-public class AppConfig {
+@ConfigurationProperties(prefix = "oxygen.account")
+public class OxygenAccountPorpertiesConfig {
 
 	 private int daysUntilDeletion;
 }

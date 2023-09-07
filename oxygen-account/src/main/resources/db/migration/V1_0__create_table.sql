@@ -1,3 +1,5 @@
+SET time_zone = '+00:00';
+
 CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(511) NOT NULL,

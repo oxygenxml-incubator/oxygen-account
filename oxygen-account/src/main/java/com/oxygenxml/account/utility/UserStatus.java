@@ -14,5 +14,4 @@ public enum UserStatus {
 	private UserStatus(String status) {
 		this.status = status;
 	}
-
 }
