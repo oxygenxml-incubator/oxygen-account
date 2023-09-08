@@ -34,6 +34,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	 */
 	public User findByEmail(String email);
 	
+	/**
+	 * Finds a User entity in the database by status
+	 * @param status The status of the User entity to find in the database
+	 * @return A User entity that matches the provided status
+	 */
 	public List<User> findByStatus(String status);
 
 }

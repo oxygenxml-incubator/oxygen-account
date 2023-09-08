@@ -52,7 +52,7 @@ public class UserService {
         }
 		
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-		
+		newUser.setRegistrationDate(new Timestamp(System.currentTimeMillis()));
 		return userRepository.save(newUser);
 		
 	}
@@ -127,6 +127,12 @@ public class UserService {
 		 return userRepository.save(currentUser);
 	}
 	
+	/**
+	 * Deletes the currently authenticated user by updating their status to "deleted" and setting their deletion date to the current timestamp.
+	 * 
+	 * @param deleteUserDto Data transfer object containing the password of the user to be deleted.
+	 * @return The updated user entity with the "deleted" status and the current timestamp as the deletion date.
+	 */
 	public User deleteUser(DeleteUserDto deleteUserDto) {
         User currentUser = getCurrentUser();
 
@@ -140,6 +146,11 @@ public class UserService {
         return userRepository.save(currentUser);
     }
 	
+	/**
+	 * Recovers the currently authenticated user by updating their status to "active" and setting their deletion date to null.
+	 * 
+	 * @return The updated user entity with the "active" status and set null the deletion date.
+	 */
 	public User recoverUser() {
         User currentUser = getCurrentUser();
 

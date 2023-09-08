@@ -103,17 +103,27 @@ public class UserController {
     	return userConverter.entityToDto(updatedUser);
     }
     
+    /**
+     * Set the status of the currently authenticated user as "deleted" and the deletion time 
+     * 
+     * @param deleteUserDto The data transfer object containing the necessary information to process the user deletion.
+     * @return A DTO representation of the deleted user, preserving the relevant user details even after deletion. 
+     */
     @PutMapping("/delete")
     public UserDto deleteUser(@RequestBody DeleteUserDto deleteUserDto) {
         User deletedUser = userService.deleteUser(deleteUserDto);
-        
         return userConverter.entityToDto(deletedUser);
     }
     
+    /**
+     *  Set the status of the currently authenticated user as "active" and set the deletion time to null.
+     *  This endpoint is a reverse method of the delete endpoint
+     * 
+     * @return A DTO representation of the recovered user, showcasing the user details post-recovery. 
+     */
     @PutMapping("/recover")
     public UserDto deleteUser() {
         User recoveredUser = userService.recoverUser();
-        
         return userConverter.entityToDto(recoveredUser);
     }
 }

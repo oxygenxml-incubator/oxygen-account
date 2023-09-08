@@ -37,7 +37,13 @@ public class UserDto {
 	@Size(min = 8)
 	private String password;
 	
+	/**
+	 * The status of the user
+	 */
 	private String status;
 	
+	/**
+	 * The deletion date of the user
+	 */
 	private Timestamp deletionDate;
 }
