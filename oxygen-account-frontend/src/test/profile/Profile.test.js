@@ -1,8 +1,7 @@
 import '@testing-library/jest-dom';
-import { render, queryByAttribute, waitFor, fireEvent, screen, getByLabelText } from '@testing-library/react';
+import { render, queryByAttribute, waitFor, fireEvent, screen } from '@testing-library/react';
 import { setupServer } from 'msw/node'
 import { rest } from 'msw';
-import { act } from 'react-dom/test-utils';
 
 import Profile from '../../profile/Profile.jsx';
 
