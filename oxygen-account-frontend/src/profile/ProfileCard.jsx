@@ -65,55 +65,61 @@ function ProfileCard() {
     // State variable indicating whether a change password submission is in progress.
     const [isChangePasswordSubmissionInProgress, setIsChangePasswordSubmissionInProgress] = useState(false);
 
+    // State variable for showing the delete account dialog.
     const [isDeleteAccountDialogActive, setIsDeleteAccountDialogActive] = useState(false);
 
+    // State variable for holding the password for confirming deletion.
     const [deletePassword, setDeletePassword] = useState('');
 
+    // State variable holding the error message related to the password field for confirming deletion.
     const [deletePasswordError, setDeletePasswordError] = useState('');
 
-    //const [isUserDeleted, setIsUserDeleted] = useState(false);
-
+    // State variable indicating whether a delete account submission is currently in progress.
     const [isDeleteAccountSubmissionInProgress, setIsDeleteAccountSubmissionInProgress] = useState(false);
 
-    const [daysLeftForRecovery, setDaysLeftForRecovery] = useState(-1);
-
+    // State variable indicating whether a recover account submission is currently in progress.
     const [isRecoverAccountSubmissionInProgress, setIsRecoverAccountSubmissionInProgress] = useState(false);
+
+    // The number of milliseconds in a day.
+    const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
+
+    // The maximum number of days allowed for account recovery.
+    const MAX_DAYS_FOR_RECOVERY = 7;
+
     /**
-     * Fetch user data on component mount
+     * Get the current user's data.
      */
-    useEffect(() => {
-		getUserCurrentData();
-    }, []);
-
-
 	const getUserCurrentData = () => {
 		setIsDataLoadingActive(true);
 
         fetch('api/users/me', {
             method: 'GET'
-        })
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                setIsDataLoadingActive(false);
+        }).then((response) => {
+            return response.json();
+        }).then((data) => {
+            setIsDataLoadingActive(false);
 
-                if (data.errorMessage) {
-                    throw new Error(data.errorMessage);
-                }
+            if (data.errorMessage) {
+                throw new Error(data.errorMessage);
+            }
 
-                setCurrentUserData(data);
-                setEditedUserName(data.name);
-                setDaysLeftForRecovery(data.daysLeftForRecovery);
-            })
-            .catch(error => {
-                setIsDataLoadingActive(false);
+            setCurrentUserData(data);
+            setEditedUserName(data.name);
+        }).catch(error => {
+            setIsDataLoadingActive(false);
 
-                setSnackbarMessage(error.message);
+            setSnackbarMessage(error.message);
 
-                setShowSnackbar(true);
-            });
+            setShowSnackbar(true);
+        });
 	}
+
+    /**
+     * Fetch user data on component mount
+     */
+    useEffect(() => {
+        getUserCurrentData();
+    }, []);
 
     /*
      * Handle the Snackbar close event.
@@ -162,7 +168,7 @@ function ProfileCard() {
             }
         }
 
-        else if (id === "delete-password") {
+        else if (id === "delete-password-field") {
             setDeletePassword(value);
 
             if (deletePasswordError !== '') {
@@ -203,7 +209,6 @@ function ProfileCard() {
         setIsEditActive(false);
     };
 
-
     /**
      * Send an edit name request to the server.
      */
@@ -216,41 +221,38 @@ function ProfileCard() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(editedUserName),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    setIsEditSubmissionInProgress(false);
-                    setIsEditActive(false);
-                    currentUserData.name = editedUserName;
-
-                    setIsSuccessSnackbar(true);
-                    setSnackbarMessage('Profile has been updated!');
-                    setShowSnackbar(true);
-                }
-                return response.json();
-            })
-            .then((data) => {
+        }).then((response) => {
+            if (response.ok) {
                 setIsEditSubmissionInProgress(false);
+                setIsEditActive(false);
+                currentUserData.name = editedUserName;
 
-                if (data.errors) {
-                    if (data.errors[0].fieldName === 'name') {
-                        setEditedNameError(data.errors[0].errorMessage);
-                    }
-                } else if (data.errorMessage) {
-                    throw new Error(data.errorMessage);
-                }
-            })
-            .catch(error => {
-                setIsEditSubmissionInProgress(false);
-
-                setIsSuccessSnackbar(false);
-
-                // If the error name is 'TypeError', it means there was a connection error.
-                // Otherwise, display the error message from the error object.
-                setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
-
+                setIsSuccessSnackbar(true);
+                setSnackbarMessage('Profile has been updated!');
                 setShowSnackbar(true);
-            });
+            }
+            return response.json();
+        }).then((data) => {
+            setIsEditSubmissionInProgress(false);
+
+            if (data.errors) {
+                if (data.errors[0].fieldName === 'name') {
+                    setEditedNameError(data.errors[0].errorMessage);
+                }
+            } else if (data.errorMessage) {
+                throw new Error(data.errorMessage);
+            }
+        }).catch(error => {
+            setIsEditSubmissionInProgress(false);
+
+            setIsSuccessSnackbar(false);
+
+            // If the error name is 'TypeError', it means there was a connection error.
+            // Otherwise, display the error message from the error object.
+            setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
+
+            setShowSnackbar(true);
+        });
     };
 
     /**
@@ -332,52 +334,49 @@ function ProfileCard() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(updatePasswordInfo),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    setIsChangePasswordSubmissionInProgress(false);
-                    setIsChangePasswordViewActive(false);
-                    clearPasswordFileds();
-
-                    setIsSuccessSnackbar(true);
-                    setSnackbarMessage('The password has been changed successfully.');
-                    setShowSnackbar(true);
-                }
-                return response.json();
-            })
-            .then((data) => {
+        }).then((response) => {
+            if (response.ok) {
                 setIsChangePasswordSubmissionInProgress(false);
+                setIsChangePasswordViewActive(false);
+                clearPasswordFileds();
 
-                if (data.errors) {
-                    data.errors.forEach(error => {
-                        switch (error.fieldName) {
-                            case "oldPassword":
-                                setCurrentPasswordError(error.errorMessage);
-                                break;
-                            case "newPassword":
-                                setNewPasswordError(error.errorMessage);
-                                break;
-                        }
-                    });
-                } else if (data.errorMessage) {
-                    throw new Error(data.errorMessage);
-                }
-            })
-            .catch(error => {
-                setIsChangePasswordSubmissionInProgress(false);
-
-                setIsSuccessSnackbar(false);
-
-                // If the error name is 'TypeError', it means there was a connection error.
-                // Otherwise, display the error message from the error object.
-                setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
-
+                setIsSuccessSnackbar(true);
+                setSnackbarMessage('The password has been changed successfully.');
                 setShowSnackbar(true);
-            });
+            }
+            return response.json();
+        }).then((data) => {
+            setIsChangePasswordSubmissionInProgress(false);
+
+            if (data.errors) {
+                data.errors.forEach(error => {
+                    switch (error.fieldName) {
+                        case "oldPassword":
+                            setCurrentPasswordError(error.errorMessage);
+                            break;
+                        case "newPassword":
+                            setNewPasswordError(error.errorMessage);
+                            break;
+                    }
+                });
+            } else if (data.errorMessage) {
+                throw new Error(data.errorMessage);
+            }
+        }).catch(error => {
+            setIsChangePasswordSubmissionInProgress(false);
+
+            setIsSuccessSnackbar(false);
+
+            // If the error name is 'TypeError', it means there was a connection error.
+            // Otherwise, display the error message from the error object.
+            setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
+
+            setShowSnackbar(true);
+        });
     };
 
     /**
-    * Handles the click event for saving the new password.
+     * Handles the click event for saving the new password.
      * Validates the new password and initiates the change password request if valid.
      */
     const handleSavePasswordClick = () => {
@@ -386,10 +385,18 @@ function ProfileCard() {
         }
     }
 
+
+    /**
+     * Opens the pop up for deleting the user account.
+     */
     const handleDeleteAccountClick = () => {
         setIsDeleteAccountDialogActive(true);
     }
 
+
+    /**
+     * Closes the dialog for deleting the user account and clear its fields.
+     */
     const handleCloseDeleteAccountDialog = () => {
         setIsDeleteAccountDialogActive(false);
 
@@ -397,6 +404,10 @@ function ProfileCard() {
         setDeletePasswordError('');
     }
 
+
+    /**
+     * Sends a request to delete the user account.
+     */
     const sendDeleteAccountRequest = () => {
         setIsDeleteAccountSubmissionInProgress(true);
 
@@ -413,9 +424,12 @@ function ProfileCard() {
         }).then((response) => {
             setIsDeleteAccountSubmissionInProgress(false);
 
+            if(response.ok) {
+                handleCloseDeleteAccountDialog();
+            }
+
             return response.json();
         }).then((data) => {
-			console.log(data);
             if (data.errorMessage) {
                 if (data.messageId === 'INCORRECT_PASSWORD') {
                     setDeletePasswordError(data.errorMessage);
@@ -423,8 +437,8 @@ function ProfileCard() {
                     throw new Error(data.errorMessage);
                 }
             } else {
+                // If there are no errors, update the user's information.
 				setCurrentUserData({
-					...currentUserData,
 					...data,
 				});
 			}
@@ -434,18 +448,22 @@ function ProfileCard() {
 
             // If the error name is 'TypeError', it means there was a connection error.
             // Otherwise, display the error message from the error object.
-            //setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
+            setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
 
-            setSnackbarMessage(error.message);
             setShowSnackbar(true);
         });
     };
 
+    /**
+     * Confirms the deletion of the user account.
+     */
     const handleConfirmDeleteAccount = () => {
-		handleCloseDeleteAccountDialog();
         sendDeleteAccountRequest();
     }
 
+    /**
+     * Sends a request to recover the user account.
+     */
     const sendRecoverAccountRequest = () => {
         setIsRecoverAccountSubmissionInProgress(true);
 
@@ -461,8 +479,8 @@ function ProfileCard() {
                 if (data.errorMessage) {
                     throw new Error(data.errorMessage);
                 } else {
+                    // If there are no errors, update the user's information.
 					setCurrentUserData({
-						...currentUserData,
 						...data,
 					});
 				}
@@ -472,16 +490,26 @@ function ProfileCard() {
 
             // If the error name is 'TypeError', it means there was a connection error.
             // Otherwise, display the error message from the error object.
-            //setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
+            setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
 
-            setSnackbarMessage(error.message);
             setShowSnackbar(true);
         });
     };
 
+    /**
+     * Handles the click event for recovering the user account.
+     */
     const handleRecoverAccountClick = () => {
         sendRecoverAccountRequest();
     }
+
+    /**
+     * Calculates the number of days left for recovery.
+     */
+    const calculateDaysLeftForRecovery = () => {
+        const daysRemaining = MAX_DAYS_FOR_RECOVERY - Math.floor((new Date() - new Date(currentUserData.deletionDate)) / MILLISECONDS_PER_DAY)
+        return Math.max(0, daysRemaining);
+    };
 
     return (
         // Main container for the profile card
@@ -705,12 +733,15 @@ function ProfileCard() {
                                                 </Typography>
                                             </Grid>
 
-                                            {daysLeftForRecovery !== -1 &&
-                                                <Grid item>
-                                                    <Typography variant="h6" style={{ fontSize: "18px" }}>
-                                                        Your account is marked as deleted. It will be permanent deleted in {daysLeftForRecovery} days!
-                                                    </Typography>
-                                                </Grid>}
+                                            {currentUserData.deletionDate !== 'null' &&
+                                            <Grid item>
+                                                <Typography variant="h6" style={{ fontSize: "18px" }}>
+                                                    {calculateDaysLeftForRecovery() > 1
+                                                      ? `Your account is marked as deleted. It will be permanently deleted in ${calculateDaysLeftForRecovery()} days!`
+                                                      : `Your account is marked as deleted. It will be permanently deleted today!`
+                                                     }
+                                                </Typography>
+                                            </Grid>}
                                         </Grid>
 
                                         <Grid item container justifyContent="flex-end">
@@ -768,7 +799,7 @@ function ProfileCard() {
 
                                                             <Grid item>
                                                                 <TextField
-                                                                    id="delete-password"
+                                                                    id="delete-password-field"
                                                                     label="Password"
                                                                     type="password"
                                                                     value={deletePassword}
@@ -794,6 +825,7 @@ function ProfileCard() {
                                                             Cancel
                                                         </Button>
                                                         <Button
+                                                            id='confirm-delete-account'
                                                             disabled={isDeleteAccountSubmissionInProgress || deletePassword === ''}
                                                             onClick={handleConfirmDeleteAccount}
                                                             color='error'
