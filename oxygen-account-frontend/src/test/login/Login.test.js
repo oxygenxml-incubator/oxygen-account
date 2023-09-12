@@ -60,6 +60,8 @@ test('sends registration request for valid data', async () => {
           name: 'Costescu Constantin-Marius',
           email: 'costescumaryus558@yahoo.com',
           password: null,
+          status: 'active',
+          deletionDate: null
         })
       );
     })
@@ -105,6 +107,7 @@ test('sends registration request with used email', async () => {
           internalErrorCode: 1,
           errorMessage: 'User with this email already exists.',
           messageId: 'EMAIL_ALREADY_EXISTS',
+          errors: null
         })
       );
     })
@@ -189,6 +192,8 @@ test('closes Snackbar from register page when close button is clicked', async ()
           name: 'Costescu Constantin-Marius',
           email: 'costescumaryus558@yahoo.com',
           password: null,
+          status: 'active',
+          deletionDate: null
         })
       );
     })
@@ -243,6 +248,8 @@ test('input fields are reset after successful submission of register form', asyn
           name: 'Costescu Constantin-Marius',
           email: 'costescumaryus558@yahoo.com',
           password: null,
+          status: 'active',
+          deletionDate: null
         })
       );
     })
@@ -292,25 +299,25 @@ test('handle input errors from server for sign up form', async () => {
       return res(
         ctx.json({
           internalErrorCode: 1008,
-          errorMessage: 'Input validation failed',
+          errorMessage: 'Input validation failed.',
           messageId: 'INPUT_VALIDATION_FAILED',
           errors: [
-            {
-              errorMessage: 'Please provide a non-empty value.',
-              fieldName: 'name',
-              messageId: 'EMPTY_FIELD',
-            },
-            {
-              errorMessage: 'Email should be valid.',
-              fieldName: 'email',
-              messageId: 'EMPTY_FIELD',
-            },
-            {
-              errorMessage: 'Input field is too short. Please enter a longer value.',
-              fieldName: 'password',
-              messageId: 'SHORT_FIELD',
-            },
-          ],
+              {
+                  fieldName: 'password',
+                  errorMessage: 'Input field is too short. Please enter a longer value.',
+                  messageId: 'SHORT_FIELD'
+              },
+              {
+                  fieldName: 'name',
+                  errorMessage: 'Please provide a non-empty value.',
+                  messageId: 'EMPTY_FIELD'
+              },
+              {
+                  fieldName: 'email',
+                  errorMessage: 'Email should be valid.',
+                  messageId: 'INVALID_EMAIL'
+              }
+          ]
         })
       );
     })

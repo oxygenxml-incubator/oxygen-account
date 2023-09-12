@@ -1,5 +1,10 @@
 package com.oxygenxml.account.utility;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,5 +39,12 @@ public class DateUtility {
 		int daysLeft = oxygenProperties.getDaysUntilDeletion() - daysSinceDeletion;
 
 		return Math.max(daysLeft, 0); 
+	}
+	
+	/**
+	 * Retrieves the current UTC timestamp.
+	 */
+	public static Timestamp getCurrentUTCTimestamp() {
+		return Timestamp.valueOf(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC));
 	}
 }

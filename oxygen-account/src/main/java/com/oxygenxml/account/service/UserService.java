@@ -1,7 +1,5 @@
 package com.oxygenxml.account.service;
 
-import java.sql.Timestamp;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -18,6 +16,7 @@ import com.oxygenxml.account.exception.UserNotAuthenticatedException;
 import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
+import com.oxygenxml.account.utility.DateUtility;
 import com.oxygenxml.account.utility.UserStatus;
 
 /**
@@ -52,7 +51,8 @@ public class UserService {
         }
 		
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-		newUser.setRegistrationDate(new Timestamp(System.currentTimeMillis()));
+		newUser.setRegistrationDate(DateUtility.getCurrentUTCTimestamp());
+		newUser.setStatus(UserStatus.ACTIVE.getStatus());
 		return userRepository.save(newUser);
 		
 	}
@@ -141,7 +141,8 @@ public class UserService {
         }
         
         currentUser.setStatus(UserStatus.DELETED.getStatus());
-        currentUser.setDeletionDate(new Timestamp(System.currentTimeMillis()));
+        
+        currentUser.setDeletionDate(DateUtility.getCurrentUTCTimestamp());
         
         return userRepository.save(currentUser);
     }

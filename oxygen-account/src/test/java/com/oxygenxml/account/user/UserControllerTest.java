@@ -42,6 +42,7 @@ import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.service.UserService;
+import com.oxygenxml.account.utility.DateUtility;
 import com.oxygenxml.account.utility.JsonUtil;
 import com.oxygenxml.account.utility.UserStatus;
 
@@ -242,7 +243,8 @@ public class UserControllerTest {
 		mockMvc.perform(get("/api/users/me").session(session))
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.name", is("User")))
-		.andExpect(jsonPath("$.email", is("test@email.com")));
+		.andExpect(jsonPath("$.email", is("test@email.com")))
+		.andExpect(jsonPath("$.status", is(UserStatus.ACTIVE.getStatus())));
 	}
 
 	/**
@@ -255,7 +257,8 @@ public class UserControllerTest {
 		mockMvc.perform(get("/api/users/me"))
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.name", is("Anonymous User")))
-		.andExpect(jsonPath("$.email", is("anonymousUser")));
+		.andExpect(jsonPath("$.email", is("anonymousUser")))
+		.andExpect(jsonPath("$.status", is(UserStatus.ACTIVE.getStatus())));
 	}
 	
 	/**
@@ -285,7 +288,8 @@ public class UserControllerTest {
 		mockMvc.perform(get("/api/users/me").session(session))
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.name", is("Marius Costescu")))
-		.andExpect(jsonPath("$.email", is("denismateescu@gmail.com")));
+		.andExpect(jsonPath("$.email", is("denismateescu@gmail.com")))
+		.andExpect(jsonPath("$.status", is(UserStatus.ACTIVE.getStatus())));;
 		
 		User user = userService.getUserByEmail("denismateescu@gmail.com");
 		
@@ -455,7 +459,7 @@ public class UserControllerTest {
 	 */
 	@Test
     void deleteUserTest() throws Exception {
-		Timestamp timestampBeforeDelete = new Timestamp(System.currentTimeMillis());
+		Timestamp timestampBeforeDelete = DateUtility.getCurrentUTCTimestamp();
 		
         MvcResult result = mockMvc.perform(post("/login")
 				.contentType(APPLICATION_FORM_URLENCODED)
@@ -481,7 +485,7 @@ public class UserControllerTest {
         assertNotNull(user.getDeletionDate());
         
         assertTrue(user.getDeletionDate().after(timestampBeforeDelete));
-        assertTrue(user.getDeletionDate().before(new Timestamp(System.currentTimeMillis())));
+        assertTrue(user.getDeletionDate().before(DateUtility.getCurrentUTCTimestamp()));
     }
 	
 	/**

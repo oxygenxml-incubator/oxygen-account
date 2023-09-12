@@ -17,6 +17,14 @@ afterAll(() => server.close())
 
 const getById = queryByAttribute.bind(null, 'id');
 
+function getDateTwoDaysAgo() {
+    const currentDate = new Date();
+    const NO_DAYS_AGO = 2;
+    currentDate.setDate(currentDate.getDate() - NO_DAYS_AGO);
+
+    return currentDate.toISOString();
+}
+
 /**
  * Test case to verify if the profile component displays user data correctly.
  */
@@ -28,7 +36,10 @@ test('display data in profile component', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com'
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -60,7 +71,10 @@ test('edit name', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com'
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -71,7 +85,9 @@ test('edit name', async () => {
                     {
                         name: "Constantin-Marius Costescu",
                         email: "marius@yahoo.com",
-                        password: null
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -117,7 +133,10 @@ test('edit error empty name', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com'
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -177,7 +196,10 @@ test('change password', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com'
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -186,9 +208,11 @@ test('change password', async () => {
             return res(
                 ctx.json(
                     {
-                        "name": "Marius",
-                        "email": "marius@yahoo.com",
-                        "password": null
+                        name: 'Marius',
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -237,7 +261,10 @@ test('change password error - Incorrect password', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com'
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -246,10 +273,10 @@ test('change password error - Incorrect password', async () => {
             return res(
                 ctx.json(
                     {
-                        "internalErrorCode": 1010,
-                        "errorMessage": "Incorrect password.",
-                        "messageId": "INCORRECT_PASSWORD",
-                        "errors": null
+                        internalErrorCode: 1010,
+                        errorMessage: 'Incorrect password.',
+                        messageId: 'INCORRECT_PASSWORD',
+                        errors: null
                     }
                 )
             );
@@ -298,7 +325,10 @@ test('change password error - password same as old', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com'
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -375,7 +405,7 @@ test('delete account', async () => {
                         email: 'mariuscostescu@yahoo.com',
                         password: null,
                         status: 'deleted',
-                        deletionDate: '2023-09-08T08:57:42.672+00:00'
+                        deletionDate: getDateTwoDaysAgo()
                     }
                 )
             );
@@ -403,6 +433,7 @@ test('delete account', async () => {
     // Wait for 'Recover account' section to appear.
     await waitFor(() => {
         expect(screen.getByText('Recover account')).toBeInTheDocument();
+        expect(screen.getByText('Your account is marked as deleted. It is scheduled to be permanently deleted in 5 days.')).toBeInTheDocument();
     })
 });
 
@@ -417,11 +448,11 @@ test('recover account', async () => {
             return res(
                 ctx.json(
                     {
-                        "name": "Marius Costescu",
-                        "email": "mariuscostescu@yahoo.com",
-                        "password": null,
-                        "status": "deleted",
-                        "deletionDate": "2023-09-08T12:53:39.099+00:00"
+                        name: 'Marius Costescu',
+                        email: 'mariuscostescu@yahoo.com',
+                        password: null,
+                        status: 'deleted',
+                        deletionDate: getDateTwoDaysAgo()
                     }
                 )
             );
@@ -430,11 +461,11 @@ test('recover account', async () => {
             return res(
                 ctx.json(
                     {
-                        "name": "Marius Costescu",
-                        "email": "mariuscostescu@yahoo.com",
-                        "password": null,
-                        "status": "active",
-                        "deletionDate": null
+                        name: 'Marius Costescu',
+                        email: 'mariuscostescu@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );

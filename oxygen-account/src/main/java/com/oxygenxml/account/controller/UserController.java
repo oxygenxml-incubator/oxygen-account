@@ -17,6 +17,7 @@ import com.oxygenxml.account.exception.UserNotAuthenticatedException;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.service.UserService;
 import com.oxygenxml.account.service.ValidationService;
+import com.oxygenxml.account.utility.UserStatus;
 
 /**
  * The UserControllerclass is a REST controller that manages HTTP requests related to users.
@@ -71,7 +72,7 @@ public class UserController {
 			return userConverter.entityToDto(currentUser);
 
 		} catch (UserNotAuthenticatedException e) {
-			return new UserDto("Anonymous User", "anonymousUser", null, null, null);
+			return new UserDto("Anonymous User", "anonymousUser", null, UserStatus.ACTIVE.getStatus(), null);
 		}
 	}
     

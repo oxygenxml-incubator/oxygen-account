@@ -63,7 +63,7 @@ public class User {
 	/**
 	 * The status of the user
 	 */
-	@Column( name = "status", insertable = false)
+	@Column(name = "status")
 	private String status;
 	
 	/**

@@ -737,8 +737,8 @@ function ProfileCard() {
                                             <Grid item>
                                                 <Typography variant="h6" style={{ fontSize: "18px" }}>
                                                     {calculateDaysLeftForRecovery() > 1
-                                                      ? `Your account is marked as deleted. It will be permanently deleted in ${calculateDaysLeftForRecovery()} days!`
-                                                      : `Your account is marked as deleted. It will be permanently deleted today!`
+                                                      ? `Your account is marked as deleted. It is scheduled to be permanently deleted in ${calculateDaysLeftForRecovery()} days.`
+                                                      : `Your account is marked as deleted. It is scheduled to be permanently deleted today.`
                                                      }
                                                 </Typography>
                                             </Grid>}
