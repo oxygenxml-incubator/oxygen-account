@@ -26,7 +26,7 @@ public class DateUtility {
 	/**
 	 *  The number of milliseconds in a day, calculated as 24 hours x 60 minutes x 60 seconds x 1000 milliseconds.
 	 */
-	private final static long MILIS_IN_DAY = 24L * 60L * 60L * 1000L;
+	private static final long MILIS_IN_DAY = 24L * 60L * 60L * 1000L;
 	
 	/**
 	 * Calculates the number of days left for a user's recovery based on the user's deletion date and the configured number of days until deletion.

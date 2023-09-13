@@ -3,12 +3,12 @@ package com.oxygenxml.account.Config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * Configuration class that binds the properties defined in the application's properties file prefixed with "oxygen.account" to this class's fields.
  */
-@Data
+@Getter
 @Configuration
 @ConfigurationProperties(prefix = "oxygen.account")
 public class OxygenAccountPorpertiesConfig {
