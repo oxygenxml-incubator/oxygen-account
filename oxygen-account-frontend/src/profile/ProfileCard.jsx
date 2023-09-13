@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
     Grid, Card, CardHeader, CardContent,
     LinearProgress, Typography, Snackbar, Alert,
-    TextField, Button
+    TextField, Button,
+    Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText
 } from '@mui/material';
 
 import OxygenAvatar from "../shared/OxygenAvatar.jsx";
@@ -64,36 +65,60 @@ function ProfileCard() {
     // State variable indicating whether a change password submission is in progress.
     const [isChangePasswordSubmissionInProgress, setIsChangePasswordSubmissionInProgress] = useState(false);
 
+    // State variable for showing the delete account dialog.
+    const [isDeleteAccountDialogActive, setIsDeleteAccountDialogActive] = useState(false);
+
+    // State variable for holding the password for confirming deletion.
+    const [deletePassword, setDeletePassword] = useState('');
+
+    // State variable holding the error message related to the password field for confirming deletion.
+    const [deletePasswordError, setDeletePasswordError] = useState('');
+
+    // State variable indicating whether a delete account submission is currently in progress.
+    const [isDeleteAccountSubmissionInProgress, setIsDeleteAccountSubmissionInProgress] = useState(false);
+
+    // State variable indicating whether a recover account submission is currently in progress.
+    const [isRecoverAccountSubmissionInProgress, setIsRecoverAccountSubmissionInProgress] = useState(false);
+
+    // The number of milliseconds in a day.
+    const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
+
+    // The maximum number of days allowed for account recovery.
+    const MAX_DAYS_FOR_RECOVERY = 7;
+
+    /**
+     * Get the current user's data.
+     */
+	const getUserCurrentData = () => {
+		setIsDataLoadingActive(true);
+
+        fetch('api/users/me', {
+            method: 'GET'
+        }).then((response) => {
+            return response.json();
+        }).then((data) => {
+            setIsDataLoadingActive(false);
+
+            if (data.errorMessage) {
+                throw new Error(data.errorMessage);
+            }
+
+            setCurrentUserData(data);
+            setEditedUserName(data.name);
+        }).catch(error => {
+            setIsDataLoadingActive(false);
+
+            setSnackbarMessage(error.message);
+
+            setShowSnackbar(true);
+        });
+	}
+
     /**
      * Fetch user data on component mount
      */
     useEffect(() => {
-        setIsDataLoadingActive(true);
-
-        fetch('api/users/me', {
-            method: 'GET'
-        })
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                setIsDataLoadingActive(false);
-
-                if (data.errorMessage) {
-                    throw new Error(data.errorMessage);
-                }
-
-                setCurrentUserData(data);
-                setEditedUserName(data.name);
-            })
-            .catch(error => {
-                setIsDataLoadingActive(false);
-
-                setSnackbarMessage(error.message);
-
-                setShowSnackbar(true);
-            });
-
+        getUserCurrentData();
     }, []);
 
     /*
@@ -142,6 +167,14 @@ function ProfileCard() {
                 setConfirmNewPasswordError('');
             }
         }
+
+        else if (id === "delete-password-field") {
+            setDeletePassword(value);
+
+            if (deletePasswordError !== '') {
+                setDeletePasswordError('');
+            }
+        }
     }
 
     /**
@@ -176,7 +209,6 @@ function ProfileCard() {
         setIsEditActive(false);
     };
 
-
     /**
      * Send an edit name request to the server.
      */
@@ -189,41 +221,38 @@ function ProfileCard() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(editedUserName),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    setIsEditSubmissionInProgress(false);
-                    setIsEditActive(false);
-                    currentUserData.name = editedUserName;
-
-                    setIsSuccessSnackbar(true);
-                    setSnackbarMessage('Profile has been updated!');
-                    setShowSnackbar(true);
-                }
-                return response.json();
-            })
-            .then((data) => {
+        }).then((response) => {
+            if (response.ok) {
                 setIsEditSubmissionInProgress(false);
+                setIsEditActive(false);
+                currentUserData.name = editedUserName;
 
-                if (data.errors) {
-                    if (data.errors[0].fieldName === 'name') {
-                        setEditedNameError(data.errors[0].errorMessage);
-                    }
-                } else if (data.errorMessage) {
-                    throw new Error(data.errorMessage);
-                }
-            })
-            .catch(error => {
-                setIsEditSubmissionInProgress(false);
-
-                setIsSuccessSnackbar(false);
-
-                // If the error name is 'TypeError', it means there was a connection error.
-                // Otherwise, display the error message from the error object.
-                setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
-
+                setIsSuccessSnackbar(true);
+                setSnackbarMessage('Profile has been updated!');
                 setShowSnackbar(true);
-            });
+            }
+            return response.json();
+        }).then((data) => {
+            setIsEditSubmissionInProgress(false);
+
+            if (data.errors) {
+                if (data.errors[0].fieldName === 'name') {
+                    setEditedNameError(data.errors[0].errorMessage);
+                }
+            } else if (data.errorMessage) {
+                throw new Error(data.errorMessage);
+            }
+        }).catch(error => {
+            setIsEditSubmissionInProgress(false);
+
+            setIsSuccessSnackbar(false);
+
+            // If the error name is 'TypeError', it means there was a connection error.
+            // Otherwise, display the error message from the error object.
+            setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
+
+            setShowSnackbar(true);
+        });
     };
 
     /**
@@ -305,52 +334,49 @@ function ProfileCard() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(updatePasswordInfo),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    setIsChangePasswordSubmissionInProgress(false);
-                    setIsChangePasswordViewActive(false);
-                    clearPasswordFileds();
-
-                    setIsSuccessSnackbar(true);
-                    setSnackbarMessage('The password has been changed successfully.');
-                    setShowSnackbar(true);
-                }
-                return response.json();
-            })
-            .then((data) => {
+        }).then((response) => {
+            if (response.ok) {
                 setIsChangePasswordSubmissionInProgress(false);
+                setIsChangePasswordViewActive(false);
+                clearPasswordFileds();
 
-                if (data.errors) {
-                    data.errors.forEach(error => {
-                        switch (error.fieldName) {
-                            case "oldPassword":
-                                setCurrentPasswordError(error.errorMessage);
-                                break;
-                            case "newPassword":
-                                setNewPasswordError(error.errorMessage);
-                                break;
-                        }
-                    });
-                } else if (data.errorMessage) {
-                    throw new Error(data.errorMessage);
-                }
-            })
-            .catch(error => {
-                setIsChangePasswordSubmissionInProgress(false);
-
-                setIsSuccessSnackbar(false);
-
-                // If the error name is 'TypeError', it means there was a connection error.
-                // Otherwise, display the error message from the error object.
-                setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
-
+                setIsSuccessSnackbar(true);
+                setSnackbarMessage('The password has been changed successfully.');
                 setShowSnackbar(true);
-            });
+            }
+            return response.json();
+        }).then((data) => {
+            setIsChangePasswordSubmissionInProgress(false);
+
+            if (data.errors) {
+                data.errors.forEach(error => {
+                    switch (error.fieldName) {
+                        case "oldPassword":
+                            setCurrentPasswordError(error.errorMessage);
+                            break;
+                        case "newPassword":
+                            setNewPasswordError(error.errorMessage);
+                            break;
+                    }
+                });
+            } else if (data.errorMessage) {
+                throw new Error(data.errorMessage);
+            }
+        }).catch(error => {
+            setIsChangePasswordSubmissionInProgress(false);
+
+            setIsSuccessSnackbar(false);
+
+            // If the error name is 'TypeError', it means there was a connection error.
+            // Otherwise, display the error message from the error object.
+            setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
+
+            setShowSnackbar(true);
+        });
     };
 
     /**
-    * Handles the click event for saving the new password.
+     * Handles the click event for saving the new password.
      * Validates the new password and initiates the change password request if valid.
      */
     const handleSavePasswordClick = () => {
@@ -358,6 +384,132 @@ function ProfileCard() {
             sendChangePasswordRequest();
         }
     }
+
+
+    /**
+     * Opens the pop up for deleting the user account.
+     */
+    const handleDeleteAccountClick = () => {
+        setIsDeleteAccountDialogActive(true);
+    }
+
+
+    /**
+     * Closes the dialog for deleting the user account and clear its fields.
+     */
+    const handleCloseDeleteAccountDialog = () => {
+        setIsDeleteAccountDialogActive(false);
+
+        setDeletePassword('');
+        setDeletePasswordError('');
+    }
+
+
+    /**
+     * Sends a request to delete the user account.
+     */
+    const sendDeleteAccountRequest = () => {
+        setIsDeleteAccountSubmissionInProgress(true);
+
+        const deletePasswordInfo = {
+            password: deletePassword.trim()
+        };
+
+        return fetch('api/users/delete', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(deletePasswordInfo),
+        }).then((response) => {
+            setIsDeleteAccountSubmissionInProgress(false);
+
+            if(response.ok) {
+                handleCloseDeleteAccountDialog();
+            }
+
+            return response.json();
+        }).then((data) => {
+            if (data.errorMessage) {
+                if (data.messageId === 'INCORRECT_PASSWORD') {
+                    setDeletePasswordError(data.errorMessage);
+                } else {
+                    throw new Error(data.errorMessage);
+                }
+            } else {
+                // If there are no errors, update the user's information.
+				setCurrentUserData({
+					...data,
+				});
+			}
+        }).catch(error => {
+            setIsDeleteAccountSubmissionInProgress(false);
+            setIsSuccessSnackbar(false);
+
+            // If the error name is 'TypeError', it means there was a connection error.
+            // Otherwise, display the error message from the error object.
+            setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
+
+            setShowSnackbar(true);
+        });
+    };
+
+    /**
+     * Confirms the deletion of the user account.
+     */
+    const handleConfirmDeleteAccount = () => {
+        sendDeleteAccountRequest();
+    }
+
+    /**
+     * Sends a request to recover the user account.
+     */
+    const sendRecoverAccountRequest = () => {
+        setIsRecoverAccountSubmissionInProgress(true);
+
+        return fetch('api/users/recover', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => {
+                setIsRecoverAccountSubmissionInProgress(false);
+                return response.json();
+        }).then((data) => {
+                if (data.errorMessage) {
+                    throw new Error(data.errorMessage);
+                } else {
+                    // If there are no errors, update the user's information.
+					setCurrentUserData({
+						...data,
+					});
+				}
+        }).catch(error => {
+            setIsRecoverAccountSubmissionInProgress(false);
+            setIsSuccessSnackbar(false);
+
+            // If the error name is 'TypeError', it means there was a connection error.
+            // Otherwise, display the error message from the error object.
+            setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
+
+            setShowSnackbar(true);
+        });
+    };
+
+    /**
+     * Handles the click event for recovering the user account.
+     */
+    const handleRecoverAccountClick = () => {
+        sendRecoverAccountRequest();
+    }
+
+    /**
+     * Calculates the number of days left for recovery.
+     */
+    const calculateDaysLeftForRecovery = () => {
+        const daysRemaining = MAX_DAYS_FOR_RECOVERY - Math.floor((new Date() - new Date(currentUserData.deletionDate)) / MILLISECONDS_PER_DAY)
+        return Math.max(0, daysRemaining);
+    };
 
     return (
         // Main container for the profile card
@@ -374,10 +526,10 @@ function ProfileCard() {
                         {isDataLoadingActive ? (
                             <LinearProgress />
                         ) : (
-                            <Grid container direction='column' gap='50px'>
+                            <Grid container direction='column' gap='30px'>
                                 {/* General section */}
-                                <Grid item container direction = 'column' gap='20px'>
-                                    <Grid item>
+                                <Grid item container direction='column' gap='20px'>
+                                    <Grid item style={{ padding: '10px' }}>
                                         <Typography variant="h6">
                                             General
                                         </Typography>
@@ -451,7 +603,11 @@ function ProfileCard() {
                                         ) : (
                                             // Edit button
                                             <Grid item>
-                                                <Button id="edit-button" variant="contained" onClick={handleClickEditButton}>
+                                                <Button
+                                                    id="edit-button"
+                                                    variant="contained"
+                                                    onClick={handleClickEditButton}
+                                                    disabled={currentUserData.status === 'deleted'}>
                                                     Edit
                                                 </Button>
                                             </Grid>
@@ -466,9 +622,9 @@ function ProfileCard() {
                                 </Grid>
 
                                 {/* Security section */}
-                                <Grid item container direction='column' style={{ borderTop: "1px solid #333"}} gap='20px'>
+                                <Grid item container direction='column' style={{ borderTop: "1px solid #333" }} gap='15px'>
                                     {/* Security Title */}
-                                    <Grid item>
+                                    <Grid item style={{ padding: '10px' }}>
                                         <Typography variant="h6">
                                             Security
                                         </Typography>
@@ -537,7 +693,7 @@ function ProfileCard() {
 
                                                     <Grid item>
                                                         <Button
-                                                            id = "save-password-button"
+                                                            id="save-password-button"
                                                             disabled={currentPassword === '' || newPassword === '' || confirmNewPassword === ''}
                                                             variant="contained"
                                                             onClick={handleSavePasswordClick}>
@@ -550,9 +706,10 @@ function ProfileCard() {
                                                 // Change Password Button
                                                 <Grid item>
                                                     <Button
-                                                        id = "change-password-button"
+                                                        id="change-password-button"
                                                         variant="contained"
-                                                        onClick={handleChangePasswordClick}>
+                                                        onClick={handleChangePasswordClick}
+                                                        disabled={(currentUserData.status === 'deleted')}>
                                                         Change Password
                                                     </Button>
                                                 </Grid>
@@ -566,6 +723,120 @@ function ProfileCard() {
                                             <LinearProgress />
                                         </Grid>}
                                 </Grid>
+
+                                {(currentUserData.status === 'deleted') ? (
+                                    <Grid item container direction='column' style={{ borderTop: "1px solid #333" }} gap='15px'>
+                                        <Grid item container direction='column' style={{ padding: '10px' }}>
+                                            <Grid item>
+                                                <Typography variant="h6">
+                                                    Recover account
+                                                </Typography>
+                                            </Grid>
+
+                                            {currentUserData.deletionDate !== 'null' &&
+                                            <Grid item>
+                                                <Typography variant="h6" style={{ fontSize: "18px" }}>
+                                                    {calculateDaysLeftForRecovery() > 1
+                                                      ? `Your account is marked as deleted. It is scheduled to be permanently deleted in ${calculateDaysLeftForRecovery()} days.`
+                                                      : `Your account is marked as deleted. It is scheduled to be permanently deleted today.`
+                                                     }
+                                                </Typography>
+                                            </Grid>}
+                                        </Grid>
+
+                                        <Grid item container justifyContent="flex-end">
+                                            <Grid item>
+                                                <Button
+                                                    id="recover-account-button"
+                                                    variant="contained"
+                                                    onClick={handleRecoverAccountClick}>
+                                                    Recover
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+
+                                        {isRecoverAccountSubmissionInProgress &&
+                                            <Grid item xs>
+                                                <LinearProgress />
+                                            </Grid>}
+                                    </Grid>
+                                ) : (
+                                    <Grid item container direction='column' style={{ borderTop: "1px solid #333" }} gap='15px'>
+                                        <Grid item style={{ padding: '10px' }}>
+                                            <Typography variant="h6">
+                                                Delete account
+                                            </Typography>
+                                        </Grid>
+
+                                        <Grid item container justifyContent="flex-end">
+                                            <Grid item>
+                                                <Button
+                                                    id="delete-account-button"
+                                                    variant="contained"
+                                                    color='error'
+                                                    onClick={handleDeleteAccountClick}>
+                                                    Delete
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+
+                                        {isDeleteAccountDialogActive &&
+                                            <Grid item>
+                                                <Dialog
+                                                    open={isDeleteAccountDialogActive}
+                                                    onClose={handleCloseDeleteAccountDialog}
+                                                >
+                                                    <DialogTitle>
+                                                        {"Delete account"}
+                                                    </DialogTitle>
+                                                    <DialogContent>
+                                                        <Grid container direction='column' gap='15px'>
+                                                            <Grid item>
+                                                                <DialogContentText style={{ marginRight: '70px' }}>
+                                                                    Insert password to delete your account
+                                                                </DialogContentText>
+                                                            </Grid>
+
+                                                            <Grid item>
+                                                                <TextField
+                                                                    id="delete-password-field"
+                                                                    label="Password"
+                                                                    type="password"
+                                                                    value={deletePassword}
+                                                                    onChange={handleInputChange}
+                                                                    error={Boolean(deletePasswordError)}
+                                                                    helperText={deletePasswordError}
+                                                                    fullWidth
+                                                                />
+                                                            </Grid>
+
+                                                            {isDeleteAccountSubmissionInProgress &&
+                                                                <Grid item xs>
+                                                                    <LinearProgress />
+                                                                </Grid>}
+                                                        </Grid>
+
+                                                    </DialogContent>
+                                                    <DialogActions>
+                                                        <Button
+                                                            color='inherit'
+                                                            onClick={handleCloseDeleteAccountDialog}
+                                                            disabled={isDeleteAccountSubmissionInProgress}>
+                                                            Cancel
+                                                        </Button>
+                                                        <Button
+                                                            id='confirm-delete-account'
+                                                            disabled={isDeleteAccountSubmissionInProgress || deletePassword === ''}
+                                                            onClick={handleConfirmDeleteAccount}
+                                                            color='error'
+                                                            autoFocus>
+                                                            Delete account
+                                                        </Button>
+                                                    </DialogActions>
+                                                </Dialog>
+                                            </Grid>}
+                                    </Grid>
+                                )}
                             </Grid>
 
                         )}

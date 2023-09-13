@@ -51,7 +51,7 @@ public class User {
 	 *  This field represents the date when the user's account is created.
 	 *  It will be automatically saved in the database upon the creation of a new account.
 	*/	
-	@Column(name = "registration_date", insertable = false)
+	@Column(name = "registration_date")
 	private Timestamp registrationDate;
 	
 
@@ -59,7 +59,16 @@ public class User {
 	 *  The password of the user.
 	 */
 	private String password;
-
 	
-
+	/**
+	 * The status of the user
+	 */
+	@Column(name = "status")
+	private String status;
+	
+	/**
+	 * The deletion date of the user
+	 */
+	@Column(name = "deletion_date")
+	private Timestamp deletionDate;
 }

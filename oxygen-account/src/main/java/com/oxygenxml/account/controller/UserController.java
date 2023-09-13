@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.oxygenxml.account.converter.UserConverter;
 import com.oxygenxml.account.dto.ChangePasswordDto;
+import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.exception.UserNotAuthenticatedException;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.service.UserService;
 import com.oxygenxml.account.service.ValidationService;
+import com.oxygenxml.account.utility.UserStatus;
 
 /**
  * The UserControllerclass is a REST controller that manages HTTP requests related to users.
@@ -70,7 +72,7 @@ public class UserController {
 			return userConverter.entityToDto(currentUser);
 
 		} catch (UserNotAuthenticatedException e) {
-			return new UserDto("Anonymous User", "anonymousUser", null);
+			return new UserDto("Anonymous User", "anonymousUser", null, UserStatus.ACTIVE.getStatus(), null);
 		}
 	}
     
@@ -100,6 +102,30 @@ public class UserController {
     	validationService.validate(changePasswordDto);
     	User updatedUser = userService.updateCurrentUserPassword(changePasswordDto);
     	return userConverter.entityToDto(updatedUser);
+    }
+    
+    /**
+     * Set the status of the currently authenticated user as "deleted" and the deletion time 
+     * 
+     * @param deleteUserDto The data transfer object containing the necessary information to process the user deletion.
+     * @return A DTO representation of the deleted user, preserving the relevant user details even after deletion. 
+     */
+    @PutMapping("/delete")
+    public UserDto deleteUser(@RequestBody DeleteUserDto deleteUserDto) {
+        User deletedUser = userService.deleteUser(deleteUserDto);
+        return userConverter.entityToDto(deletedUser);
+    }
+    
+    /**
+     *  Set the status of the currently authenticated user as "active" and set the deletion time to null.
+     *  This endpoint is a reverse method of the delete endpoint
+     * 
+     * @return A DTO representation of the recovered user, showcasing the user details post-recovery. 
+     */
+    @PutMapping("/recover")
+    public UserDto deleteUser() {
+        User recoveredUser = userService.recoverUser();
+        return userConverter.entityToDto(recoveredUser);
     }
 }
 	

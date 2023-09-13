@@ -1,0 +1,1 @@
+ALTER TABLE users ALTER COLUMN registration_date TIMESTAMP NOT NULL;

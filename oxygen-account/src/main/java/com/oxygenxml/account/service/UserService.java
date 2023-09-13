@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.oxygenxml.account.dto.ChangePasswordDto;
+import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.exception.InternalErrorCode;
 import com.oxygenxml.account.exception.OxygenAccountException;
@@ -15,6 +16,8 @@ import com.oxygenxml.account.exception.UserNotAuthenticatedException;
 import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
+import com.oxygenxml.account.utility.DateUtility;
+import com.oxygenxml.account.utility.UserStatus;
 
 /**
  *  Service class for user-related operations.
@@ -48,7 +51,8 @@ public class UserService {
         }
 		
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-		
+		newUser.setRegistrationDate(DateUtility.getCurrentUTCTimestamp());
+		newUser.setStatus(UserStatus.ACTIVE.getStatus());
 		return userRepository.save(newUser);
 		
 	}
@@ -122,4 +126,38 @@ public class UserService {
 		 
 		 return userRepository.save(currentUser);
 	}
+	
+	/**
+	 * Deletes the currently authenticated user by updating their status to "deleted" and setting their deletion date to the current timestamp.
+	 * 
+	 * @param deleteUserDto Data transfer object containing the password of the user to be deleted.
+	 * @return The updated user entity with the "deleted" status and the current timestamp as the deletion date.
+	 */
+	public User deleteUser(DeleteUserDto deleteUserDto) {
+        User currentUser = getCurrentUser();
+
+        if (!passwordEncoder.matches(deleteUserDto.getPassword(), currentUser.getPassword())) {
+            throw new OxygenAccountException(Message.INCORRECT_PASSWORD, HttpStatus.FORBIDDEN, InternalErrorCode.INCORRECT_PASSWORD);
+        }
+        
+        currentUser.setStatus(UserStatus.DELETED.getStatus());
+        
+        currentUser.setDeletionDate(DateUtility.getCurrentUTCTimestamp());
+        
+        return userRepository.save(currentUser);
+    }
+	
+	/**
+	 * Recovers the currently authenticated user by updating their status to "active" and setting their deletion date to null.
+	 * 
+	 * @return The updated user entity with the "active" status and set null the deletion date.
+	 */
+	public User recoverUser() {
+        User currentUser = getCurrentUser();
+
+        currentUser.setStatus(UserStatus.ACTIVE.getStatus());
+        currentUser.setDeletionDate(null);
+        
+        return userRepository.save(currentUser);
+    }
 }

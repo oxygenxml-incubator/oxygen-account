@@ -17,6 +17,14 @@ afterAll(() => server.close())
 
 const getById = queryByAttribute.bind(null, 'id');
 
+function getDateTwoDaysAgo() {
+    const currentDate = new Date();
+    const NO_DAYS_AGO = 2;
+    currentDate.setDate(currentDate.getDate() - NO_DAYS_AGO);
+
+    return currentDate.toISOString();
+}
+
 /**
  * Test case to verify if the profile component displays user data correctly.
  */
@@ -28,7 +36,10 @@ test('display data in profile component', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com'
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -60,7 +71,10 @@ test('edit name', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com'
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -71,7 +85,9 @@ test('edit name', async () => {
                     {
                         name: "Constantin-Marius Costescu",
                         email: "marius@yahoo.com",
-                        password: null
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -117,7 +133,10 @@ test('edit error empty name', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com'
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -177,7 +196,10 @@ test('change password', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com'
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -186,9 +208,11 @@ test('change password', async () => {
             return res(
                 ctx.json(
                     {
-                        "name": "Marius",
-                        "email": "marius@yahoo.com",
-                        "password": null
+                        name: 'Marius',
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -222,7 +246,7 @@ test('change password', async () => {
     // Wait for the expected data to appear
     await waitFor(() => {
         expect(screen.getByText('The password has been changed successfully.')).toBeInTheDocument();
-      });
+    });
 });
 
 
@@ -237,7 +261,10 @@ test('change password error - Incorrect password', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com'
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -246,10 +273,10 @@ test('change password error - Incorrect password', async () => {
             return res(
                 ctx.json(
                     {
-                        "internalErrorCode": 1010,
-                        "errorMessage": "Incorrect password.",
-                        "messageId": "INCORRECT_PASSWORD",
-                        "errors": null
+                        internalErrorCode: 1010,
+                        errorMessage: 'Incorrect password.',
+                        messageId: 'INCORRECT_PASSWORD',
+                        errors: null
                     }
                 )
             );
@@ -283,7 +310,7 @@ test('change password error - Incorrect password', async () => {
     // Wait for the expected error to appear
     await waitFor(() => {
         expect(screen.getByText('Incorrect password.')).toBeInTheDocument();
-      });
+    });
 });
 
 
@@ -298,7 +325,10 @@ test('change password error - password same as old', async () => {
                 ctx.json(
                     {
                         name: 'Marius Costescu',
-                        email: 'marius@yahoo.com'
+                        email: 'marius@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
                     }
                 )
             );
@@ -344,5 +374,176 @@ test('change password error - password same as old', async () => {
     // Wait for the expected error to appear
     await waitFor(() => {
         expect(screen.getByText('The new password is the same as the old one.')).toBeInTheDocument();
-      });
+    });
+});
+
+
+/**
+ * Test case to simulate account deletion.
+ */
+test('delete account', async () => {
+    // Mock a server response for user profile data and a server response for account deletion
+    server.use(
+        rest.get('/api/users/me', async (req, res, ctx) => {
+            return res(
+                ctx.json(
+                    {
+                        name: 'Marius Costescu',
+                        email: 'mariuscostescu@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
+                    }
+                )
+            );
+        }),
+        rest.put('/api/users/delete', async (req, res, ctx) => {
+            return res(
+                ctx.json(
+                    {
+                        name: 'Marius Costescu',
+                        email: 'mariuscostescu@yahoo.com',
+                        password: null,
+                        status: 'deleted',
+                        deletionDate: getDateTwoDaysAgo()
+                    }
+                )
+            );
+        })
+    );
+
+    // Render the Profile component
+    const dom = render(<Profile />);
+
+    // Simulate the process of deleting the account
+    await waitFor(() => {
+        // Click Delete Account button
+        const deleteAccountButton = getById(dom.container, 'delete-account-button');
+        fireEvent.click(deleteAccountButton);
+
+        // Insert password to confirm deletion
+        const deletePasswordFiled = screen.getByLabelText('Password');
+        fireEvent.change(deletePasswordFiled, { target: { value: 'password' } });
+
+        // Confirm deletion
+        const confirmDeleteAccountButton = screen.getByRole('button', { name: 'Delete account' });
+        fireEvent.click(confirmDeleteAccountButton);
+    });
+
+    // Wait for 'Recover account' section to appear.
+    await waitFor(() => {
+        expect(screen.getByText('Recover account')).toBeInTheDocument();
+        expect(screen.getByText('Your account is marked as deleted. It is scheduled to be permanently deleted in 5 days.')).toBeInTheDocument();
+    })
+});
+
+
+/**
+ * Test case to simulate the process of recovering a deleted user account.
+ */
+test('recover account', async () => {
+    // Mock a server response for user profile data and a server response for account recovery
+    server.use(
+        rest.get('/api/users/me', async (req, res, ctx) => {
+            return res(
+                ctx.json(
+                    {
+                        name: 'Marius Costescu',
+                        email: 'mariuscostescu@yahoo.com',
+                        password: null,
+                        status: 'deleted',
+                        deletionDate: getDateTwoDaysAgo()
+                    }
+                )
+            );
+        }),
+        rest.put('/api/users/recover', async (req, res, ctx) => {
+            return res(
+                ctx.json(
+                    {
+                        name: 'Marius Costescu',
+                        email: 'mariuscostescu@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
+                    }
+                )
+            );
+        })
+    );
+
+    // Render the Profile component
+    const dom = render(<Profile />);
+
+    // Simulate the process of recovering the account
+    await waitFor(() => {
+        // Click Recover Account button
+        const recoverAccountButton = getById(dom.container, 'recover-account-button');
+        fireEvent.click(recoverAccountButton);
+    });
+
+    // Wait for 'Delete account' section to appear.
+    await waitFor(() => {
+        expect(screen.getByText('Delete account')).toBeInTheDocument();
+    })
+});
+
+
+/**
+ * Test case to simulate an error when deleting the account with an incorrect password.
+ */
+test('delete account error - INCORRECT PASSWORD', async () => {
+    // Mock a server response for user profile data and a server response for the INCORRECT_PASSWORD error
+    server.use(
+        rest.get('/api/users/me', async (req, res, ctx) => {
+            return res(
+                ctx.json(
+                    {
+                        name: 'Marius Costescu',
+                        email: 'mariuscostescu@yahoo.com',
+                        password: null,
+                        status: 'active',
+                        deletionDate: null
+                    }
+                )
+            );
+        }),
+        rest.put('/api/users/delete', async (req, res, ctx) => {
+            return res(
+                ctx.json(
+                    {
+                        internalErrorCode: 1010,
+                        errorMessage: "Incorrect password.",
+                        messageId: "INCORRECT_PASSWORD",
+                        errors: null
+                    }
+                ),
+                ctx.status(403)
+            );
+        })
+    );
+
+    // Render the Profile component
+    const dom = render(<Profile />);
+
+    // Simulate the process of deleting the account with an incorrect password
+    await waitFor(() => {
+        // Click Delete Account button
+        const deleteAccountButton = getById(dom.container, 'delete-account-button');
+        fireEvent.click(deleteAccountButton);
+
+        // Insert an incorrect password
+        const deletePasswordFiled = screen.getByLabelText('Password');
+        fireEvent.change(deletePasswordFiled, { target: { value: 'passwordd' } });
+
+        // Confirm deletion
+        const confirmDeleteAccountButton = screen.getByRole('button', { name: 'Delete account' });
+        fireEvent.click(confirmDeleteAccountButton);
+    });
+
+    // Wait for the expected error message to appear
+    await waitFor(() => {
+        expect(screen.getByText('Incorrect password.')).toBeInTheDocument();
+    });
+
 });

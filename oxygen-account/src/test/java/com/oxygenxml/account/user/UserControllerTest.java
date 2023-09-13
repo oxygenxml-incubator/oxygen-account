@@ -4,6 +4,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -13,6 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.sql.Timestamp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +36,15 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.oxygenxml.account.OxygenAccountApplication;
 import com.oxygenxml.account.dto.ChangePasswordDto;
+import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.service.UserService;
+import com.oxygenxml.account.utility.DateUtility;
 import com.oxygenxml.account.utility.JsonUtil;
+import com.oxygenxml.account.utility.UserStatus;
 
 /**
  * UserControllerTest class tests the functionality of UserController
@@ -235,7 +243,8 @@ public class UserControllerTest {
 		mockMvc.perform(get("/api/users/me").session(session))
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.name", is("User")))
-		.andExpect(jsonPath("$.email", is("test@email.com")));
+		.andExpect(jsonPath("$.email", is("test@email.com")))
+		.andExpect(jsonPath("$.status", is(UserStatus.ACTIVE.getStatus())));
 	}
 
 	/**
@@ -248,7 +257,8 @@ public class UserControllerTest {
 		mockMvc.perform(get("/api/users/me"))
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.name", is("Anonymous User")))
-		.andExpect(jsonPath("$.email", is("anonymousUser")));
+		.andExpect(jsonPath("$.email", is("anonymousUser")))
+		.andExpect(jsonPath("$.status", is(UserStatus.ACTIVE.getStatus())));
 	}
 	
 	/**
@@ -278,7 +288,8 @@ public class UserControllerTest {
 		mockMvc.perform(get("/api/users/me").session(session))
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.name", is("Marius Costescu")))
-		.andExpect(jsonPath("$.email", is("denismateescu@gmail.com")));
+		.andExpect(jsonPath("$.email", is("denismateescu@gmail.com")))
+		.andExpect(jsonPath("$.status", is(UserStatus.ACTIVE.getStatus())));;
 		
 		User user = userService.getUserByEmail("denismateescu@gmail.com");
 		
@@ -440,6 +451,110 @@ public class UserControllerTest {
 		 User user = userService.getUserByEmail("denismateescu@gmail.com");
 		
 		 assertTrue(passwordEncoder.matches("password", user.getPassword()));
+	}
+	
+	/**
+	 * Tests the situation when a user wants to delete his account
+	 * @throws Exception
+	 */
+	@Test
+    void deleteUserTest() throws Exception {
+		Timestamp timestampBeforeDelete = DateUtility.getCurrentUTCTimestamp();
+		
+        MvcResult result = mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "denismateescu@gmail.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
+        
+        MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+        
+        DeleteUserDto deleteUserDto = new DeleteUserDto();
+        deleteUserDto.setPassword("password");
+        
+        mockMvc.perform(put("/api/users/delete").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(deleteUserDto)))
+		.andExpect(status().isOk());
+
+        User user = userService.getUserByEmail("denismateescu@gmail.com");
+        
+        assertEquals(UserStatus.DELETED.getStatus(), user.getStatus());
+        assertNotNull(user.getDeletionDate());
+        
+        assertTrue(user.getDeletionDate().after(timestampBeforeDelete));
+        assertTrue(user.getDeletionDate().before(DateUtility.getCurrentUTCTimestamp()));
+    }
+	
+	/**
+	 * Tests the situation when a user wants to delete his account but enters the wrong password
+	 * @throws Exception
+	 */
+	@Test
+	void deleteUserWrongPasswordTest() throws Exception {
+        MvcResult result = mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "denismateescu@gmail.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
+        
+        MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+        
+        DeleteUserDto deleteUserDto = new DeleteUserDto();
+        deleteUserDto.setPassword("wrongPassword");
+        
+        mockMvc.perform(put("/api/users/delete").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(deleteUserDto)))
+		.andExpect(status().isForbidden())
+		.andExpect(jsonPath("$.errorMessage", is(Message.INCORRECT_PASSWORD.getMessage())));
+
+        User user = userService.getUserByEmail("denismateescu@gmail.com");
+        
+        assertEquals(UserStatus.ACTIVE.getStatus(), user.getStatus());
+    }
+	
+	/**
+	 * Tests the situation when a deleted user wants to recover his account
+	 * @throws Exception
+	 */
+	@Test
+	void recoverDeletedUser() throws Exception {
+        MvcResult result = mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "denismateescu@gmail.com")
+				.param("password", "password"))
+		.andExpect(status().isFound())
+		.andExpect(redirectedUrl("/"))
+		.andReturn();
+        
+        MockHttpSession session = (MockHttpSession) result.getRequest().getSession();
+        
+        DeleteUserDto deleteUserDto = new DeleteUserDto();
+        deleteUserDto.setPassword("password");
+        
+        mockMvc.perform(put("/api/users/delete").session(session)
+				.contentType("application/json")
+				.content(JsonUtil.asJsonString(deleteUserDto)))
+		.andExpect(status().isOk());
+
+        User userAfterDeletion = userService.getUserByEmail("denismateescu@gmail.com");
+        
+        assertEquals(UserStatus.DELETED.getStatus(), userAfterDeletion.getStatus());
+        assertNotNull(userAfterDeletion.getDeletionDate());
+        
+        mockMvc.perform(put("/api/users/recover").session(session)
+				.contentType("application/json"))
+		.andExpect(status().isOk());
+        
+        User userAfterRecover = userService.getUserByEmail("denismateescu@gmail.com");
+        
+        assertEquals(UserStatus.ACTIVE.getStatus(), userAfterRecover.getStatus());
+        assertNull(userAfterRecover.getDeletionDate());
 	}
 }
 
