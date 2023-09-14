@@ -164,7 +164,7 @@ export default function DeleteSection({ currentUserData, updateCurrentUser, mana
                         </Typography>
                     </Grid>
 
-                    {currentUserData.deletionDate !== 'null' &&
+                    {currentUserData.deletionDate &&
                         <Grid item>
                             <Typography variant="h6" style={{ fontSize: "18px" }}>
                                 {calculateDaysLeftForRecovery() > 1
