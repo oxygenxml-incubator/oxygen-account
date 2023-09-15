@@ -24,7 +24,12 @@ function ProfileCard() {
     // State variable indicating whether the Snackbar should display success or error severity.
     const [isSuccessSnackbar, setIsSuccessSnackbar] = useState(false);
 
-    const { currentUserData, updateCurrentUser, isDataLoadingActive } = useContext(UserContext);
+    //const { currentUserData, updateCurrentUser, isDataLoadingActive } = useContext(UserContext);
+
+    const userContext = useContext(UserContext);
+    const currentUserData = userContext.currentUserData;
+    const updateCurrentUser = userContext.updateCurrentUser;
+    const isDataLoadingActive = userContext.isDataLoadingActive;
 
     /*
      * Handle the Snackbar close event.

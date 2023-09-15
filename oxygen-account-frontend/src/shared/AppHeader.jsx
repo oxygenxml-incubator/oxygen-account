@@ -1,17 +1,20 @@
 import * as React from 'react';
-import { AppBar, Typography, Toolbar, Button, Grid, Box, Tooltip, IconButton, Menu, MenuItem  } from "@mui/material";
+import { AppBar, Typography, Toolbar, Button, Grid, Box, Tooltip, IconButton, Menu, MenuItem } from "@mui/material";
 import UserContext from "../profile/UserContext.jsx";
 import OxygenAvatar from "./OxygenAvatar.jsx";
+
+import { useState, useContext } from 'react';
 /**
  * Header component displaying the application's logo and title.
 
  * @returns {JSX.Element} The JSX representation of the Header component.
  */
 function AppHeader({ showLogoutButton }) {
-    const userContext = React.useContext(UserContext);
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const userContext = useContext(UserContext);
     const currentUserData = userContext ? userContext.currentUserData : null;
-    
+
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
@@ -50,34 +53,36 @@ function AppHeader({ showLogoutButton }) {
                         </Grid>
                     </Grid>
 
-                      {showLogoutButton && currentUserData &&
-                        <Grid item container alignItems="center" style={{ maxWidth: 'fit-content' }}>
-                            <Typography variant="body1" style={{ marginRight: '1rem', color: 'black' }}>
-                                {currentUserData?.name || ""} 
-                            </Typography>
-
+                    {showLogoutButton && currentUserData &&
+                        <Grid item style={{ maxWidth: 'fit-content' }}>
                             <Box sx={{ flexGrow: 0 }}>
-                                <Tooltip title="Open settings">
-                                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                    <OxygenAvatar
-                                         name={currentUserData?.name || ""}
-                                        size={"50px"}
-                                    />
+                                <Tooltip title="Open menu">
+                                    <IconButton onClick={handleOpenUserMenu} sx = {{borderRadius: '0px'}}>
+                                        <Grid container alignItems="center">
+                                            <Grid item>
+                                                <Typography variant="body1" style={{ marginRight: '1rem', color: 'black' }}>
+                                                    {currentUserData.name + " \u25BE"}
+                                                 </Typography>
+                                            </Grid>
+                                            <Grid item>
+                                                <OxygenAvatar
+                                                    name={currentUserData.name}
+                                                    size={"50px"}
+                                                />
+                                            </Grid>
+                                        </Grid>
                                     </IconButton>
                                 </Tooltip>
                                 <Menu
-                                    sx={{ mt: '45px' }}
-                                    id="menu-appbar"
+                                    MenuListProps={{ sx: { padding: '0px' } }}
+                                    id="menu"
                                     anchorEl={anchorElUser}
                                     anchorOrigin={{
-                                        vertical: 'top',
+                                        vertical: 'bottom',
                                         horizontal: 'right',
                                     }}
                                     keepMounted
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
+
                                     open={Boolean(anchorElUser)}
                                     onClose={handleCloseUserMenu}
                                 >
