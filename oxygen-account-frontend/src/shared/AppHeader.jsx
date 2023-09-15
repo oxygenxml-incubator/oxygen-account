@@ -54,8 +54,8 @@ function AppHeader({ showLogoutButton }) {
                     </Grid>
 
                     {showLogoutButton && currentUserData &&
-                        <Grid item style={{ maxWidth: 'fit-content' }}>
-                            <Box sx={{ flexGrow: 0 }}>
+                        <Grid item container style={{ maxWidth: 'fit-content' }}>
+                            <Grid item>
                                 <Tooltip title="Open menu">
                                     <IconButton onClick={handleOpenUserMenu} sx = {{borderRadius: '0px'}}>
                                         <Grid container alignItems="center">
@@ -73,6 +73,8 @@ function AppHeader({ showLogoutButton }) {
                                         </Grid>
                                     </IconButton>
                                 </Tooltip>
+                            </Grid>
+                            <Grid item>
                                 <Menu
                                     MenuListProps={{ sx: { padding: '0px' } }}
                                     id="menu"
@@ -92,7 +94,7 @@ function AppHeader({ showLogoutButton }) {
                                         </form>
                                     </MenuItem>
                                 </Menu>
-                            </Box>
+                            </Grid>
                         </Grid>
                     }
                 </Grid>
