@@ -59,19 +59,19 @@ function AppHeader({ showLogoutButton }) {
                             <Grid item>
                                 <Tooltip title="Open menu">
                                     <IconButton onClick={handleOpenUserMenu} sx = {{borderRadius: '0px'}}>
-                                        <Grid container alignItems="center">
-                                            <Grid item>
-                                                <Typography variant="body1" style={{ color: 'black' }}>
+                                        <Grid container alignItems="center" style={{ borderLeft: "2px solid #A9A9A9" }}>
+                                            <Grid item style={{marginLeft: '7px'}}>
+                                                <Typography variant="body1" style={{ fontSize:'15px', color: 'black' }}>
                                                     {currentUserData.name}
                                                  </Typography>
                                             </Grid>
-                                            <Grid item style={{marginRight : '1rem'}}>
+                                            <Grid item style={{marginRight : '5px'}}>
                                                 <ArrowDropDownIcon />
                                             </Grid>
                                             <Grid item>
                                                 <OxygenAvatar
                                                     name={currentUserData.name}
-                                                    size={"50px"}
+                                                    size={"40px"}
                                                 />
                                             </Grid>
                                         </Grid>
@@ -92,9 +92,13 @@ function AppHeader({ showLogoutButton }) {
                                     open={Boolean(anchorElUser)}
                                     onClose={handleCloseUserMenu}
                                 >
-                                    <MenuItem onClick={handleCloseUserMenu}>
+                                    <MenuItem onClick={handleCloseUserMenu} style={{ padding: 0 }}>
                                         <form action="/logout" method="post">
-                                            <Button type="submit" style={{ color: 'black', textTransform: 'none' }}>Log out</Button>
+                                            <Button 
+                                                type="submit" 
+                                                style={{ color: 'black', textTransform: 'none', minWidth: '130px' }}>
+                                                Log out
+                                            </Button>
                                         </form>
                                     </MenuItem>
                                 </Menu>

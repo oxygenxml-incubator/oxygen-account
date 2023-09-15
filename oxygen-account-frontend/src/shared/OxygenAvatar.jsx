@@ -51,7 +51,7 @@ function OxygenAvatar( {name, size} ) {
             sx= {{bgcolor: stringToColor(name), 
                 width: size, 
                 height: size, 
-                fontSize: `${parseInt(size) / 4}px`
+                fontSize: `${parseInt(size) / 2.5}px`
             }}
         />
     );

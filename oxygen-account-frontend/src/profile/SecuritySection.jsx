@@ -1,10 +1,12 @@
 import React from "react";
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import { Grid, TextField, Button, Typography, LinearProgress } from "@mui/material";
 
-export default function SecuritySection({currentUserData, showMessage}) {
+import UserContext from "./UserContext.jsx";
+
+export default function SecuritySection({ showMessage }) {
     // State variable indicating whether the change password view is active or not.
     const [isChangePasswordViewActive, setIsChangePasswordViewActive] = useState(false);
 
@@ -28,6 +30,9 @@ export default function SecuritySection({currentUserData, showMessage}) {
 
     // State variable indicating whether a change password submission is in progress.
     const [isLoading, setIsLoading] = useState(false);
+
+    const userContext = useContext(UserContext);
+    const currentUserData = userContext.currentUserData;
 
     /**
      * Handle input change event for text field.

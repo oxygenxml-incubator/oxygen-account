@@ -7,6 +7,7 @@ import {
 import GeneralSection from './GeneralSection.jsx';
 import SecuritySection from './SecuritySection.jsx';
 import DeleteSection from './DeleteSection.jsx';
+
 import UserContext from "./UserContext.jsx";
 
 /**
@@ -24,11 +25,8 @@ function ProfileCard() {
     // State variable indicating whether the Snackbar should display success or error severity.
     const [isSuccessSnackbar, setIsSuccessSnackbar] = useState(false);
 
-    //const { currentUserData, updateCurrentUser, isDataLoadingActive } = useContext(UserContext);
 
     const userContext = useContext(UserContext);
-    const currentUserData = userContext.currentUserData;
-    const updateCurrentUser = userContext.updateCurrentUser;
     const isDataLoadingActive = userContext.isDataLoadingActive;
 
     /*
@@ -66,20 +64,15 @@ function ProfileCard() {
                             <LinearProgress />
                         ) : (
                             <Grid container direction='column' gap='30px'>
-                                <GeneralSection 
-                                    currentUserData={currentUserData}
-                                    updateCurrentUser={updateCurrentUser}
-                                    showMessage={showMessage }
+                                <GeneralSection
+                                    showMessage={showMessage}
                                 />
 
                                 <SecuritySection
-                                    currentUserData={currentUserData}
                                     showMessage={showMessage}
                                 />
                                 
                                 <DeleteSection
-                                    currentUserData={currentUserData}
-                                    updateCurrentUser={updateCurrentUser}
                                     showMessage={showMessage}
                                 />
                             </Grid>
