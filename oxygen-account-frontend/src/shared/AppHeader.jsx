@@ -2,6 +2,7 @@ import * as React from 'react';
 import { AppBar, Typography, Toolbar, Button, Grid, Box, Tooltip, IconButton, Menu, MenuItem } from "@mui/material";
 import UserContext from "../profile/UserContext.jsx";
 import OxygenAvatar from "./OxygenAvatar.jsx";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 import { useState, useContext } from 'react';
 /**
@@ -60,9 +61,12 @@ function AppHeader({ showLogoutButton }) {
                                     <IconButton onClick={handleOpenUserMenu} sx = {{borderRadius: '0px'}}>
                                         <Grid container alignItems="center">
                                             <Grid item>
-                                                <Typography variant="body1" style={{ marginRight: '1rem', color: 'black' }}>
-                                                    {currentUserData.name + " \u25BE"}
+                                                <Typography variant="body1" style={{ color: 'black' }}>
+                                                    {currentUserData.name}
                                                  </Typography>
+                                            </Grid>
+                                            <Grid item style={{marginRight : '1rem'}}>
+                                                <ArrowDropDownIcon />
                                             </Grid>
                                             <Grid item>
                                                 <OxygenAvatar
@@ -81,7 +85,7 @@ function AppHeader({ showLogoutButton }) {
                                     anchorEl={anchorElUser}
                                     anchorOrigin={{
                                         vertical: 'bottom',
-                                        horizontal: 'right',
+                                        horizontal: 'left',
                                     }}
                                     keepMounted
 

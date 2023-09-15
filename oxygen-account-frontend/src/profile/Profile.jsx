@@ -57,7 +57,6 @@ export default function Profile() {
    */
   const updateCurrentUser = (updatedUser) => {
     setCurrentUserData({
-      ...currentUserData,
       ...updatedUser,
     });
   }
