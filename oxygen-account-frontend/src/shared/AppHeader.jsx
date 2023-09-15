@@ -11,15 +11,19 @@ import { useState, useContext } from 'react';
  * @returns {JSX.Element} The JSX representation of the Header component.
  */
 function AppHeader({ showLogoutButton }) {
+    // A state variable to hold the DOM element that the user menu is anchored to.
     const [anchorElUser, setAnchorElUser] = useState(null);
 
+    // Accesing the current value of currentUserData stored in the userContext variable.
     const userContext = useContext(UserContext);
     const currentUserData = userContext ? userContext.currentUserData : null;
 
+    // Handle the opening of the user menu. It sets anchorElUser to the target of the triggering event, which sets the DOM element that the menu is anchored to.
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
 
+    // Handle the closing of the user menu. 
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
@@ -57,10 +61,12 @@ function AppHeader({ showLogoutButton }) {
                     {showLogoutButton && currentUserData &&
                         <Grid item container style={{ maxWidth: 'fit-content' }}>
                             <Grid item>
+                                {/* Helper text */}
                                 <Tooltip title="Open menu">
                                     <IconButton onClick={handleOpenUserMenu} sx = {{borderRadius: '0px'}}>
                                         <Grid container alignItems="center" style={{ borderLeft: "2px solid #A9A9A9" }}>
                                             <Grid item style={{marginLeft: '7px'}}>
+                                                {/* Current user name */}
                                                 <Typography variant="body1" style={{ fontSize:'15px', color: 'black' }}>
                                                     {currentUserData.name}
                                                  </Typography>
@@ -69,6 +75,7 @@ function AppHeader({ showLogoutButton }) {
                                                 <ArrowDropDownIcon />
                                             </Grid>
                                             <Grid item>
+                                                {/* Current user avatar */}
                                                 <OxygenAvatar
                                                     name={currentUserData.name}
                                                     size={"40px"}
@@ -79,6 +86,7 @@ function AppHeader({ showLogoutButton }) {
                                 </Tooltip>
                             </Grid>
                             <Grid item>
+                                {/* Avatar drop down menu */}
                                 <Menu
                                     MenuListProps={{ sx: { padding: '0px' } }}
                                     id="menu"
@@ -94,6 +102,7 @@ function AppHeader({ showLogoutButton }) {
                                 >
                                     <MenuItem onClick={handleCloseUserMenu} style={{ padding: 0 }}>
                                         <form action="/logout" method="post">
+                                            {/* Log out button */}
                                             <Button 
                                                 type="submit" 
                                                 style={{ color: 'black', textTransform: 'none', minWidth: '130px' }}>

@@ -26,7 +26,10 @@ function ProfileCard() {
     const [isSuccessSnackbar, setIsSuccessSnackbar] = useState(false);
 
 
+    // Accessing the currentUserData property from the userContext object to get the data of the currently logged-in user.
     const userContext = useContext(UserContext);
+
+    // Variable to indicate whether data loading is actively occurring in the current user context.
     const isDataLoadingActive = userContext.isDataLoadingActive;
 
     /*

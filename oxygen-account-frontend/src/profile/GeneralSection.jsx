@@ -13,8 +13,13 @@ export default function GeneralSection({ showMessage }) {
     // State variable indicating whether the edit mode is active.
     const [isEditActive, setIsEditActive] = useState(false);
 
+    // Using the useContext hook to obtain the current context value for UserContext, and storing it in the userContext variable.
     const userContext = useContext(UserContext);
+
+    // Accessing the currentUserData property from the userContext object to get the data of the currently logged-in user.
     const currentUserData = userContext.currentUserData;
+
+    // Accessing the updateCurrentUser function from the userContext object to have a function that updates the current user's data.
     const updateCurrentUser = userContext.updateCurrentUser;
 
     // State variable for holding the edited user name.
