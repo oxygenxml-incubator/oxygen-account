@@ -4,7 +4,7 @@ import "../css/ProfileStyle.css";
 import React, { useState, useEffect } from "react";
 import AppHeader from "../shared/AppHeader.jsx";
 import ProfileCard from "./ProfileCard.jsx";
-import { Grid } from "@mui/material";
+import { Grid, LinearProgress } from "@mui/material";
 import UserContext from "./UserContext.jsx";
 
 /**
@@ -63,7 +63,7 @@ export default function Profile() {
   }
 
   return (
-    <UserContext.Provider value={{ currentUserData, updateCurrentUser, isDataLoadingActive }}>
+    <UserContext.Provider value={{ currentUserData, updateCurrentUser }}>
       {/* Main Container */}
       <Grid container direction="column">
         {/* Header Section */}
@@ -72,9 +72,16 @@ export default function Profile() {
         </Grid>
 
         {/* User's profile information Section */}
-        <Grid item container>
-          <ProfileCard />
-        </Grid>
+        {isDataLoadingActive ? (
+          <Grid item xs>
+            <LinearProgress />
+          </Grid>
+          ) : (        
+          <Grid item container>
+            <ProfileCard />
+          </Grid>
+          )}
+
       </Grid>
     </UserContext.Provider>
   );

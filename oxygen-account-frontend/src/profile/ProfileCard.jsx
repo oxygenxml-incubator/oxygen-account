@@ -1,14 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import {
-    Grid, Card, CardHeader, CardContent,
-    LinearProgress, Snackbar, Alert,
+    Grid, Card, CardHeader, CardContent, Snackbar, Alert,
 } from '@mui/material';
 
 import GeneralSection from './GeneralSection.jsx';
 import SecuritySection from './SecuritySection.jsx';
 import DeleteSection from './DeleteSection.jsx';
-
-import UserContext from "./UserContext.jsx";
 
 /**
  * Component responsible for rendering the profile card containing current user info.
@@ -24,13 +21,6 @@ function ProfileCard() {
 
     // State variable indicating whether the Snackbar should display success or error severity.
     const [isSuccessSnackbar, setIsSuccessSnackbar] = useState(false);
-
-
-    // Accessing the currentUserData property from the userContext object to get the data of the currently logged-in user.
-    const userContext = useContext(UserContext);
-
-    // Variable to indicate whether data loading is actively occurring in the current user context.
-    const isDataLoadingActive = userContext.isDataLoadingActive;
 
     /*
      * Handle the Snackbar close event.
@@ -63,23 +53,19 @@ function ProfileCard() {
 
                     {/* Display loading process or user information */}
                     <CardContent>
-                        {isDataLoadingActive ? (
-                            <LinearProgress />
-                        ) : (
-                            <Grid container direction='column' gap='30px'>
-                                <GeneralSection
-                                    showMessage={showMessage}
-                                />
+                        <Grid container direction='column' gap='30px'>
+                            <GeneralSection
+                                showMessage={showMessage}
+                            />
 
-                                <SecuritySection
-                                    showMessage={showMessage}
-                                />
+                            <SecuritySection
+                                showMessage={showMessage}
+                            />
                                 
-                                <DeleteSection
-                                    showMessage={showMessage}
-                                />
-                            </Grid>
-                        )}
+                            <DeleteSection
+                                showMessage={showMessage}
+                            />
+                        </Grid>
                     </CardContent>
                 </Card>
             </Grid>
