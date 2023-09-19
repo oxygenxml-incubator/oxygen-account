@@ -19,4 +19,6 @@ public class OxygenAccountPorpertiesConfig {
 	 * The number of days until a deleted user is permanently deleted from the system.
 	 */
 	 private int daysUntilDeletion;
+	 
+	 private String secretKey;
 }

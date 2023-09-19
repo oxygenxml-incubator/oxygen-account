@@ -33,7 +33,7 @@ public class User {
 	 */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 
 	/**
 	 * The name of the user.
