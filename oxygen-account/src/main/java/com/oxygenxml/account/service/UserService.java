@@ -19,6 +19,9 @@ import com.oxygenxml.account.repository.UserRepository;
 import com.oxygenxml.account.utility.DateUtility;
 import com.oxygenxml.account.utility.UserStatus;
 
+import io.jsonwebtoken.io.IOException;
+import jakarta.mail.MessagingException;
+
 /**
  *  Service class for user-related operations.
  */
@@ -37,6 +40,9 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private EmailService emailService;
+	
 	/**
 	 * Register a new user in the system.
 	 * 
@@ -53,6 +59,16 @@ public class UserService {
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		newUser.setRegistrationDate(DateUtility.getCurrentUTCTimestamp());
 		newUser.setStatus(UserStatus.ACTIVE.getStatus());
+		
+		try {
+			emailService.sendEmail(newUser);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return userRepository.save(newUser);
 	}
