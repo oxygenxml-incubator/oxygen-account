@@ -37,9 +37,6 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
-	@Autowired
-	private JwtService jwtService;
-	
 	/**
 	 * Register a new user in the system.
 	 * 
@@ -56,17 +53,8 @@ public class UserService {
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		newUser.setRegistrationDate(DateUtility.getCurrentUTCTimestamp());
 		newUser.setStatus(UserStatus.ACTIVE.getStatus());
-		newUser = userRepository.save(newUser);
 		
-		System.out.println("User id: " + newUser.getId());
-		System.out.println("User registration date: " + newUser.getRegistrationDate());
-		
-		String token = jwtService.generateToken(newUser.getId(), newUser.getRegistrationDate());
-		System.out.println(token);
-		System.out.println("User id decodificat: "+ jwtService.getUserIdFromToken(token));
-		System.out.println("Registration date decodificat: " + jwtService.getCreationDateFromToken(token));
-		
-		return newUser;
+		return userRepository.save(newUser);
 	}
 	
 	/**

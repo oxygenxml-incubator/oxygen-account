@@ -20,5 +20,8 @@ public class OxygenAccountPorpertiesConfig {
 	 */
 	 private int daysUntilDeletion;
 	 
+	 /**
+	  * The secret key for JWT Token
+	  */
 	 private String secretKey;
 }

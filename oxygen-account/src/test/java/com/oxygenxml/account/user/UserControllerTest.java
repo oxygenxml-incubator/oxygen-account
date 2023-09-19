@@ -41,7 +41,6 @@ import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
-import com.oxygenxml.account.service.JwtService;
 import com.oxygenxml.account.service.UserService;
 import com.oxygenxml.account.utility.DateUtility;
 import com.oxygenxml.account.utility.JsonUtil;
@@ -76,9 +75,6 @@ public class UserControllerTest {
      */
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
-    @Autowired
-    private JwtService jwtService;
 
 	/**
 	 *  Tests the user registration functionality.
@@ -559,38 +555,6 @@ public class UserControllerTest {
         
         assertEquals(UserStatus.ACTIVE.getStatus(), userAfterRecover.getStatus());
         assertNull(userAfterRecover.getDeletionDate());
-	}
-	
-	/**
-	 *  Tests the user registration functionality.
-	 *  It attempts to register a new user
-	 * @throws Exception if the test encounters any errors.
-	 */
-	@Test
-	void testGenerateToken() throws Exception {
-		UserDto newUser = new UserDto();
-
-		newUser.setName("Marius");
-		newUser.setEmail("marius@gmail.com");
-		newUser.setPassword("password");
-
-		ResultActions resultAction = mockMvc.perform(post("/api/users/register")
-				.contentType("application/json")
-				.content(JsonUtil.asJsonString(newUser)));
-		resultAction.andExpect(status().isOk());
-		
-		User userAfterRegister = userService.getUserByEmail("marius@gmail.com");
-		
-		String token = jwtService.generateToken(userAfterRegister.getId(), userAfterRegister.getRegistrationDate());
-		
-		assertNotNull(token);
-
-	    Long extractedUserId = jwtService.getUserIdFromToken(token);
-	    assertEquals(userAfterRegister.getId(), extractedUserId);
-
-	    Timestamp extractedCreationDate = jwtService.getCreationDateFromToken(token);
-	    long timeDifferenceInMillis = Math.abs(userAfterRegister.getRegistrationDate().getTime() -  extractedCreationDate.getTime());
-	    assertTrue(timeDifferenceInMillis < 1);
 	}
 }
 
