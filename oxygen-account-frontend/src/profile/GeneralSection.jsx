@@ -4,12 +4,23 @@ import OxygenAvatar from "../shared/OxygenAvatar.jsx";
 
 import { Grid, TextField, Button, LinearProgress, Typography } from "@mui/material";
 
-import { useState } from "react";
+import { useState, useContext } from "react";
+
+import UserContext from "./UserContext.jsx";
 
 
-export default function GeneralSection({ currentUserData, updateCurrentUser, showMessage }) {
+export default function GeneralSection({ showMessage }) {
     // State variable indicating whether the edit mode is active.
     const [isEditActive, setIsEditActive] = useState(false);
+
+    // Using the useContext hook to obtain the current context value for UserContext, and storing it in the userContext variable.
+    const userContext = useContext(UserContext);
+
+    // Accessing the currentUserData property from the userContext object to get the data of the currently logged-in user.
+    const currentUserData = userContext.currentUserData;
+
+    // Accessing the updateCurrentUser function from the userContext object to have a function that updates the current user's data.
+    const updateCurrentUser = userContext.updateCurrentUser;
 
     // State variable for holding the edited user name.
     const [editedUserName, setEditedUserName] = useState(currentUserData.name);
@@ -117,7 +128,7 @@ export default function GeneralSection({ currentUserData, updateCurrentUser, sho
     }
 
     return (
-        < Grid item container direction='column' gap='20px' >
+        <Grid item container direction='column' gap='20px' >
             <Grid item style={{ padding: '10px' }}>
                 <Typography variant="h6">
                     General

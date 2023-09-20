@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-    Grid, Card, CardHeader, CardContent,
-    LinearProgress, Snackbar, Alert,
+    Grid, Card, CardHeader, CardContent, Snackbar, Alert,
 } from '@mui/material';
 
 import GeneralSection from './GeneralSection.jsx';
@@ -13,13 +12,7 @@ import DeleteSection from './DeleteSection.jsx';
  * 
  * @returns {JSX.Element} The JSX representation of the ProfileCard component.
  */
-function ProfileCard() {
-    // State variable for holding user data
-    const [currentUserData, setCurrentUserData] = useState(null);
-
-    // State variable indicating when the request is in progress.
-    const [isDataLoadingActive, setIsDataLoadingActive] = useState(true);
-
+function ProfileCard() {  
     // State variable for showing or hiding the Snackbar component.
     const [showSnackbar, setShowSnackbar] = useState(false);
 
@@ -28,40 +21,6 @@ function ProfileCard() {
 
     // State variable indicating whether the Snackbar should display success or error severity.
     const [isSuccessSnackbar, setIsSuccessSnackbar] = useState(false);
-
-    /**
-     * Get the current user's data.
-     */
-	const getUserCurrentData = () => {
-		setIsDataLoadingActive(true);
-
-        fetch('api/users/me', {
-            method: 'GET'
-        }).then((response) => {
-            return response.json();
-        }).then((data) => {
-            setIsDataLoadingActive(false);
-
-            if (data.errorMessage) {
-                throw new Error(data.errorMessage);
-            }
-
-            setCurrentUserData(data);
-        }).catch(error => {
-            setIsDataLoadingActive(false);
-
-            setSnackbarMessage(error.message);
-
-            setShowSnackbar(true);
-        });
-	}
-
-    /**
-     * Fetch user data on component mount
-     */
-    useEffect(() => {
-        getUserCurrentData();
-    }, []);
 
     /*
      * Handle the Snackbar close event.
@@ -81,14 +40,6 @@ function ProfileCard() {
         setShowSnackbar(true);
     }
 
-    /**
-     * Updates the current user data state with the response from server.
-     */
-    const updateCurrentUser = (updatedUser) => {
-        setCurrentUserData({
-            ...updatedUser,
-        });
-    }
 
     return (
         // Main container for the profile card
@@ -102,28 +53,19 @@ function ProfileCard() {
 
                     {/* Display loading process or user information */}
                     <CardContent>
-                        {isDataLoadingActive ? (
-                            <LinearProgress />
-                        ) : (
-                            <Grid container direction='column' gap='30px'>
-                                <GeneralSection 
-                                    currentUserData={currentUserData}
-                                    updateCurrentUser={updateCurrentUser}
-                                    showMessage={showMessage }
-                                />
+                        <Grid container direction='column' gap='30px'>
+                            <GeneralSection
+                                showMessage={showMessage}
+                            />
 
-                                <SecuritySection
-                                    currentUserData={currentUserData}
-                                    showMessage={showMessage}
-                                />
+                            <SecuritySection
+                                showMessage={showMessage}
+                            />
                                 
-                                <DeleteSection
-                                    currentUserData={currentUserData}
-                                    updateCurrentUser={updateCurrentUser}
-                                    showMessage={showMessage}
-                                />
-                            </Grid>
-                        )}
+                            <DeleteSection
+                                showMessage={showMessage}
+                            />
+                        </Grid>
                     </CardContent>
                 </Card>
             </Grid>

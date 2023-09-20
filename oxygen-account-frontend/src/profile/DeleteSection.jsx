@@ -1,11 +1,13 @@
 import React from "react";
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import {
     Grid, Typography, Dialog, DialogTitle, DialogContentText,
     DialogContent, DialogActions, TextField, Button, LinearProgress
 } from "@mui/material";
+
+import UserContext from "./UserContext.jsx";
 
 // The number of milliseconds in a day.
 const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -13,7 +15,7 @@ const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 // The maximum number of days allowed for account recovery.
 const MAX_DAYS_FOR_RECOVERY = 7;
 
-export default function DeleteSection({ currentUserData, updateCurrentUser, manageSnackbar }) {
+export default function DeleteSection({ showMessage }) {
     // State variable for showing the delete account dialog.
     const [isDeleteAccountDialogActive, setIsDeleteAccountDialogActive] = useState(false);
 
@@ -28,6 +30,16 @@ export default function DeleteSection({ currentUserData, updateCurrentUser, mana
 
     // State variable indicating whether a recover account submission is currently in progress.
     const [isLoading, setIsLoading] = useState(false);
+
+    // Using the useContext hook to obtain the current context value for UserContext, and storing it in the userContext variable.
+    const userContext = useContext(UserContext);
+
+    // Accessing the currentUserData property from the userContext object to get the data of the currently logged-in user.
+    const currentUserData = userContext.currentUserData;
+
+    // Accessing the updateCurrentUser function from the userContext object to have a function that updates the current user's data.
+    const updateCurrentUser = userContext.updateCurrentUser;
+
 
     /**
      * Handle input change event for text field.
