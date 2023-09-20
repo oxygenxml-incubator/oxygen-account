@@ -1,7 +1,8 @@
 package com.oxygenxml.account.service;
 
 import java.sql.Timestamp;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.crypto.SecretKey;
 
@@ -12,6 +13,7 @@ import com.oxygenxml.account.Config.OxygenAccountPorpertiesConfig;
 import com.oxygenxml.account.utility.TokenClaims;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -35,16 +37,35 @@ public class JwtService {
 	 * @param accountCreationDate The creation date of the user's account
 	 * @return A JWT string
 	 */
-	public String generateEmailConfirmationToken(Long userId, Timestamp accountCreationDate) {
+	public String generateEmailConfirmationToken(Integer userId, Timestamp accountCreationDate) {
+
+		Map<TokenClaims, Object> claims = new HashMap<>();
+		claims.put(TokenClaims.USER_ID, userId);
+		claims.put(TokenClaims.CREATION_DATE, accountCreationDate);
+
+		return generateToken(claims);
+	}
+	
+	/**
+	 * Generates a JWT using the specified claims.
+	 * 
+	 * @param claims A map representing the claims to be included in the token.
+	 * @return A JWT string generated with the specified claims and signed with the secret key
+	 */
+	private String generateToken(Map<TokenClaims, Object> claims) {
 		SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(oxygenProperties.getSecretKey()));
-		
-		return Jwts.builder()
-				.claim(TokenClaims.USER_ID.getTokenClaims(), userId)
-				.claim(TokenClaims.CREATION_DATE.getTokenClaims(), accountCreationDate)
+
+		JwtBuilder jwtBuilder = Jwts.builder();
+
+		for (Map.Entry<TokenClaims, Object> claim : claims.entrySet()) {
+			jwtBuilder.claim(claim.getKey().getTokenClaims(), claim.getValue());
+		}
+
+		return jwtBuilder
 				.signWith(key)
 				.compact();
 	}
-	
+	 
 	/**
 	 * Parses the specified JWT and returns its claims.
 	 * 
@@ -59,28 +80,5 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-    }
-    
-	/**
-	 * Retrieves the user ID from the specified JWT.
-	 * 
-	 * @param token The JWT containing the user ID.
-	 * @return The user ID extracted from the JWT.
-	 */
-    public Long getUserIdFromToken(String token) {
-        Claims claims = parseToken(token);
-        return claims.get(TokenClaims.USER_ID.getTokenClaims(), Long.class);
-    }
-
-    /**
-     * Retrieves the account creation date from the specified JWT.
-     * 
-     * @param token The JWT containing the account creation date
-     * @return The account creation date extracted from the JWT
-     */
-    public Timestamp getCreationDateFromToken(String token) {
-        Claims claims = parseToken(token);
-        Date creationDate = claims.get(TokenClaims.CREATION_DATE.getTokenClaims(), Date.class);
-        return new Timestamp(creationDate.getTime());
     }
 }
