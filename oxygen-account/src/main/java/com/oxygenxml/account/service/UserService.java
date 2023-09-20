@@ -1,6 +1,7 @@
 package com.oxygenxml.account.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.oxygenxml.account.dto.ChangePasswordDto;
 import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
+import com.oxygenxml.account.events.RegistrationEvent;
 import com.oxygenxml.account.exception.InternalErrorCode;
 import com.oxygenxml.account.exception.OxygenAccountException;
 import com.oxygenxml.account.exception.UserNotAuthenticatedException;
@@ -19,14 +21,15 @@ import com.oxygenxml.account.repository.UserRepository;
 import com.oxygenxml.account.utility.DateUtility;
 import com.oxygenxml.account.utility.UserStatus;
 
-import io.jsonwebtoken.io.IOException;
-import jakarta.mail.MessagingException;
+import lombok.AllArgsConstructor;
 
 /**
  *  Service class for user-related operations.
  */
 @Service
+@AllArgsConstructor
 public class UserService {
+	private final ApplicationEventPublisher eventPublisher;
 	
 	/**
 	 * Instance of UserRepository to interact with the database.
@@ -39,9 +42,6 @@ public class UserService {
 	 */
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
-	@Autowired
-	private EmailService emailService;
 	
 	/**
 	 * Register a new user in the system.
@@ -58,19 +58,13 @@ public class UserService {
 		
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		newUser.setRegistrationDate(DateUtility.getCurrentUTCTimestamp());
-		newUser.setStatus(UserStatus.ACTIVE.getStatus());
+		newUser.setStatus(UserStatus.NEW.getStatus());
 		
-		try {
-			emailService.sendEmail(newUser);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		newUser = userRepository.save(newUser);
 		
-		return userRepository.save(newUser);
+		eventPublisher.publishEvent(new RegistrationEvent(this, newUser));
+		
+		return newUser;
 	}
 	
 	/**

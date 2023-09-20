@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { AppBar, Typography, Toolbar, Button, Grid, Box, Tooltip, IconButton, Menu, MenuItem } from "@mui/material";
-import UserContext from "../profile/UserContext.jsx";
+import { AppBar, Typography, Toolbar, Button, Grid, Tooltip, IconButton, Menu, MenuItem } from "@mui/material";
+
 import OxygenAvatar from "./OxygenAvatar.jsx";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import UserContext from '../profile/UserContext.jsx';
 
 import { useState, useContext } from 'react';
 /**

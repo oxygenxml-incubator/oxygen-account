@@ -116,7 +116,7 @@ function RegistrationForm({ toggleForm }) {
                     setisLoadingActive(false);
 
                     setIsSuccessSnackbar(true);
-                    setSnackbarMessage('Account created successfully!');
+                    setSnackbarMessage('A confirmation email has been sent to your address.');
                     setShowSnackbar(true);
                 }
                 return response.json();

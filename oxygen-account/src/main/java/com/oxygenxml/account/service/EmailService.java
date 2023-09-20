@@ -16,12 +16,17 @@ import lombok.AllArgsConstructor;
 public class EmailService {
     final JavaMailSender javaMailSender;
 
-    public void sendEmail(User user) throws MessagingException, IOException {
+    public void sendEmail(User user, String token) throws MessagingException, IOException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
         helper.setSubject("Confirm oxygen account");
         helper.setTo(user.getEmail());
-        helper.setText("Te rugam sa confirmi emailul", true);
+        
+        String emailBody = "Please confirm your account: ";
+        String confirmationLink = "http://localhost:8080/api/users/confirm?token=" + token;
+        emailBody += "<a href='" + confirmationLink + "'>Click here</a>";
+        
+        helper.setText(emailBody, true);
         javaMailSender.send(mimeMessage);
     }
 }

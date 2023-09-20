@@ -16,7 +16,9 @@ public enum UserStatus {
 	/**
 	 * Status used to indicate that the user is active
 	 */
-	ACTIVE("active");
+	ACTIVE("active"),
+	
+	NEW("new");
 	
 	/**
 	 * The string representation of the user status. 
