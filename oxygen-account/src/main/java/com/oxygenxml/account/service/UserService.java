@@ -58,11 +58,10 @@ public class UserService {
 		
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		newUser.setRegistrationDate(DateUtility.getCurrentUTCTimestamp());
-		newUser.setStatus(UserStatus.NEW.getStatus());
+		newUser.setStatus(UserStatus.ACTIVE.getStatus());
 		
 		newUser = userRepository.save(newUser);
 		
-		// metoda
 		eventPublisher.publishEvent(new RegistrationEvent(this, newUser));
 		
 		return newUser;
