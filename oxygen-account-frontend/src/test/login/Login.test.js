@@ -90,7 +90,7 @@ test('sends registration request for valid data', async () => {
 
   // Wait for the success message to appear
   await waitFor(() => {
-    expect(screen.getByText('Account created successfully!')).toBeInTheDocument();
+    expect(screen.getByText('A confirmation email has been sent to your address.')).toBeInTheDocument();
   });
 });
 
@@ -222,7 +222,7 @@ test('closes Snackbar from register page when close button is clicked', async ()
 
   // Wait for the success message to appear
   await waitFor(() => {
-    expect(screen.getByText('Account created successfully!')).toBeInTheDocument();
+    expect(screen.getByText('A confirmation email has been sent to your address.')).toBeInTheDocument();
   });
 
   // Click the close button on the Snackbar
@@ -230,7 +230,7 @@ test('closes Snackbar from register page when close button is clicked', async ()
 
   // Wait for the success message to disappear
   await waitFor(() => {
-    expect(screen.queryByText('Account created successfully!')).not.toBeInTheDocument();
+    expect(screen.queryByText('A confirmation email has been sent to your address.')).not.toBeInTheDocument();
   });
 });
 
@@ -278,7 +278,7 @@ test('input fields are reset after successful submission of register form', asyn
 
   // Wait for the success message to appear
   await waitFor(() => {
-    expect(screen.getByText('Account created successfully!')).toBeInTheDocument();
+    expect(screen.getByText('A confirmation email has been sent to your address.')).toBeInTheDocument();
   });
 
   // Verify that input fields are reset after successful submission
