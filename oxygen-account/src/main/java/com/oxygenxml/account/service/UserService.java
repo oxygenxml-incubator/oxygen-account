@@ -16,10 +16,10 @@ import com.oxygenxml.account.exception.InternalErrorCode;
 import com.oxygenxml.account.exception.OxygenAccountException;
 import com.oxygenxml.account.exception.UserNotAuthenticatedException;
 import com.oxygenxml.account.messages.Message;
+import com.oxygenxml.account.messages.UserStatus;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
 import com.oxygenxml.account.utility.DateUtility;
-import com.oxygenxml.account.utility.UserStatus;
 
 import lombok.AllArgsConstructor;
 
@@ -62,10 +62,12 @@ public class UserService {
 		
 		newUser = userRepository.save(newUser);
 		
+		// metoda
 		eventPublisher.publishEvent(new RegistrationEvent(this, newUser));
 		
 		return newUser;
 	}
+	
 	
 	/**
 	 *  Retrieves a User entity based on the provided email from the database.

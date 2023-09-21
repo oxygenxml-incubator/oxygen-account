@@ -13,9 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.oxygenxml.account.OxygenAccountApplication;
+import com.oxygenxml.account.messages.TokenClaims;
 import com.oxygenxml.account.service.JwtService;
 import com.oxygenxml.account.utility.DateUtility;
-import com.oxygenxml.account.utility.TokenClaims;
 
 import io.jsonwebtoken.Claims;
 

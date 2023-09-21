@@ -1,4 +1,4 @@
-package com.oxygenxml.account.utility;
+package com.oxygenxml.account.messages;
 
 import lombok.Getter;
 

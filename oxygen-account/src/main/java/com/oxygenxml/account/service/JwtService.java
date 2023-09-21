@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.oxygenxml.account.Config.OxygenAccountPorpertiesConfig;
-import com.oxygenxml.account.utility.TokenClaims;
+import com.oxygenxml.account.messages.TokenClaims;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;

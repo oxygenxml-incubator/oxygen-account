@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.oxygenxml.account.messages.UserStatus;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.repository.UserRepository;
 import com.oxygenxml.account.utility.DateUtility;
-import com.oxygenxml.account.utility.UserStatus;
 
 /**
  * A scheduled task that processes deleted users on a daily basis, checking if the deleted users should be permanently deleted from the database.

@@ -5,43 +5,70 @@ import java.util.Map;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.oxygenxml.account.dto.EmailDto;
+import com.oxygenxml.account.dto.EmailInfo;
 import com.oxygenxml.account.events.RegistrationEvent;
+import com.oxygenxml.account.exception.EmailException;
+import com.oxygenxml.account.messages.EmailTemplateData;
+import com.oxygenxml.account.messages.EmailTypes;
 import com.oxygenxml.account.model.User;
-import com.oxygenxml.account.utility.EmailTypes;
 
-import io.jsonwebtoken.io.IOException;
-import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 
+/**
+ * Service class for handling events.
+ */
 @Service
 @AllArgsConstructor
 public class EventService {
+	
+	/**
+	 * The email service responsible for sending email.
+	 */
     private final EmailService emailService;
+    
+    /**
+     * The JWT (JSON Web Token) service used for generating email confirmation tokens.
+     */
     private final JwtService jwtService;
 
+    /**
+     * Event listener method for handling user registration events.
+     *
+     * @param event The RegistrationEvent containing user registration information.
+     */
     @EventListener
     public void handleUserRegistration(RegistrationEvent event) {
-    	User newUser = event.getUser();
+    	User newUser = event.getUser();     
+        
+        Map<String, Object> emailData = new HashMap<>();
+        emailData.put(EmailTemplateData.NAME.getEmailTemplateData(), newUser.getName());
+        
         String token = jwtService.generateEmailConfirmationToken(newUser.getId(), newUser.getRegistrationDate());
-        
-        
-        EmailDto emailDto = new EmailDto();
-        emailDto.setType(EmailTypes.CONFIRM_REGISTRATION.getEmailType());
-        emailDto.setEmailAddress(newUser.getEmail());
-        
-        Map<String, Object> templateData = new HashMap<>();
-		templateData.put("token", token);
-
-		emailDto.setEmailData(templateData);
-
+		emailData.put(EmailTemplateData.TOKEN.getEmailTemplateData(), token);
+		
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+	    String baseUrl = ServletUriComponentsBuilder.fromRequestUri(request)
+	    		.replacePath(null)
+	    		.build()
+	    		.toUriString();
+	    emailData.put(EmailTemplateData.BASEURL.getEmailTemplateData(), baseUrl);
 		
         try {
-        	emailService.sendEmail(emailDto);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (MessagingException e) {
+        	/**
+        	 * Object containing information about the email.
+        	 */
+            EmailInfo emailInfo = new EmailInfo();
+            emailInfo.setType(EmailTypes.CONFIRM_REGISTRATION);
+            emailInfo.setEmailAddress(newUser.getEmail());
+    		emailInfo.setEmailData(emailData);
+    		
+        	emailService.sendEmail(emailInfo);
+		} catch (EmailException e) {
 			e.printStackTrace();
 		}
     }

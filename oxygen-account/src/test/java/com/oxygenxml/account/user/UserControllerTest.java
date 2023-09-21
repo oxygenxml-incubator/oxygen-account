@@ -40,11 +40,11 @@ import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.messages.Message;
+import com.oxygenxml.account.messages.UserStatus;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.service.UserService;
 import com.oxygenxml.account.utility.DateUtility;
 import com.oxygenxml.account.utility.JsonUtil;
-import com.oxygenxml.account.utility.UserStatus;
 
 /**
  * UserControllerTest class tests the functionality of UserController
