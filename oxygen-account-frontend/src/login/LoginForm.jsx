@@ -25,6 +25,8 @@ function LoginForm({ toggleForm }) {
     // State variable for storing the message to display in the Snackbar.
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
+    const [isSuccessSnackbar, setIsSuccesSnackbar] = useState(true);
+
     /**
      * Handle input change event for text fields.
      * @param {Object} event - The input change event object.
@@ -85,12 +87,29 @@ function LoginForm({ toggleForm }) {
     };
 
     /**
-     * Checks if the URL hash is '#invalid-user', and displays a Snackbar with an error message if true.
+     * Checks the URL hash, and displays a Snackbar with a releated message.
      */
     function handleInvalidUserHash() {
         if (window.location.hash === '#invalid-user') {
-            setShowSnackbar(true);
+            setIsSuccesSnackbar(false);
             setSnackbarMessage('Invalid email or password');
+            setShowSnackbar(true);
+        } else if (window.location.hash === '#success-confirmation') {
+            setIsSuccesSnackbar(true);
+            setSnackbarMessage('The account has been successfully verified');
+            setShowSnackbar(true);
+        } else if (window.location.hash === '#invalid-token') {
+            setIsSuccesSnackbar(false);
+            setSnackbarMessage('The confirmation link is invalid.');
+            setShowSnackbar(true);
+        } else if (window.location.hash === '#token-expired') {
+            setIsSuccesSnackbar(false);
+            setSnackbarMessage('The confirmation link has expired');
+            setShowSnackbar(true);
+        } else if (window.location.hash === '#user-already-confirmed') {
+            setIsSuccesSnackbar(false);
+            setSnackbarMessage('The user has already been confirmed.');
+            setShowSnackbar(true);
         }
     }
 
@@ -158,7 +177,7 @@ function LoginForm({ toggleForm }) {
                             elevation={6}
                             variant="filled"
                             onClose={handleSnackbarClose}
-                            severity={'error'}
+                            severity={isSuccessSnackbar ? 'success' : 'error'}
                             sx={{ width: '100%' }}
                         >
                             {snackbarMessage}

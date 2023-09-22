@@ -28,6 +28,3 @@ export default function AuthContainer() {
     </Grid>
   );
 };
-
-
-
