@@ -34,9 +34,19 @@ public class DateUtility {
 	 * @return the number of days left for recovery; returns zero if the user has no days left
 	 */
 	public int getDaysLeftForRecovery(User user) {
-		long timeSinceDeletion = System.currentTimeMillis() - user.getDeletionDate().getTime();
+		Timestamp currentTimestamp = getCurrentUTCTimestamp();
+		long timeSinceDeletion = currentTimestamp.getTime() - user.getDeletionDate().getTime();
 		int daysSinceDeletion = (int) (timeSinceDeletion / MILIS_IN_DAY);
 		int daysLeft = oxygenProperties.getDaysUntilDeletion() - daysSinceDeletion;
+
+		return Math.max(daysLeft, 0); 
+	}
+	
+	public int getDaysLeftForConfirmAccount(User user) {
+		Timestamp currentTimestamp = getCurrentUTCTimestamp();
+		long timeSinceCreation = currentTimestamp.getTime() - user.getRegistrationDate().getTime();
+		int daysSinceCreation = (int) (timeSinceCreation / MILIS_IN_DAY);
+		int daysLeft = oxygenProperties.getDaysUntilDeletion() - daysSinceCreation;
 
 		return Math.max(daysLeft, 0); 
 	}

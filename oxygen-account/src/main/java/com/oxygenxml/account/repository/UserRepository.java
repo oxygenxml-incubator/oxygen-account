@@ -40,5 +40,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	 * @return A User entity that matches the provided status
 	 */
 	public List<User> findByStatus(String status);
-
+	
+	public User findById(int id);
 }

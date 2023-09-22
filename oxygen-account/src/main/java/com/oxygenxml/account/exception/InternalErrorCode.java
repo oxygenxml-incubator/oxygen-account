@@ -66,7 +66,11 @@ public enum InternalErrorCode {
 	/**
 	 * The error that occurs when the users isn't authenticated
 	 */
-	USER_NOT_AUTHENTICATED(1012);
+	USER_NOT_AUTHENTICATED(1012),
+	
+	USER_ALREADY_CONFIRMED(1013),
+	
+	TOKEN_EXPIRED(1014);
 	
 	/**
 	 * It represents the internal error code

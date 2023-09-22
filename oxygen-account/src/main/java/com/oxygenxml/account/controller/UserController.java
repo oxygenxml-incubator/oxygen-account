@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oxygenxml.account.converter.UserConverter;
@@ -126,6 +127,14 @@ public class UserController {
     public UserDto deleteUser() {
         User recoveredUser = userService.recoverUser();
         return userConverter.entityToDto(recoveredUser);
+    }
+    
+    @GetMapping("/confirm")
+    public UserDto confirmUserRegistration(@RequestParam String token) {
+
+    	User confirmedUser = userService.confirmUserRegistration(token);
+
+    	return userConverter.entityToDto(confirmedUser);
     }
 }
 	

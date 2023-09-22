@@ -1,5 +1,8 @@
 package com.oxygenxml.account.service;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -19,8 +22,10 @@ import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.model.UserStatus;
 import com.oxygenxml.account.repository.UserRepository;
+import com.oxygenxml.account.type.TokenClaim;
 import com.oxygenxml.account.utility.DateUtility;
 
+import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 
 /**
@@ -30,6 +35,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserService {
 	private final ApplicationEventPublisher eventPublisher;
+	
+	private static final long MILIS_IN_DAY = 24L * 60L * 60L * 1000L;
 	
 	/**
 	 * Instance of UserRepository to interact with the database.
@@ -42,6 +49,9 @@ public class UserService {
 	 */
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private JwtService jwtService;
 	
 	/**
 	 * Register a new user in the system.
@@ -58,7 +68,7 @@ public class UserService {
 		
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		newUser.setRegistrationDate(DateUtility.getCurrentUTCTimestamp());
-		newUser.setStatus(UserStatus.ACTIVE.getStatus());
+		newUser.setStatus(UserStatus.NEW.getStatus());
 		
 		newUser = userRepository.save(newUser);
 		
@@ -171,4 +181,31 @@ public class UserService {
         
         return userRepository.save(currentUser);
     }
+	
+	public User confirmUserRegistration(String token) {
+		Claims claims;
+		 
+    	claims = jwtService.parseToken(token);
+
+    	Integer userId = claims.get(TokenClaim.USER_ID.getName(), Integer.class);
+
+    	Date creationDate = claims.get(TokenClaim.CREATION_DATE.getName(), Date.class);
+    	
+    	Timestamp currentDate = DateUtility.getCurrentUTCTimestamp();
+        long differenceDays = Math.abs(currentDate.getTime() - creationDate.getTime())/MILIS_IN_DAY;
+        
+        if(differenceDays > 7) {
+    		throw new OxygenAccountException(Message.TOKEN_EXPIRED, HttpStatus.GONE, InternalErrorCode.TOKEN_EXPIRED);
+    	}
+        
+        User user = userRepository.findById((int) userId);
+        
+        if (UserStatus.ACTIVE.getStatus().equals(user.getStatus())) {
+    		throw new OxygenAccountException(Message.USER_ALREADY_CONFIRMED, HttpStatus.GONE, InternalErrorCode.USER_ALREADY_CONFIRMED);
+    	} 
+        
+        user.setStatus(UserStatus.ACTIVE.getStatus());
+        
+        return userRepository.save(user);
+	}
 }

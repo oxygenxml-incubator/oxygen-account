@@ -44,4 +44,17 @@ public class DeletedUsersTask {
 			}
 		}
 	}
+	
+	@Scheduled(cron = "0 0 0 * * ?")
+	public void processDeleteUnconfirmedUsers() {
+		List<User> newUsers = userRepository.findByStatus(UserStatus.NEW.getStatus());
+
+		for (User user : newUsers) {
+			int daysLeft = daysLeftUtility.getDaysLeftForConfirmAccount(user);
+
+			if (daysLeft == 0) {
+				userRepository.delete(user);
+			}
+		}
+	}
 }
