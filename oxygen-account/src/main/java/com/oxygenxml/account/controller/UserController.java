@@ -1,7 +1,6 @@
 package com.oxygenxml.account.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,7 +15,6 @@ import com.oxygenxml.account.dto.ChangePasswordDto;
 import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
-import com.oxygenxml.account.exception.InternalErrorCode;
 import com.oxygenxml.account.exception.OxygenAccountException;
 import com.oxygenxml.account.exception.UserNotAuthenticatedException;
 import com.oxygenxml.account.messages.Message;
@@ -24,6 +22,7 @@ import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.model.UserStatus;
 import com.oxygenxml.account.service.UserService;
 import com.oxygenxml.account.service.ValidationService;
+import com.oxygenxml.account.type.UrlAnchor;
 
 /**
  * The UserControllerclass is a REST controller that manages HTTP requests related to users.
@@ -138,20 +137,25 @@ public class UserController {
     public RedirectView confirmUserRegistration(@RequestParam String token) {
 
     	if(token == null) {
-    		return new RedirectView("/login#invalid-token");
+    		return new RedirectView(UrlAnchor.INVALID_TOKEN.getAnchor());
     	}
     	
     	try {
             userService.confirmUserRegistration(token);
-            return new RedirectView("/login#success-confirmation");
+            return new RedirectView(UrlAnchor.SUCCES_CONFIRMATION.getAnchor());
+            
         } catch (OxygenAccountException e) {
             String messageId = e.getMessageId();
+            
             if(messageId.equals(Message.INVALID_TOKEN.getId())) {
-            	return new RedirectView("/login#invalid-token");
+            	return new RedirectView(UrlAnchor.INVALID_TOKEN.getAnchor());
+            	
             } else if(messageId.equals(Message.TOKEN_EXPIRED.getId())) {
-            	return new RedirectView("/login#token-expired");
+            	return new RedirectView(UrlAnchor.TOKEN_EXPIRED.getAnchor());
+            	
             } else if(messageId.equals(Message.USER_ALREADY_CONFIRMED.getId())) {
-            	return new RedirectView("/login#user-already-confirmed");
+            	return new RedirectView(UrlAnchor.USER_ALREADY_CONFIRMED.getAnchor());
+            	
             } else {
             	return new RedirectView("/login");
             }
