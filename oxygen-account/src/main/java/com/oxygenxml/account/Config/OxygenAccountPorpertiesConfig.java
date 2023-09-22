@@ -24,4 +24,6 @@ public class OxygenAccountPorpertiesConfig {
 	  * The secret key for JWT Token
 	  */
 	 private String secretKey;
+	 
+	 private int daysForEmailConfirmation;
 }

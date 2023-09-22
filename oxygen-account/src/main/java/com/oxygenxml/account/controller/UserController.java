@@ -1,6 +1,7 @@
 package com.oxygenxml.account.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -8,13 +9,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.oxygenxml.account.converter.UserConverter;
 import com.oxygenxml.account.dto.ChangePasswordDto;
 import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
+import com.oxygenxml.account.exception.InternalErrorCode;
+import com.oxygenxml.account.exception.OxygenAccountException;
 import com.oxygenxml.account.exception.UserNotAuthenticatedException;
+import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.model.UserStatus;
 import com.oxygenxml.account.service.UserService;
@@ -130,11 +135,28 @@ public class UserController {
     }
     
     @GetMapping("/confirm")
-    public UserDto confirmUserRegistration(@RequestParam String token) {
+    public RedirectView confirmUserRegistration(@RequestParam String token) {
 
-    	User confirmedUser = userService.confirmUserRegistration(token);
-
-    	return userConverter.entityToDto(confirmedUser);
+    	if(token == null) {
+    		return new RedirectView("/login#invalid-token");
+    	}
+    	
+    	try {
+            userService.confirmUserRegistration(token);
+            return new RedirectView("/login#success-confirmation");
+        } catch (OxygenAccountException e) {
+            String messageId = e.getMessageId();
+            if(messageId.equals(Message.INVALID_TOKEN.getId())) {
+            	return new RedirectView("/login#invalid-token");
+            } else if(messageId.equals(Message.TOKEN_EXPIRED.getId())) {
+            	return new RedirectView("/login#token-expired");
+            } else if(messageId.equals(Message.USER_ALREADY_CONFIRMED.getId())) {
+            	return new RedirectView("/login#user-already-confirmed");
+            } else {
+            	return new RedirectView("/login");
+            }
+        }
+    	
     }
 }
 	

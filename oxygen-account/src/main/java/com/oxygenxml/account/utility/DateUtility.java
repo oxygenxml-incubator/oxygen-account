@@ -46,7 +46,7 @@ public class DateUtility {
 		Timestamp currentTimestamp = getCurrentUTCTimestamp();
 		long timeSinceCreation = currentTimestamp.getTime() - user.getRegistrationDate().getTime();
 		int daysSinceCreation = (int) (timeSinceCreation / MILIS_IN_DAY);
-		int daysLeft = oxygenProperties.getDaysUntilDeletion() - daysSinceCreation;
+		int daysLeft = oxygenProperties.getDaysForEmailConfirmation() - daysSinceCreation;
 
 		return Math.max(daysLeft, 0); 
 	}

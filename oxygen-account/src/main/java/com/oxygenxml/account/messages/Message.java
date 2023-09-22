@@ -78,7 +78,9 @@ public enum Message {
 	
 	USER_ALREADY_CONFIRMED("USER_ALREADY_CONFIRMED", "The user has already been confirmed."),
 	
-	TOKEN_EXPIRED("TOKEN_EXPIRED", "The confirmation link has expired");
+	TOKEN_EXPIRED("TOKEN_EXPIRED", "The confirmation link has expired"),
+	
+	INVALID_TOKEN("INVALID_TOKEN", "The confirmation link is invalid.");
 
 	/**
 	 * Unique identifier corresponding to each type of message.

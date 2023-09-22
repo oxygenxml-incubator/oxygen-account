@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.oxygenxml.account.Config.OxygenAccountPorpertiesConfig;
 import com.oxygenxml.account.dto.ChangePasswordDto;
 import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
@@ -52,6 +53,9 @@ public class UserService {
 	
 	@Autowired
 	private JwtService jwtService;
+	
+	@Autowired
+	private OxygenAccountPorpertiesConfig oxygenProperties;
 	
 	/**
 	 * Register a new user in the system.
@@ -184,24 +188,31 @@ public class UserService {
 	
 	public User confirmUserRegistration(String token) {
 		Claims claims;
-		 
-    	claims = jwtService.parseToken(token);
 
-    	Integer userId = claims.get(TokenClaim.USER_ID.getName(), Integer.class);
+		try {
+			claims = jwtService.parseToken(token);
+		} catch (Exception e) {
+			throw new OxygenAccountException(Message.INVALID_TOKEN, HttpStatus.BAD_REQUEST, InternalErrorCode.INVALID_TOKEN);
+		}
 
-    	Date creationDate = claims.get(TokenClaim.CREATION_DATE.getName(), Date.class);
-    	
-    	Timestamp currentDate = DateUtility.getCurrentUTCTimestamp();
-        long differenceDays = Math.abs(currentDate.getTime() - creationDate.getTime())/MILIS_IN_DAY;
-        
-        if(differenceDays > 7) {
-    		throw new OxygenAccountException(Message.TOKEN_EXPIRED, HttpStatus.GONE, InternalErrorCode.TOKEN_EXPIRED);
-    	}
-        
-        User user = userRepository.findById((int) userId);
-        
-        if (UserStatus.ACTIVE.getStatus().equals(user.getStatus())) {
-    		throw new OxygenAccountException(Message.USER_ALREADY_CONFIRMED, HttpStatus.GONE, InternalErrorCode.USER_ALREADY_CONFIRMED);
+		Integer userId = claims.get(TokenClaim.USER_ID.getName(), Integer.class);
+		Date creationDate = claims.get(TokenClaim.CREATION_DATE.getName(), Date.class);
+
+		if (userId == null || creationDate == null) {
+			throw new OxygenAccountException(Message.INVALID_TOKEN, HttpStatus.BAD_REQUEST, InternalErrorCode.INVALID_TOKEN);
+		}
+
+		Timestamp currentDate = DateUtility.getCurrentUTCTimestamp();
+		long differenceDays = Math.abs(currentDate.getTime() - creationDate.getTime())/MILIS_IN_DAY;
+
+		if(differenceDays >= oxygenProperties.getDaysForEmailConfirmation()) {
+			throw new OxygenAccountException(Message.TOKEN_EXPIRED, HttpStatus.GONE, InternalErrorCode.TOKEN_EXPIRED);
+		}
+
+		User user = userRepository.findById((int) userId);
+
+		if (UserStatus.ACTIVE.getStatus().equals(user.getStatus())) {
+			throw new OxygenAccountException(Message.USER_ALREADY_CONFIRMED, HttpStatus.GONE, InternalErrorCode.USER_ALREADY_CONFIRMED);
     	} 
         
         user.setStatus(UserStatus.ACTIVE.getStatus());

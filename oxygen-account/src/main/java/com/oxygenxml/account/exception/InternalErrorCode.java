@@ -70,7 +70,9 @@ public enum InternalErrorCode {
 	
 	USER_ALREADY_CONFIRMED(1013),
 	
-	TOKEN_EXPIRED(1014);
+	TOKEN_EXPIRED(1014),
+	
+	INVALID_TOKEN(1015);
 	
 	/**
 	 * It represents the internal error code
