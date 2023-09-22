@@ -14,8 +14,8 @@ import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
 import com.oxygenxml.account.exception.UserNotAuthenticatedException;
-import com.oxygenxml.account.messages.UserStatus;
 import com.oxygenxml.account.model.User;
+import com.oxygenxml.account.model.UserStatus;
 import com.oxygenxml.account.service.UserService;
 import com.oxygenxml.account.service.ValidationService;
 

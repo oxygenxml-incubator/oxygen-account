@@ -12,9 +12,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.oxygenxml.account.dto.EmailInfo;
 import com.oxygenxml.account.events.RegistrationEvent;
 import com.oxygenxml.account.exception.EmailException;
-import com.oxygenxml.account.messages.EmailTemplateData;
-import com.oxygenxml.account.messages.EmailTypes;
 import com.oxygenxml.account.model.User;
+import com.oxygenxml.account.type.EmailTemplateData;
+import com.oxygenxml.account.type.EmailType;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -46,24 +46,24 @@ public class EventService {
     	User newUser = event.getUser();     
         
         Map<String, Object> emailData = new HashMap<>();
-        emailData.put(EmailTemplateData.NAME.getEmailTemplateData(), newUser.getName());
+        emailData.put(EmailTemplateData.NAME.getName(), newUser.getName());
         
         String token = jwtService.generateEmailConfirmationToken(newUser.getId(), newUser.getRegistrationDate());
-		emailData.put(EmailTemplateData.TOKEN.getEmailTemplateData(), token);
+		emailData.put(EmailTemplateData.TOKEN.getName(), token);
 		
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 	    String baseUrl = ServletUriComponentsBuilder.fromRequestUri(request)
 	    		.replacePath(null)
 	    		.build()
 	    		.toUriString();
-	    emailData.put(EmailTemplateData.BASEURL.getEmailTemplateData(), baseUrl);
+	    emailData.put(EmailTemplateData.BASEURL.getName(), baseUrl);
 		
         try {
         	/**
         	 * Object containing information about the email.
         	 */
             EmailInfo emailInfo = new EmailInfo();
-            emailInfo.setType(EmailTypes.CONFIRM_REGISTRATION);
+            emailInfo.setType(EmailType.CONFIRM_REGISTRATION);
             emailInfo.setEmailAddress(newUser.getEmail());
     		emailInfo.setEmailData(emailData);
     		

@@ -1,12 +1,9 @@
-package com.oxygenxml.account.messages;
-
-import lombok.Getter;
+package com.oxygenxml.account.type;
 
 /**
  * An enumeration representing the types of email messages.
  */
-@Getter
-public enum EmailTypes {
+public enum EmailType {
 	
 	/**
      * Email type for confirm registration.

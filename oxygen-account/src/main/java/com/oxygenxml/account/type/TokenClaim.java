@@ -1,4 +1,4 @@
-package com.oxygenxml.account.messages;
+package com.oxygenxml.account.type;
 
 import lombok.Getter;
 
@@ -6,8 +6,7 @@ import lombok.Getter;
  * Defines constants for JWT token claims used in the application.
  */
 @Getter
-public enum TokenClaims {
-
+public enum TokenClaim {
 
 	/**
 	 * The claim representing the user ID.
@@ -22,14 +21,14 @@ public enum TokenClaims {
 	/**
 	 * The string key used to store the claim in the JWT.
 	 */
-	private final String tokenClaims;
+	private final String name;
 
 	/**
 	 * Constructs a new {@code TokenClaims} enum instance with the specified string key.
 	 * 
-	 * @param tokenClaims The string key representing the claim in the JWT.
+	 * @param name The string key representing the claim in the JWT.
 	 */
-	private TokenClaims(String tokenClaims) {
-		this.tokenClaims = tokenClaims;
+	private TokenClaim(String name) {
+		this.name = name;
 	}
 }

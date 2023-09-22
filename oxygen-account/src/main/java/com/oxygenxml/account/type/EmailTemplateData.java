@@ -1,4 +1,4 @@
-package com.oxygenxml.account.messages;
+package com.oxygenxml.account.type;
 
 import lombok.Getter;
 
@@ -26,12 +26,12 @@ public enum EmailTemplateData {
 	/**
      * The string key used to store the actual tag.
      */
-	private final String emailTemplateData;
+	private final String name;
 
 	/**
 	 * Constructs a new enum instance with the specified string key.
 	 */
-	private EmailTemplateData(String emailTemplateData) {
-		this.emailTemplateData = emailTemplateData;
+	private EmailTemplateData(String name) {
+		this.name = name;
 	}
 }

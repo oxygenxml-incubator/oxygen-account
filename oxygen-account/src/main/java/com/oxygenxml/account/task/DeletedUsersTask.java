@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.oxygenxml.account.messages.UserStatus;
 import com.oxygenxml.account.model.User;
+import com.oxygenxml.account.model.UserStatus;
 import com.oxygenxml.account.repository.UserRepository;
 import com.oxygenxml.account.utility.DateUtility;
 

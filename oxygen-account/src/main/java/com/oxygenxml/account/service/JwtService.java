@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.oxygenxml.account.Config.OxygenAccountPorpertiesConfig;
-import com.oxygenxml.account.messages.TokenClaims;
+import com.oxygenxml.account.type.TokenClaim;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
@@ -39,9 +39,9 @@ public class JwtService {
 	 */
 	public String generateEmailConfirmationToken(Integer userId, Timestamp accountCreationDate) {
 
-		Map<TokenClaims, Object> claims = new HashMap<>();
-		claims.put(TokenClaims.USER_ID, userId);
-		claims.put(TokenClaims.CREATION_DATE, accountCreationDate);
+		Map<TokenClaim, Object> claims = new HashMap<>();
+		claims.put(TokenClaim.USER_ID, userId);
+		claims.put(TokenClaim.CREATION_DATE, accountCreationDate);
 
 		return generateToken(claims);
 	}
@@ -52,13 +52,13 @@ public class JwtService {
 	 * @param claims A map representing the claims to be included in the token.
 	 * @return A JWT string generated with the specified claims and signed with the secret key
 	 */
-	private String generateToken(Map<TokenClaims, Object> claims) {
+	private String generateToken(Map<TokenClaim, Object> claims) {
 		SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(oxygenProperties.getSecretKey()));
 
 		JwtBuilder jwtBuilder = Jwts.builder();
 
-		for (Map.Entry<TokenClaims, Object> claim : claims.entrySet()) {
-			jwtBuilder.claim(claim.getKey().getTokenClaims(), claim.getValue());
+		for (Map.Entry<TokenClaim, Object> claim : claims.entrySet()) {
+			jwtBuilder.claim(claim.getKey().getName(), claim.getValue());
 		}
 
 		return jwtBuilder

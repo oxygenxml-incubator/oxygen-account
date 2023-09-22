@@ -1,11 +1,10 @@
 package com.oxygenxml.account.exception;
 
-import org.springframework.core.NestedCheckedException;
-
 /**
  * Custom checked exception for email-related errors.
  */
-public class EmailException extends NestedCheckedException  {
+public class EmailException extends Exception  {
+	
     /**
 	 * 
 	 */

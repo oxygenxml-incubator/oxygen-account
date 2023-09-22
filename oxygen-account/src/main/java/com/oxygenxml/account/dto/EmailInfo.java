@@ -1,7 +1,7 @@
 package com.oxygenxml.account.dto;
 
 import java.util.Map;
-import com.oxygenxml.account.messages.EmailTypes;
+import com.oxygenxml.account.type.EmailType;
 import lombok.Data;
 
 /**
@@ -13,7 +13,7 @@ public class EmailInfo {
 	/**
 	 * The type of the email.
 	 */
-	private EmailTypes type;
+	private EmailType type;
 
 	/**
 	 * The email address of the recipient.
