@@ -186,6 +186,13 @@ public class UserService {
         return userRepository.save(currentUser);
     }
 	
+	/**
+	 * This method is responsible for confirming the user registration through a given token.
+	 * 
+	 * @param token A String representing the token used for confirming user registration.
+	 * @return User object representing the confirmed user with updated status.
+	 * @throws  OxygenAccountException if the token is invalid, expired, or the user is already active
+	 */
 	public User confirmUserRegistration(String token) {
 		Claims claims;
 

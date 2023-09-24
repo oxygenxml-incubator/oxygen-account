@@ -133,6 +133,12 @@ public class UserController {
         return userConverter.entityToDto(recoveredUser);
     }
     
+    /**
+     * This endpoint is used to confirm user registration through a given token.
+     * 
+     * @param token The token used for confirming user registration.
+     * @return RedirectView object directing to the corresponding URL based on the operation's outcome.
+     */
     @GetMapping("/confirm")
     public RedirectView confirmUserRegistration(@RequestParam String token) {
 
@@ -160,7 +166,6 @@ public class UserController {
             	return new RedirectView("/login");
             }
         }
-    	
     }
 }
 	

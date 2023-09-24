@@ -33,6 +33,10 @@ import com.oxygenxml.account.service.JwtService;
 import com.oxygenxml.account.service.UserService;
 import com.oxygenxml.account.utility.JsonUtil;
 
+/**
+ * ClasaEmail tests the functioning of the email sending system
+ *
+ */
 @SpringBootTest(classes=OxygenAccountApplication.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -44,30 +48,54 @@ import com.oxygenxml.account.utility.JsonUtil;
 })
 public class EmailTest {
 
+	/**
+	 * Holds the token extracted during the user registration event.
+	 */
+	private String extractedToken;
+	
+	/**
+	 * It's used to simulate the handling of user registration events for testing purposes.
+	 */
     @MockBean
     private EventService eventService;
     
+    /**
+     * Instance for handling JWT operations such as token generation and parsing.
+     */
     @Autowired
     private JwtService jwtService;
     
-    private String extractedToken;
-    
+    /**
+	 * MockMvc instance is used for simulating HTPP requests
+	 */
 	@Autowired
 	private MockMvc mockMvc;
 	
+	/**
+	 * The instance used for user-related operations
+	 */
 	@Autowired
 	private UserService userService;
 	
+	/**
+	 * It is used to publish application events such as registration events for testing purposes.
+	 */
 	@MockBean
     private ApplicationEventPublisher eventPublisher;
     
+	/**
+	 * Listens to user registration events and handles token generation for email confirmation.
+	 */
     @EventListener
-    public void handleUserRegistration(RegistrationEvent event) {
+    public void handleUserRegistrationTest(RegistrationEvent event) {
         User registeredUser = event.getUser();
         
         extractedToken = jwtService.generateEmailConfirmationToken(registeredUser.getId(), registeredUser.getRegistrationDate());
     }
     
+    /**
+     * Tests the whole flow of a new user registration and the email confirmation
+     */
     @Test
 	void confirmNewUser() throws Exception {
 		UserDto newUser = new UserDto();
@@ -78,7 +106,7 @@ public class EmailTest {
 		
 		Mockito.doAnswer(invocation -> {
             RegistrationEvent event = invocation.getArgument(0);
-            handleUserRegistration(event);
+            handleUserRegistrationTest(event);
             return null;
         }).when(eventService).handleUserRegistration(any(RegistrationEvent.class));
 		
@@ -99,6 +127,4 @@ public class EmailTest {
 		user = userService.getUserByEmail("denis@gmail.com");
         assertEquals(UserStatus.ACTIVE.getStatus(), user.getStatus());
 	}
-
-    
 }

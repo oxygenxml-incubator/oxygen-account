@@ -42,6 +42,12 @@ public class DateUtility {
 		return Math.max(daysLeft, 0); 
 	}
 	
+	/**
+	 * This method calculates the number of days left for a user to confirm their account.
+	 * 
+	 * @param user User object representing the user whose account confirmation days left are to be calculated.
+	 * @return int representing the number of days left for the user to confirm their account.
+	 */
 	public int getDaysLeftForConfirmAccount(User user) {
 		Timestamp currentTimestamp = getCurrentUTCTimestamp();
 		long timeSinceCreation = currentTimestamp.getTime() - user.getRegistrationDate().getTime();
