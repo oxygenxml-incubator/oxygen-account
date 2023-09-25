@@ -2,6 +2,7 @@ package com.oxygenxml.account.email;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -122,7 +123,8 @@ public class EmailTest {
 		
 		mockMvc.perform(get("/api/users/confirm")
                 .param("token", extractedToken))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login#success-confirmation"));
 		
 		user = userService.getUserByEmail("denis@gmail.com");
         assertEquals(UserStatus.ACTIVE.getStatus(), user.getStatus());
