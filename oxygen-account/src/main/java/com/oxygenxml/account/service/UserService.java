@@ -53,8 +53,8 @@ public class UserService {
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		newUser.setRegistrationDate(DateUtility.getCurrentUTCTimestamp());
 		newUser.setStatus(UserStatus.ACTIVE.getStatus());
-		return userRepository.save(newUser);
 		
+		return userRepository.save(newUser);
 	}
 	
 	/**
