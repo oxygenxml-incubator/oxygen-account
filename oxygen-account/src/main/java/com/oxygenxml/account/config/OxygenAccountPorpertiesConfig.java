@@ -1,4 +1,4 @@
-package com.oxygenxml.account.Config;
+package com.oxygenxml.account.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

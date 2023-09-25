@@ -8,7 +8,7 @@ import java.time.ZoneOffset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.oxygenxml.account.Config.OxygenAccountPorpertiesConfig;
+import com.oxygenxml.account.config.OxygenAccountPorpertiesConfig;
 import com.oxygenxml.account.model.User;
 
 /**
