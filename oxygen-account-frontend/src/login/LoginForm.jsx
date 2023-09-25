@@ -27,6 +27,15 @@ function LoginForm({ toggleForm }) {
 
     const [isSuccessSnackbar, setIsSuccesSnackbar] = useState(true);
 
+    const hashMessages = {
+        '#invalid-user': 'Invalid email or password',
+        '#success-confirmation': 'The account has been successfully verified',
+        '#invalid-token': 'The confirmation link is invalid.',
+        '#token-expired': 'The confirmation link has expired',
+        '#user-already-confirmed': 'The user has already been confirmed.',
+        '#unconfirmed-user': 'The user has not been confirmed'
+    };
+
     /**
      * Handle input change event for text fields.
      * @param {Object} event - The input change event object.
@@ -90,25 +99,16 @@ function LoginForm({ toggleForm }) {
      * Checks the URL hash, and displays a Snackbar with a releated message.
      */
     function handleInvalidUserHash() {
-        if (window.location.hash === '#invalid-user') {
-            setIsSuccesSnackbar(false);
-            setSnackbarMessage('Invalid email or password');
-            setShowSnackbar(true);
-        } else if (window.location.hash === '#success-confirmation') {
-            setIsSuccesSnackbar(true);
-            setSnackbarMessage('The account has been successfully verified');
-            setShowSnackbar(true);
-        } else if (window.location.hash === '#invalid-token') {
-            setIsSuccesSnackbar(false);
-            setSnackbarMessage('The confirmation link is invalid.');
-            setShowSnackbar(true);
-        } else if (window.location.hash === '#token-expired') {
-            setIsSuccesSnackbar(false);
-            setSnackbarMessage('The confirmation link has expired');
-            setShowSnackbar(true);
-        } else if (window.location.hash === '#user-already-confirmed') {
-            setIsSuccesSnackbar(false);
-            setSnackbarMessage('The user has already been confirmed.');
+        const currentHash = window.location.hash;
+        const message = hashMessages[currentHash];
+
+        if (message) {
+            if(currentHash === "#success-confirmation") {
+                setIsSuccesSnackbar(true);
+            } else {
+                setIsSuccesSnackbar(false);
+            }
+            setSnackbarMessage(message);
             setShowSnackbar(true);
         }
     }

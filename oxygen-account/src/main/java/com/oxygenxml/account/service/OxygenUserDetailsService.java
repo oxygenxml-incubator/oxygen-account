@@ -35,9 +35,12 @@ public class OxygenUserDetailsService implements UserDetailsService {
 		if(appUser == null) {
 			throw new UsernameNotFoundException(Message.USER_NOT_FOUND.getMessage());
 		}
+		
+		boolean isEmailConfirmed = "active".equals(appUser.getStatus());
 
 		UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(appUser.getEmail())
-				.password(appUser.getPassword());
+				.password(appUser.getPassword())
+				.accountLocked(!isEmailConfirmed);
 		
 		
 		return builder.build();
