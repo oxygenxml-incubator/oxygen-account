@@ -551,5 +551,18 @@ public class UserControllerTest {
         assertEquals(UserStatus.ACTIVE.getStatus(), userAfterRecover.getStatus());
         assertNull(userAfterRecover.getDeletionDate());
 	}
+	
+	/**
+	 * Tests the situation when a unconfirmed user trying to log in
+	 * @throws Exception
+	 */
+	@Test
+	void testLoginUnconfirmedUser() throws Exception {
+		mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "denismateescu@yahoo.com")
+				.param("password", "password"))
+		.andExpect(redirectedUrl("/login#unconfirmed-user"));
+	}
 }
 

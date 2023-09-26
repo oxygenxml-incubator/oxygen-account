@@ -19,6 +19,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,8 +34,9 @@ import com.oxygenxml.account.service.OxygenUserDetailsService;
  */
 @SpringBootTest(classes=OxygenAccountApplication.class)
 @AutoConfigureMockMvc
-@TestPropertySource(locations="classpath:application-test.properties")
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@TestPropertySource(locations="classpath:application-test.properties")
 class LoginTest {
 	
 	/**
@@ -158,5 +160,5 @@ class LoginTest {
     	 mockMvc.perform(get("/profile"))
          .andExpect(status().isFound()) 
          .andExpect(redirectedUrlPattern("**/login"));
-    }
+    }    
 }
