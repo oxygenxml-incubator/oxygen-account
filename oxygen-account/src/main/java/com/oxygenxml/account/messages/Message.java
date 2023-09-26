@@ -80,7 +80,9 @@ public enum Message {
 	
 	TOKEN_EXPIRED("TOKEN_EXPIRED", "The confirmation link has expired"),
 	
-	INVALID_TOKEN("INVALID_TOKEN", "The confirmation link is invalid.");
+	INVALID_TOKEN("INVALID_TOKEN", "The confirmation link is invalid."),
+	
+	EMAIL_NOT_CONFIRMED("EMAIL_NOT_CONFIRMED", "Email not confirmed.");
 
 	/**
 	 * Unique identifier corresponding to each type of message.

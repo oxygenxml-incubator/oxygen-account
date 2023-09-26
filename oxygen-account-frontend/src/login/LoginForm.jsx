@@ -95,6 +95,12 @@ function LoginForm({ toggleForm }) {
         }
     };
 
+    const openSnackbar = (message, isSucces) => {
+        setIsSuccesSnackbar(isSucces);
+        setSnackbarMessage(message);
+        setShowSnackbar(true);
+    }
+
     /**
      * Checks the URL hash, and displays a Snackbar with a releated message.
      */
@@ -104,12 +110,10 @@ function LoginForm({ toggleForm }) {
 
         if (message) {
             if(currentHash === "#success-confirmation") {
-                setIsSuccesSnackbar(true);
+                openSnackbar(message, true);
             } else {
-                setIsSuccesSnackbar(false);
+                openSnackbar(message, false);
             }
-            setSnackbarMessage(message);
-            setShowSnackbar(true);
         }
     }
 
