@@ -86,30 +86,25 @@ function LoginForm({ toggleForm }) {
         }
     };
 
+    const openSnackbar = (message, isSucces) => {
+        setIsSuccesSnackbar(isSucces);
+        setSnackbarMessage(message);
+        setShowSnackbar(true);
+    }
+
     /**
      * Checks the URL hash, and displays a Snackbar with a releated message.
      */
-    function handleInvalidUserHash() {
-        if (window.location.hash === '#invalid-user') {
-            setIsSuccesSnackbar(false);
-            setSnackbarMessage('Invalid email or password');
-            setShowSnackbar(true);
-        } else if (window.location.hash === '#success-confirmation') {
-            setIsSuccesSnackbar(true);
-            setSnackbarMessage('The account has been successfully verified');
-            setShowSnackbar(true);
-        } else if (window.location.hash === '#invalid-token') {
-            setIsSuccesSnackbar(false);
-            setSnackbarMessage('The confirmation link is invalid.');
-            setShowSnackbar(true);
-        } else if (window.location.hash === '#token-expired') {
-            setIsSuccesSnackbar(false);
-            setSnackbarMessage('The confirmation link has expired');
-            setShowSnackbar(true);
-        } else if (window.location.hash === '#user-already-confirmed') {
-            setIsSuccesSnackbar(false);
-            setSnackbarMessage('The user has already been confirmed.');
-            setShowSnackbar(true);
+    const handleInvalidUserHash = () => {
+        const currentHash = window.location.hash;
+        const message = hashMessages[currentHash];
+
+        if (message) {
+            if(currentHash === "#success-confirmation") {
+                openSnackbar(message, true);
+            } else {
+                openSnackbar(message, false);
+            }
         }
     }
 

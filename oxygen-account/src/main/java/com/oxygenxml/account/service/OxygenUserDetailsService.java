@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.oxygenxml.account.exception.EmailNotConfirmedException;
 import com.oxygenxml.account.messages.Message;
 
 /**
@@ -35,10 +36,13 @@ public class OxygenUserDetailsService implements UserDetailsService {
 		if(appUser == null) {
 			throw new UsernameNotFoundException(Message.USER_NOT_FOUND.getMessage());
 		}
+		
+		if("new".equals(appUser.getStatus())) {
+			throw new EmailNotConfirmedException(Message.EMAIL_NOT_CONFIRMED.getMessage());
+		}
 
 		UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(appUser.getEmail())
 				.password(appUser.getPassword());
-		
 		
 		return builder.build();
 	}
