@@ -31,8 +31,9 @@ public enum UrlAnchor {
 	/**
 	 * Represents the anchor for a user who is already confirmed.
 	 */
-	USER_ALREADY_CONFIRMED("/login#user-already-confirmed");
+	USER_ALREADY_CONFIRMED("/login#user-already-confirmed"),
 
+	UNCONFIRMED_USER("/login#unconfirmed-user");
 
 	/**
      * The actual URL anchor string associated with the enum constant.

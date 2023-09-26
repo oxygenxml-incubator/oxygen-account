@@ -1,8 +1,11 @@
 package com.oxygenxml.account.security;
 
+import javax.naming.AuthenticationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -52,9 +55,7 @@ public class WebSecurityConfiguration {
 	 */
 	@Bean
 	public AuthenticationFailureHandler authenticationFailureHandler() {
-	    SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
-	    failureHandler.setDefaultFailureUrl(UrlAnchor.INVALID_USER.getAnchor());
-	    return failureHandler;
+		return new CustomAuthenticationFailureHandler();
 	}
 	
 	/**

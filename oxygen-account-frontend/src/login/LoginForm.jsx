@@ -27,6 +27,15 @@ function LoginForm({ toggleForm }) {
 
     const [isSuccessSnackbar, setIsSuccesSnackbar] = useState(true);
 
+    const hashMessages = {
+        '#invalid-user': 'Invalid email or password',
+        '#success-confirmation': 'The account has been successfully verified',
+        '#invalid-token': 'The confirmation link is invalid.',
+        '#token-expired': 'The confirmation link has expired',
+        '#user-already-confirmed': 'The user has already been confirmed.',
+        '#unconfirmed-user': 'The user has not been confirmed'
+    };
+
     /**
      * Handle input change event for text fields.
      * @param {Object} event - The input change event object.
@@ -95,7 +104,7 @@ function LoginForm({ toggleForm }) {
     /**
      * Checks the URL hash, and displays a Snackbar with a releated message.
      */
-    const handleInvalidUserHash = () => {
+    function handleInvalidUserHash() {
         const currentHash = window.location.hash;
         const message = hashMessages[currentHash];
 
