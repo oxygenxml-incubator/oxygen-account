@@ -3,10 +3,10 @@ package com.oxygenxml.account.security;
 import java.io.IOException;
 
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
+import com.oxygenxml.account.exception.EmailNotConfirmedException;
 import com.oxygenxml.account.type.UrlAnchor;
 
 import jakarta.servlet.ServletException;

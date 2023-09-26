@@ -42,8 +42,7 @@ public class OxygenUserDetailsService implements UserDetailsService {
 		}
 
 		UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(appUser.getEmail())
-				.password(appUser.getPassword())
-				.accountLocked(!isEmailConfirmed);
+				.password(appUser.getPassword());
 		
 		return builder.build();
 	}
