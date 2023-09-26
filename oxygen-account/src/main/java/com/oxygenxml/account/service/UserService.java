@@ -1,6 +1,7 @@
 package com.oxygenxml.account.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,20 +11,25 @@ import org.springframework.stereotype.Service;
 import com.oxygenxml.account.dto.ChangePasswordDto;
 import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
+import com.oxygenxml.account.events.RegistrationEvent;
 import com.oxygenxml.account.exception.InternalErrorCode;
 import com.oxygenxml.account.exception.OxygenAccountException;
 import com.oxygenxml.account.exception.UserNotAuthenticatedException;
 import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
+import com.oxygenxml.account.model.UserStatus;
 import com.oxygenxml.account.repository.UserRepository;
 import com.oxygenxml.account.utility.DateUtility;
-import com.oxygenxml.account.utility.UserStatus;
+
+import lombok.AllArgsConstructor;
 
 /**
  *  Service class for user-related operations.
  */
 @Service
+@AllArgsConstructor
 public class UserService {
+	private final ApplicationEventPublisher eventPublisher;
 	
 	/**
 	 * Instance of UserRepository to interact with the database.
@@ -54,8 +60,13 @@ public class UserService {
 		newUser.setRegistrationDate(DateUtility.getCurrentUTCTimestamp());
 		newUser.setStatus(UserStatus.ACTIVE.getStatus());
 		
-		return userRepository.save(newUser);
+		newUser = userRepository.save(newUser);
+		
+		eventPublisher.publishEvent(new RegistrationEvent(this, newUser));
+		
+		return newUser;
 	}
+	
 	
 	/**
 	 *  Retrieves a User entity based on the provided email from the database.

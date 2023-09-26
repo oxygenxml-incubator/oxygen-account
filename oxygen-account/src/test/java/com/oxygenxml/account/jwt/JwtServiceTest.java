@@ -1,4 +1,4 @@
-package com.oxygenxml.account.user;
+package com.oxygenxml.account.jwt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,8 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.oxygenxml.account.OxygenAccountApplication;
 import com.oxygenxml.account.service.JwtService;
+import com.oxygenxml.account.type.TokenClaim;
 import com.oxygenxml.account.utility.DateUtility;
-import com.oxygenxml.account.utility.TokenClaims;
 
 import io.jsonwebtoken.Claims;
 
@@ -48,10 +48,10 @@ public class JwtServiceTest {
 		
 		Claims claims = jwtService.parseToken(token);
 
-		Integer userIdExtracted = claims.get(TokenClaims.USER_ID.getTokenClaims(), Integer.class);
+		Integer userIdExtracted = claims.get(TokenClaim.USER_ID.getName(), Integer.class);
 		assertEquals(userId, userIdExtracted);
 
-		Date extractedCreationDate = claims.get(TokenClaims.CREATION_DATE.getTokenClaims(), Date.class);
+		Date extractedCreationDate = claims.get(TokenClaim.CREATION_DATE.getName(), Date.class);
 		
 		long timeDifferenceInMillis = Math.abs(accountCreationDate.getTime() - new Timestamp(extractedCreationDate.getTime()).getTime());
 		assertTrue(timeDifferenceInMillis < 1);
