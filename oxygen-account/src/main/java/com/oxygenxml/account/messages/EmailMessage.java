@@ -2,12 +2,24 @@ package com.oxygenxml.account.messages;
 
 public enum EmailMessage {
 
+	/**
+	 * Represents an error that occurs when the system is unable to find the specified email template
+	 */
 	EMAIL_TEMPLATE_NOT_FOUND("EMAIL_TEMPLATE_NOT_FOUND", "Email template was not found."),
 	
+	/**
+	 * Represents an error that occurs when the system is unable to determine the type of an email
+	 */
 	EMAIL_TYPE_NOT_FOUND("EMAIL_TYPE_NOT_FOUND", "Email type was not found."),
 	
+	/**
+	 * Represents an error that occurs when the system is unable to locate the properties for an email
+	 */
 	EMAIL_PROPERTIES_NOT_FOUND("EMAIL_PROPERTIES_NOT_FOUND", "Email properties were not found."),
 
+	/**
+	 *  Represents an error that occurs when there is a failure in processing the email template.
+	 */
 	EMAIL_TEMPLATE_PROCESSING_FAILED("EMAIL_TEMPLATE_PROCESSING_FAILED", "Email template processing failed.");
 
 
