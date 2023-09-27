@@ -69,7 +69,7 @@ public enum InternalErrorCode {
 	USER_NOT_AUTHENTICATED(1012),
 	
 	/**
-	 * The error that occurs when the users isn't authenticated
+	 * The error that occurs when the user is already confirmed
 	 */
 	USER_ALREADY_CONFIRMED(1013),
 	
