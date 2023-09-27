@@ -1,5 +1,8 @@
 package com.oxygenxml.account.service;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -8,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.oxygenxml.account.config.OxygenAccountPorpertiesConfig;
 import com.oxygenxml.account.dto.ChangePasswordDto;
 import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
@@ -19,8 +23,10 @@ import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.model.UserStatus;
 import com.oxygenxml.account.repository.UserRepository;
+import com.oxygenxml.account.type.TokenClaim;
 import com.oxygenxml.account.utility.DateUtility;
 
+import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 
 /**
@@ -30,6 +36,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserService {
 	private final ApplicationEventPublisher eventPublisher;
+	
+	private static final long MILIS_IN_DAY = 24L * 60L * 60L * 1000L;
 	
 	/**
 	 * Instance of UserRepository to interact with the database.
@@ -42,6 +50,12 @@ public class UserService {
 	 */
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private JwtService jwtService;
+	
+	@Autowired
+	private OxygenAccountPorpertiesConfig oxygenProperties;
 	
 	/**
 	 * Register a new user in the system.
@@ -58,7 +72,7 @@ public class UserService {
 		
 		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		newUser.setRegistrationDate(DateUtility.getCurrentUTCTimestamp());
-		newUser.setStatus(UserStatus.ACTIVE.getStatus());
+		newUser.setStatus(UserStatus.NEW.getStatus());
 		
 		newUser = userRepository.save(newUser);
 		
@@ -171,4 +185,45 @@ public class UserService {
         
         return userRepository.save(currentUser);
     }
+	
+	/**
+	 * This method is responsible for confirming the user registration through a given token.
+	 * 
+	 * @param token A String representing the token used for confirming user registration.
+	 * @return User object representing the confirmed user with updated status.
+	 * @throws  OxygenAccountException if the token is invalid, expired, or the user is already active
+	 */
+	public User confirmUserRegistration(String token) {
+		Claims claims;
+
+		try {
+			claims = jwtService.parseToken(token);
+		} catch (Exception e) {
+			throw new OxygenAccountException(Message.INVALID_TOKEN, HttpStatus.BAD_REQUEST, InternalErrorCode.INVALID_TOKEN);
+		}
+
+		Integer userId = claims.get(TokenClaim.USER_ID.getName(), Integer.class);
+		Date creationDate = claims.get(TokenClaim.CREATION_DATE.getName(), Date.class);
+
+		if (userId == null || creationDate == null) {
+			throw new OxygenAccountException(Message.INVALID_TOKEN, HttpStatus.BAD_REQUEST, InternalErrorCode.INVALID_TOKEN);
+		}
+
+		Timestamp currentDate = DateUtility.getCurrentUTCTimestamp();
+		long differenceDays = Math.abs(currentDate.getTime() - creationDate.getTime())/MILIS_IN_DAY;
+
+		if(differenceDays >= oxygenProperties.getDaysForEmailConfirmation()) {
+			throw new OxygenAccountException(Message.TOKEN_EXPIRED, HttpStatus.GONE, InternalErrorCode.TOKEN_EXPIRED);
+		}
+
+		User user = userRepository.findById((int) userId);
+
+		if (UserStatus.ACTIVE.getStatus().equals(user.getStatus())) {
+			throw new OxygenAccountException(Message.USER_ALREADY_CONFIRMED, HttpStatus.GONE, InternalErrorCode.USER_ALREADY_CONFIRMED);
+    	} 
+        
+        user.setStatus(UserStatus.ACTIVE.getStatus());
+        
+        return userRepository.save(user);
+	}
 }

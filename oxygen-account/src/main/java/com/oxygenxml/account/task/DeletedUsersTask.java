@@ -44,4 +44,20 @@ public class DeletedUsersTask {
 			}
 		}
 	}
+	
+	/**
+	 * Scheduled task that runs daily at midnight to process users marked as "new" and check if they should be permanently deleted from the repository.
+	 */
+	@Scheduled(cron = "0 0 0 * * ?")
+	public void processDeleteUnconfirmedUsers() {
+		List<User> newUsers = userRepository.findByStatus(UserStatus.NEW.getStatus());
+
+		for (User user : newUsers) {
+			int daysLeft = daysLeftUtility.getDaysLeftForConfirmAccount(user);
+
+			if (daysLeft == 0) {
+				userRepository.delete(user);
+			}
+		}
+	}
 }

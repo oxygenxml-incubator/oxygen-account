@@ -78,17 +78,15 @@ public class EmailService {
 	         */
 	        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
 	        
-			try {
-				helper.setTo(emailInfo.getEmailAddress());
-				helper.setSubject(templateSubjectContent);
-		        helper.setText(templateBodyContent, true);
-			} catch (MessagingException e) {
-				throw new EmailException(EmailMessage.EMAIL_PROPERTIES_NOT_FOUND.getMessage(), e);
-			}  
+			helper.setTo(emailInfo.getEmailAddress());
+			helper.setSubject(templateSubjectContent);
+		    helper.setText(templateBodyContent, true);
 
 	        javaMailSender.send(mimeMessage);
 		} catch (java.io.IOException | TemplateException e) {
 			throw new EmailException(EmailMessage.EMAIL_TEMPLATE_PROCESSING_FAILED.getMessage(), e);
+		} catch (MessagingException e) {
+			throw new EmailException(EmailMessage.EMAIL_PROPERTIES_NOT_FOUND.getMessage(), e);
 		}
     }
 }

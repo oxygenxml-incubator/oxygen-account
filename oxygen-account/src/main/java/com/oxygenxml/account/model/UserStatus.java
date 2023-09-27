@@ -18,6 +18,9 @@ public enum UserStatus {
 	 */
 	ACTIVE("active"),
 	
+	/**
+	 * Status used to indicate that the user is new
+	 */
 	NEW("new");
 	
 	/**

@@ -6,18 +6,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.oxygenxml.account.converter.UserConverter;
 import com.oxygenxml.account.dto.ChangePasswordDto;
 import com.oxygenxml.account.dto.DeleteUserDto;
 import com.oxygenxml.account.dto.UpdateUserNameDto;
 import com.oxygenxml.account.dto.UserDto;
+import com.oxygenxml.account.exception.OxygenAccountException;
 import com.oxygenxml.account.exception.UserNotAuthenticatedException;
+import com.oxygenxml.account.messages.Message;
 import com.oxygenxml.account.model.User;
 import com.oxygenxml.account.model.UserStatus;
 import com.oxygenxml.account.service.UserService;
 import com.oxygenxml.account.service.ValidationService;
+import com.oxygenxml.account.type.UrlAnchor;
 
 /**
  * The UserControllerclass is a REST controller that manages HTTP requests related to users.
@@ -126,6 +131,41 @@ public class UserController {
     public UserDto deleteUser() {
         User recoveredUser = userService.recoverUser();
         return userConverter.entityToDto(recoveredUser);
+    }
+    
+    /**
+     * This endpoint is used to confirm user registration through a given token.
+     * 
+     * @param token The token used for confirming user registration.
+     * @return RedirectView object directing to the corresponding URL based on the operation's outcome.
+     */
+    @GetMapping("/confirm")
+    public RedirectView confirmUserRegistration(@RequestParam String token) {
+
+    	if(token == null) {
+    		return new RedirectView(UrlAnchor.INVALID_TOKEN.getAnchor());
+    	}
+    	
+    	try {
+            userService.confirmUserRegistration(token);
+            return new RedirectView(UrlAnchor.SUCCES_CONFIRMATION.getAnchor());
+            
+        } catch (OxygenAccountException e) {
+            String messageId = e.getMessageId();
+            
+            if(messageId.equals(Message.INVALID_TOKEN.getId())) {
+            	return new RedirectView(UrlAnchor.INVALID_TOKEN.getAnchor());
+            	
+            } else if(messageId.equals(Message.TOKEN_EXPIRED.getId())) {
+            	return new RedirectView(UrlAnchor.TOKEN_EXPIRED.getAnchor());
+            	
+            } else if(messageId.equals(Message.USER_ALREADY_CONFIRMED.getId())) {
+            	return new RedirectView(UrlAnchor.USER_ALREADY_CONFIRMED.getAnchor());
+            	
+            } else {
+            	return new RedirectView("/login");
+            }
+        }
     }
 }
 	

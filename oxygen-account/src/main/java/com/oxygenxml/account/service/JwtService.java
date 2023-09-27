@@ -9,7 +9,7 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.oxygenxml.account.Config.OxygenAccountPorpertiesConfig;
+import com.oxygenxml.account.config.OxygenAccountPorpertiesConfig;
 import com.oxygenxml.account.type.TokenClaim;
 
 import io.jsonwebtoken.Claims;

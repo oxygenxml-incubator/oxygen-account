@@ -1,8 +1,11 @@
 package com.oxygenxml.account.security;
 
+import javax.naming.AuthenticationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,6 +16,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
 import com.oxygenxml.account.service.OxygenUserDetailsService;
+import com.oxygenxml.account.type.UrlAnchor;
 
 /**
  * Configuration class for web application security.
@@ -21,10 +25,6 @@ import com.oxygenxml.account.service.OxygenUserDetailsService;
 @EnableWebSecurity
 public class WebSecurityConfiguration {
 
-	/**
-	 * The redirect URL for situations where a user is invalid.
-	 */
-	private static final String INVALID_USER_URL = "/login#invalid-user";
 	/**
 	 *  Service for user details retrieval.
 	 */
@@ -55,9 +55,7 @@ public class WebSecurityConfiguration {
 	 */
 	@Bean
 	public AuthenticationFailureHandler authenticationFailureHandler() {
-	    SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
-	    failureHandler.setDefaultFailureUrl(INVALID_USER_URL);
-	    return failureHandler;
+		return new CustomAuthenticationFailureHandler();
 	}
 	
 	/**

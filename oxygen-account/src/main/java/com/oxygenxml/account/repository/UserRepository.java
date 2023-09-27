@@ -40,5 +40,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	 * @return A User entity that matches the provided status
 	 */
 	public List<User> findByStatus(String status);
-
+	
+	/**
+	 * Retrieves a User entity from the database by the provided ID.
+	 * 
+	 * @param id The ID of the User entity to retrieve from the database.
+	 * @return A User entity with the provided ID, or null if no such User entity exists.
+	 */
+	public User findById(int id);
 }

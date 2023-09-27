@@ -1,4 +1,4 @@
-package com.oxygenxml.account.Config;
+package com.oxygenxml.account.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -24,4 +24,9 @@ public class OxygenAccountPorpertiesConfig {
 	  * The secret key for JWT Token
 	  */
 	 private String secretKey;
+
+	 /**
+	  * The number of days until a new user is permanently deleted from the system.
+	  */
+	 private int daysForEmailConfirmation;
 }

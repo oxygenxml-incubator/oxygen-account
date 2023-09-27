@@ -67,6 +67,9 @@ public class UserControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	
+	/**
+	 * The instance used for user-related operations
+	 */
 	@Autowired
 	private UserService userService;
 	
@@ -217,14 +220,6 @@ public class UserControllerTest {
 	 */
 	@Test
 	void testShowDetailsAboutUser() throws Exception {
-		UserDto newUserDto = new UserDto();
-		newUserDto.setName("User");
-		newUserDto.setEmail("test@email.com");
-		newUserDto.setPassword("password");
-
-		mockMvc.perform(post("/api/users/register")
-				.contentType("application/json")
-				.content(JsonUtil.asJsonString(newUserDto)));
 
 		ResultActions sessionAccess = mockMvc.perform(get("/profile"))
 				.andExpect(status().isFound()) 
@@ -235,15 +230,15 @@ public class UserControllerTest {
 
 		mockMvc.perform(post("/login").session(session)
 				.contentType(APPLICATION_FORM_URLENCODED)
-				.param("email", "test@email.com")
+				.param("email", "denismateescu@gmail.com")
 				.param("password", "password"))
 		.andExpect(status().isFound())
 		.andExpect(redirectedUrlPattern("**/profile?continue"));
 
 		mockMvc.perform(get("/api/users/me").session(session))
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.name", is("User")))
-		.andExpect(jsonPath("$.email", is("test@email.com")))
+		.andExpect(jsonPath("$.name", is("Denis Mateescu")))
+		.andExpect(jsonPath("$.email", is("denismateescu@gmail.com")))
 		.andExpect(jsonPath("$.status", is(UserStatus.ACTIVE.getStatus())));
 	}
 

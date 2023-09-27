@@ -13,9 +13,12 @@ function AuthCard() {
     const [showLoginForm, setShowLoginForm] = useState(true);
 
     /**
-    * Toggles between login and registration forms.
+    * Toggles between login and registration forms and remove hash.
     */
     const toggleForm = () => {
+        if (window.location.hash) {
+            history.replaceState({}, document.title, window.location.pathname);
+        }
         setShowLoginForm(!showLoginForm);
     };
 

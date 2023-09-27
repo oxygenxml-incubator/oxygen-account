@@ -74,7 +74,27 @@ public enum Message {
 	/**
 	 * ID corresponding to the message indicating that the user is not authenticated
 	 */
-	USER_NOT_AUTHENTICATED("USER_NOT_AUTHENTICATED", "User not authenticated.");
+	USER_NOT_AUTHENTICATED("USER_NOT_AUTHENTICATED", "User not authenticated."),
+
+	/**
+	 * ID corresponding to the message indicating that the user was already confirmed
+	 */
+	USER_ALREADY_CONFIRMED("USER_ALREADY_CONFIRMED", "The user has already been confirmed."),
+
+	/**
+	 * ID corresponding to the message indicating that the link has expired
+	 */
+	TOKEN_EXPIRED("TOKEN_EXPIRED", "The confirmation link has expired"),
+
+	/**
+	 * ID corresponding to the message indicating that the link is invalid
+	 */
+	INVALID_TOKEN("INVALID_TOKEN", "The confirmation link is invalid."),
+
+	/**
+	 * ID corresponding to the message indicating that the email is not confirmed
+	 */
+	EMAIL_NOT_CONFIRMED("EMAIL_NOT_CONFIRMED", "Email not confirmed.");
 
 	/**
 	 * Unique identifier corresponding to each type of message.

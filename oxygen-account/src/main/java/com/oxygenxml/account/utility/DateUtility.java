@@ -8,7 +8,7 @@ import java.time.ZoneOffset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.oxygenxml.account.Config.OxygenAccountPorpertiesConfig;
+import com.oxygenxml.account.config.OxygenAccountPorpertiesConfig;
 import com.oxygenxml.account.model.User;
 
 /**
@@ -34,9 +34,25 @@ public class DateUtility {
 	 * @return the number of days left for recovery; returns zero if the user has no days left
 	 */
 	public int getDaysLeftForRecovery(User user) {
-		long timeSinceDeletion = System.currentTimeMillis() - user.getDeletionDate().getTime();
+		Timestamp currentTimestamp = getCurrentUTCTimestamp();
+		long timeSinceDeletion = currentTimestamp.getTime() - user.getDeletionDate().getTime();
 		int daysSinceDeletion = (int) (timeSinceDeletion / MILIS_IN_DAY);
 		int daysLeft = oxygenProperties.getDaysUntilDeletion() - daysSinceDeletion;
+
+		return Math.max(daysLeft, 0); 
+	}
+	
+	/**
+	 * This method calculates the number of days left for a user to confirm their account.
+	 * 
+	 * @param user User object representing the user whose account confirmation days left are to be calculated.
+	 * @return int representing the number of days left for the user to confirm their account.
+	 */
+	public int getDaysLeftForConfirmAccount(User user) {
+		Timestamp currentTimestamp = getCurrentUTCTimestamp();
+		long timeSinceCreation = currentTimestamp.getTime() - user.getRegistrationDate().getTime();
+		int daysSinceCreation = (int) (timeSinceCreation / MILIS_IN_DAY);
+		int daysLeft = oxygenProperties.getDaysForEmailConfirmation() - daysSinceCreation;
 
 		return Math.max(daysLeft, 0); 
 	}
