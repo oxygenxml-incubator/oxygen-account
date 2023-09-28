@@ -70,7 +70,6 @@ public class EventService {
         	emailService.sendEmail(emailInfo);
 		} catch (EmailException e) {
 			System.err.println("Could not send registration email!");
-			e.printStackTrace();
 		}
     }
 }

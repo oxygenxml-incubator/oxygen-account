@@ -564,5 +564,18 @@ public class UserControllerTest {
 				.param("password", "password"))
 		.andExpect(redirectedUrl("/login#unconfirmed-user"));
 	}
+	
+	/**
+	 * Tests the situation when a invalid user is trying to log in
+	 * @throws Exception
+	 */
+	@Test
+	void testLoginInvalidUser() throws Exception {
+		mockMvc.perform(post("/login")
+				.contentType(APPLICATION_FORM_URLENCODED)
+				.param("email", "wrongemail@yahoo.com")
+				.param("password", "password"))
+		.andExpect(redirectedUrl("/login#invalid-user"));
+	}
 }
 
