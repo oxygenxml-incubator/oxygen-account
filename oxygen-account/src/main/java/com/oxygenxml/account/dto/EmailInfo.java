@@ -1,13 +1,17 @@
 package com.oxygenxml.account.dto;
 
 import java.util.Map;
+
 import com.oxygenxml.account.type.EmailType;
-import lombok.Data;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * An object representing email information.
  */
-@Data
+@Getter
+@Setter
 public class EmailInfo {
 
 	/**
